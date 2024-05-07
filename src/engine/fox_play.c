@@ -2588,7 +2588,7 @@ void Play_Init(void) {
             Player_ResetVsData();
         }
     }
-    if(gCurrentLevel == LEVEL_UNK_4) {
+    if((gCurrentLevel == LEVEL_SECTOR_Y) || (gCurrentLevel == LEVEL_UNK_4)) {
         gLevelMode = LEVELMODE_UNK_2;
     }
     if ((gCurrentLevel == LEVEL_VENOM_ANDROSS) && (gLevelPhase == 1)) {
@@ -2657,6 +2657,16 @@ void Play_Init(void) {
         gPlayerGlareAlphas[i] = D_ctx_801783C0[i] = 0;
         gControllerRumbleTimers[i] = 0;
         gPlayerScores[i] = 0;
+    }
+    if((gCurrentLevel == LEVEL_SECTOR_Y) || (gCurrentLevel == LEVEL_UNK_4)) {
+        ObjectInit objInit = { 100.0f, 0, 0, 0, {0, 180, 0}, ACTOR_EVENT_ID };
+        objInit.id += (gCurrentLevel == LEVEL_SECTOR_Y) ? 149 : 99;
+
+        ActorEvent_Load(&gActors[59], &objInit, 59);
+        gActors[59].fwork[1] = (gCurrentLevel == LEVEL_SECTOR_Y) ? 40.0f : 20.0f;
+        
+        gPlayer[0].turretActor = 59;
+
     }
     if (gLevelMode == LEVELMODE_ALL_RANGE) {
         MEM_ARRAY_ALLOCATE(gScenery360, 200);

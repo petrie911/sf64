@@ -1,4 +1,7 @@
 #include "global.h"
+#include "assets/ast_enmy_space.h"
+#include "assets/ast_area_6.h"
+
 
 void Turret_SetupShot(Player* player, PlayerShot* shot, f32 xOffset, f32 yOffset, f32 zOffset, s32 shotId, f32 speed) {
     Vec3f sp4C;
@@ -97,9 +100,10 @@ void Turret_Shoot(Player* player) {
     }
 
     // Draws a textured line to each Event Actor in sequence as R is held. Some sort of charged lock on attack?
-    for (i = 0; i < player->turretLockOnCount; i++) {
+    for (i = 1; i < player->turretLockOnCount; i++) {
         if ((gActors[i].obj.status == OBJ_ACTIVE) && (gActors[i].obj.id == OBJ_ACTOR_EVENT)) {
             gTexturedLines[i].mode = 3;
+            gTexturedLines[i].xyScale = 1.0f;
             gTexturedLines[i].zScale = 1.0f;
 
             gTexturedLines[i].posAA.x = player->pos.x;
@@ -142,7 +146,7 @@ void Turret_Update(Player* player) {
     player->unk_004 = gActors[player->turretActor].obj.rot.x;
     player->rot.z = gActors[player->turretActor].obj.rot.z;
 
-    // Disables controls for 50 frames. some sort of big charged attack?
+    // Animation for start of level
     if (player->turretState < 2) {
         if (player->turretState == 0) {
             player->turretRecoil = 200;
@@ -156,7 +160,7 @@ void Turret_Update(Player* player) {
         }
     }
 
-    // The control stick may have moved a targeting cursor
+    // Moves targeting cursor
     sp2C = (f32) gControllerPress[player->num].stick_x;
     sp28 = -(f32) gControllerPress[player->num].stick_y;
     Math_SmoothStepToF(&player->rot.y, -sp2C * 0.35000002f, 0.5f, 2.0f, 0.00001f);
@@ -168,7 +172,7 @@ void Turret_Update(Player* player) {
     gPathVelZ = player->zPathVel;
     gPathProgress = player->zPath;
 
-    // These appear to move the camera around unless locked in place with Z
+    // Moves the camera around unless locked in place with Z. Condition seems incorrect. 
     if (!(gControllerHold[player->num].button & Z_TRIG) && (sqrtf(SQ(sp2C) + SQ(sp28)) > 55.0f)) {
         if ((gControllerHold[player->num].button & R_CBUTTONS) || (sp2C > 40.0f)) {
             player->unk_008 += 2.0f;
@@ -255,7 +259,7 @@ void Turret_Draw(Player* player) {
     }
 
     Matrix_Push(&gGfxMatrix);
-    // Possibly the targeting cursor. During the big attack, it would come back to the player before moving outward
+    // Targeting cursor. At start of level it moves away from player as guns appear
     RCP_SetupDL_36();
     Matrix_Translate(gGfxMatrix, 0.0f, -100.0f, 0.0f, MTXF_APPLY);
     Matrix_RotateY(gGfxMatrix, player->rot.y * M_DTOR, MTXF_APPLY);
@@ -267,9 +271,10 @@ void Turret_Draw(Player* player) {
     }
     Matrix_Scale(gGfxMatrix, 12.0f, 12.0f, 1.0f, MTXF_APPLY);
     Matrix_SetGfxMtx(&gMasterDisp);
+    gSPDisplayList(gMasterDisp++, D_1024F60);
     Matrix_Pop(&gGfxMatrix);
 
-    // Likely displayed the turrets guns. They are 100 units to the left and right of the player and 100 units below
+    // Draws turret guns. They are 100 units to the left and right of the player and 100 units below
     RCP_SetupDL_27();
     if ((player->turretRecoil > 20) && (player->turretState >= 2)) {
         gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 200, 0, 100, 255);
@@ -280,18 +285,22 @@ void Turret_Draw(Player* player) {
     Matrix_Translate(gGfxMatrix, -100.0f, -100.0f, -200.0f + player->turretRecoil, MTXF_APPLY);
     Matrix_RotateY(gGfxMatrix, player->rot.y * M_DTOR, MTXF_APPLY);
     Matrix_RotateX(gGfxMatrix, -player->rot.x * M_DTOR, MTXF_APPLY);
+    // Matrix_RotateY(gGfxMatrix, M_PI, MTXF_APPLY);
     Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 1.0f, MTXF_APPLY);
     Matrix_SetGfxMtx(&gMasterDisp);
+    gSPDisplayList(gMasterDisp++, D_ENMY_SPACE_4001310);
     Matrix_Pop(&gGfxMatrix);
     Matrix_Push(&gGfxMatrix);
     Matrix_Translate(gGfxMatrix, 100.0f, -100.0f, -200.0f + player->turretRecoil, MTXF_APPLY);
     Matrix_RotateY(gGfxMatrix, player->rot.y * M_DTOR, MTXF_APPLY);
     Matrix_RotateX(gGfxMatrix, -player->rot.x * M_DTOR, MTXF_APPLY);
+    // Matrix_RotateY(gGfxMatrix, M_PI, MTXF_APPLY);
     Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 1.0f, MTXF_APPLY);
     Matrix_SetGfxMtx(&gMasterDisp);
+    gSPDisplayList(gMasterDisp++, D_ENMY_SPACE_4001310);
     Matrix_Pop(&gGfxMatrix);
 
-    // Likely drew muzzle flashes. This suggests the guns were 188 long
+    // Draws muzzle flashes. This suggests the guns were 188 long
     if ((player->turretRecoil > 20) && (player->turretState >= 2)) {
         RCP_SetupDL_64();
         gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 128);
@@ -302,6 +311,7 @@ void Turret_Draw(Player* player) {
         Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -188.0f, MTXF_APPLY);
         Matrix_Scale(gGfxMatrix, 2.0f, 2.0f, 2.0f, MTXF_APPLY);
         Matrix_SetGfxMtx(&gMasterDisp);
+        gSPDisplayList(gMasterDisp++, D_1024AC0);
         Matrix_Pop(&gGfxMatrix);
         Matrix_Push(&gGfxMatrix);
         Matrix_Translate(gGfxMatrix, 100.0f, -100.0f, -200.0f + player->turretRecoil, MTXF_APPLY);
@@ -310,6 +320,7 @@ void Turret_Draw(Player* player) {
         Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -188.0f, MTXF_APPLY);
         Matrix_Scale(gGfxMatrix, 2.0f, 2.0f, 2.0f, MTXF_APPLY);
         Matrix_SetGfxMtx(&gMasterDisp);
+        gSPDisplayList(gMasterDisp++, D_1024AC0);
         Matrix_Pop(&gGfxMatrix);
     }
 }
