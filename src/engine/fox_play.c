@@ -2546,6 +2546,13 @@ void Player_InitVersus(void) {
     Play_ClearObjectData();
 }
 
+void Turret_AnchorActor(Actor* this) {
+    gPlayer[0].vel.z = this->vel.z = -this->fwork[1];
+    this->obj.pos.x = gPlayer[0].xPath;
+    this->obj.pos.y = gPlayer[0].yPath;
+    this->obj.pos.y += D_i6_801A6B80;
+}
+
 void Play_Init(void) {
     s32 i;
 
@@ -2658,13 +2665,15 @@ void Play_Init(void) {
         gControllerRumbleTimers[i] = 0;
         gPlayerScores[i] = 0;
     }
-    if((gCurrentLevel == LEVEL_SECTOR_Y) || (gCurrentLevel == LEVEL_UNK_4)) {
-        ObjectInit objInit = { 100.0f, 0, 0, 0, {0, 180, 0}, ACTOR_EVENT_ID };
-        objInit.id += (gCurrentLevel == LEVEL_SECTOR_Y) ? 149 : 99;
+    if (gLevelMode == LEVELMODE_UNK_2) {
+        ObjectInit objInit = { 100.0f, 0, 0, 0, {0, 180, 0}, OBJ_ACTOR_239 };
 
-        ActorEvent_Load(&gActors[59], &objInit, 59);
+        Actor_Load(&gActors[59], &objInit);
         gActors[59].fwork[1] = (gCurrentLevel == LEVEL_SECTOR_Y) ? 40.0f : 20.0f;
         
+        gActors[59].info.action = Turret_AnchorActor;
+        gActors[59].info.draw = NULL;
+
         gPlayer[0].turretActor = 59;
 
     }

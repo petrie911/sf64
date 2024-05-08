@@ -2875,7 +2875,7 @@ void Object_Update(void) {
     Effect* effect;
 
     gCullObjects = false;
-    if ((gLevelMode == LEVELMODE_ON_RAILS) &&
+    if ((gLevelMode != LEVELMODE_ALL_RANGE) &&
         ((gPlayer[0].state_1C8 == PLAYERSTATE_1C8_INIT) || (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_ACTIVE) ||
          (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_DOWN) || (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_ENTER_WARP_ZONE) ||
          (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_START_360) || (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_NEXT))) {

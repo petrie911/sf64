@@ -103,7 +103,7 @@ void Turret_Shoot(Player* player) {
     for (i = 1; i < player->turretLockOnCount; i++) {
         if ((gActors[i].obj.status == OBJ_ACTIVE) && (gActors[i].obj.id == OBJ_ACTOR_EVENT)) {
             gTexturedLines[i].mode = 3;
-            gTexturedLines[i].xyScale = 1.0f;
+            gTexturedLines[i].xyScale = 0.1f;
             gTexturedLines[i].zScale = 1.0f;
 
             gTexturedLines[i].posAA.x = player->pos.x;
@@ -246,9 +246,8 @@ void Turret_UpdateCamera(Player* player) {
     player->cam.eye.y = player->pos.y;
     player->cam.eye.z = player->pos.z + gPathProgress;
 }
-
+f32 D_i6_801A6B80 = -100.0f;
 void Turret_Draw(Player* player) {
-    static f32 D_i6_801A6B80 = -100.0f;
 
     // Probably a Y-offset adjustment, for debug?
     if (gControllerHold[player->num].button & U_JPAD) {

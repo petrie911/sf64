@@ -230,6 +230,7 @@ static char* fmtTypes[] = { "X", "S", "U", "F" };
 void ObjectRam_DrawEntry(RamEntry* entry, s32 index) {
     fu data;
     s32 y = entry->y + 50 + 27 * index;
+    Object* ptr = (uintptr_t) objPointers[entry->type] + entry->index * objSizes[entry->type];
 
     SET_DRAW_COLOR(EDM_TYPE)
     Graphics_DisplaySmallText(entry->x + 10, y, 1.0f, 1.0f, objTypes[entry->type]);
@@ -270,6 +271,25 @@ void ObjectRam_DrawEntry(RamEntry* entry, s32 index) {
             break;
     }
     Graphics_DisplaySmallText(entry->x + 40, y + 10, 1.0f, 1.0f, D_801619A0);
+    if ((index == selectIndex) && (entry->type > ORAM_PLAYER) && (ptr->status == OBJ_ACTIVE)) {
+        gTexturedLines[99].mode = 3;
+        gTexturedLines[99].xyScale = 1.0f;
+        gTexturedLines[99].zScale = 1.0f;
+        gTexturedLines[99].posAA.x = gPlayer[0].pos.x;
+        gTexturedLines[99].posAA.y = gPlayer[0].pos.y;
+        gTexturedLines[99].posAA.z = gPlayer[0].pos.z;
+        if(gLevelMode != LEVELMODE_ALL_RANGE) {
+            gTexturedLines[99].posAA.z -= 100.0f;
+        }
+        gTexturedLines[99].timer = 3;
+        gTexturedLines[99].red = 255;
+        gTexturedLines[99].green = 128;
+        gTexturedLines[99].blue = 0;
+        gTexturedLines[99].alpha = 255;
+        gTexturedLines[99].posBB.x = ptr->pos.x;
+        gTexturedLines[99].posBB.y = ptr->pos.y;
+        gTexturedLines[99].posBB.z = ptr->pos.z;
+    }
 }
 
 static char* omStr[] = { "OBJECT", "OFFSET", "FORMAT", "POSITION" };
