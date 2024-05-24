@@ -94,7 +94,7 @@ void Option_ExpertSoundUpdate(void) {
 
     if (gControllerPress[gMainController].button & B_BUTTON) {
         if (!D_menu_801B9320) {
-            AUDIO_PLAY_BGM(SEQ_ID_MENU);
+            AUDIO_PLAY_BGM(NA_BGM_SELECT);
             gDrawMode = DRAW_NONE;
             D_menu_801B9124 = 1000;
             D_menu_801B912C = 0;
@@ -118,7 +118,7 @@ void Option_ExpertSoundUpdate(void) {
 
     /* Draw */
 
-    RCP_SetupDL(&gMasterDisp, 0x53);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_83);
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 0, 255);
 
     Graphics_DisplaySmallText(20, 50, 1.0f, 1.0f, "SFX ID:");

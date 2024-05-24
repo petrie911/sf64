@@ -64,6 +64,18 @@
 #define SEGMENT_BSS_END(segment)   (segment ## _BSS_END)
 #define SEGMENT_BSS_SIZE(segment)  ((uintptr_t)SEGMENT_BSS_END(segment) - (uintptr_t)SEGMENT_BSS_START(segment))
 
+#define ROM_SEGMENT(file) { SEGMENT_ROM_START(file), SEGMENT_ROM_END(file) }
+
+#define OVERLAY_OFFSETS(file)                                 \
+    { { SEGMENT_ROM_START(file), SEGMENT_ROM_END(file) },     \
+      { SEGMENT_BSS_START(file), SEGMENT_BSS_END(file) },     \
+      { SEGMENT_TEXT_START(file), SEGMENT_TEXT_END(file) },   \
+      { SEGMENT_DATA_START(file), SEGMENT_RODATA_END(file) } }
+
+#define NO_SEGMENT { NULL, NULL }
+
+#define NO_OVERLAY { NO_SEGMENT, NO_SEGMENT, NO_SEGMENT, NO_SEGMENT }
+
 u8 Load_SceneSetup(u8 sceneId, u8 sceneSetup);
 void Load_InitDmaAndMsg(void);
 
@@ -71,6 +83,8 @@ typedef struct {
     /* 0x0 */ void* start;
     /* 0x4 */ void* end;
 } SegmentOffset; // size = 0x8
+
+#define SEGMENT_SIZE(segment) ((ptrdiff_t) ((uintptr_t) (segment).end - (uintptr_t) (segment).start))
 
 typedef struct {
     /* 0x00 */ SegmentOffset rom;
@@ -87,8 +101,11 @@ typedef struct {
 typedef struct {
     /* 0x0 */ void* vRomAddress;
     /* 0x4 */ SegmentOffset pRom;
-    /* 0xC */ s32 compFlag;
+    /* 0xC */ bool compFlag;
 } DmaEntry; // size = 0x10;
+
+#define DMA_ENTRY(file) { file##_ROM_START, { file##_ROM_START, file##_ROM_END }, false }
+#define DMA_ENTRY_NONE { NULL, { NULL, NULL }, false }
 
 extern DmaEntry gDmaTable[]; // 178A70
 
@@ -135,8 +152,17 @@ DECLARE_SEGMENT(ast_macbeth);
 DECLARE_SEGMENT(ast_warp_zone);
 DECLARE_SEGMENT(ast_title);
 DECLARE_SEGMENT(ast_map);
+DECLARE_SEGMENT(ast_map_en);
+DECLARE_SEGMENT(ast_map_fr);
+DECLARE_SEGMENT(ast_map_de);
 DECLARE_SEGMENT(ast_option);
+DECLARE_SEGMENT(ast_option_en);
+DECLARE_SEGMENT(ast_option_fr);
+DECLARE_SEGMENT(ast_option_de);
 DECLARE_SEGMENT(ast_vs_menu);
+DECLARE_SEGMENT(ast_vs_menu_en);
+DECLARE_SEGMENT(ast_vs_menu_fr);
+DECLARE_SEGMENT(ast_vs_menu_de);
 DECLARE_SEGMENT(ast_text);
 DECLARE_SEGMENT(ast_font_3d);
 DECLARE_SEGMENT(ast_andross);
@@ -147,6 +173,9 @@ DECLARE_SEGMENT(ast_ending_award_back);
 DECLARE_SEGMENT(ast_ending_expert);
 DECLARE_SEGMENT(ast_training);
 DECLARE_SEGMENT(ast_radio);
+DECLARE_SEGMENT(ast_radio_en);
+DECLARE_SEGMENT(ast_radio_fr);
+DECLARE_SEGMENT(ast_radio_de);
 DECLARE_SEGMENT(ovl_i1);
 DECLARE_SEGMENT(ovl_i2);
 DECLARE_SEGMENT(ovl_i3);
@@ -156,5 +185,9 @@ DECLARE_SEGMENT(ovl_i6);
 DECLARE_SEGMENT(ovl_menu);
 DECLARE_SEGMENT(ovl_ending);
 DECLARE_SEGMENT(ovl_unused);
+
+
+
+
 
 #endif

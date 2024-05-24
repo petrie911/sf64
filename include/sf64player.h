@@ -48,12 +48,14 @@ typedef enum DrawMode {
     /* 6 */ DRAW_UNK_VS,
     /* 7 */ DRAW_UNK_7,
     /* 8 */ DRAW_ENDING,
+    /* 9 */ DRAW_MAX,
 } DrawMode;
 
 typedef enum LevelMode {
     /* 0 */ LEVELMODE_ON_RAILS,
     /* 1 */ LEVELMODE_ALL_RANGE,
     /* 2 */ LEVELMODE_UNK_2,
+    /* 3 */ LEVELMODE_MAX,
 } LevelMode;
 
 typedef enum PlayerState1C8 {
@@ -71,6 +73,7 @@ typedef enum PlayerState1C8 {
     /* 11 */ PLAYERSTATE_1C8_ANDROSS_MOUTH,
     /* 12 */ PLAYERSTATE_1C8_12,
     /* 13 */ PLAYERSTATE_1C8_VS_STANDBY,
+    /* 14 */ PLAYERSTATE_1C8_MAX,
 } PlayerState1C8;
 
 typedef enum PlayerShotStatus {
@@ -102,6 +105,7 @@ typedef enum LaserStrength {
     /* 1 */ LASERS_TWIN,
     /* 2 */ LASERS_HYPER,
     /* 3 */ LASERS_UNK_3,
+    /* 4 */ LASERS_MAX,
 } LaserStrength;
 
 typedef struct PlayerShot {
@@ -205,10 +209,10 @@ typedef struct Player {
     /* 0x104 */ Vec3f rot_104;
     /* 0x110 */ f32 boostSpeed;
     /* 0x114 */ f32 yRot_114;
-    /* 0x118 */ f32 yRot_118;
+    /* 0x118 */ f32 pathChangeYaw;
     /* 0x11C */ f32 yRotVel_11C;
     /* 0x120 */ f32 xRot_120;
-    /* 0x124 */ f32 xRot_124;
+    /* 0x124 */ f32 pathChangePitch;
     /* 0x128 */ char pad128[4];
     /* 0x12C */ f32 zRotBank;
     /* 0x130 */ f32 zRotBarrelRoll;
@@ -237,7 +241,7 @@ typedef struct Player {
     /* 0x18C */ f32 unk_18C;
     /* 0x190 */ f32 unk_190;
     /* 0x194 */ f32 unk_194;
-    /* 0x198 */ s32 savedCockpitView;
+    /* 0x198 */ s32 savedAlternateView;
     /* 0x19C */ s32 unk_19C;
     /* 0x1A0 */ s32 unk_1A0;
     /* 0x1A4 */ s32 unk_1A4;
@@ -266,7 +270,7 @@ typedef struct Player {
     /* 0x204 */ s32 unk_204;
     /* 0x208 */ s32 unk_208;
     /* 0x20C */ s32 unk_20C; 
-    /* 0x210 */ s32 timer_210;
+    /* 0x210 */ s32 pathChangeTimer;
     /* 0x214 */ s32 timer_214;
     /* 0x218 */ s32 timer_218;
     /* 0x21C */ s32 unk_21C;
@@ -276,7 +280,7 @@ typedef struct Player {
     /* 0x22C */ s32 whooshTimer;
     /* 0x230 */ s32 unk_230;
     /* 0x234 */ s32 unk_234;
-    /* 0x238 */ s32 cockpitView;
+    /* 0x238 */ s32 alternateView;
     /* 0x23C */ s32 shadowing;
     /* 0x240 */ s32 unk_240;
     /* 0x244 */ s32 shotTimer;

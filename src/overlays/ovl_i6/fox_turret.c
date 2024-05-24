@@ -1,4 +1,5 @@
 #include "global.h"
+#include "assets/ast_arwing.h"
 #include "assets/ast_enmy_space.h"
 #include "assets/ast_area_6.h"
 
@@ -112,10 +113,10 @@ void Turret_Shoot(Player* player) {
 
             gTexturedLines[i].timer = 2;
 
-            gTexturedLines[i].red = 255;
-            gTexturedLines[i].green = 255;
-            gTexturedLines[i].blue = 255;
-            gTexturedLines[i].alpha = 255;
+            gTexturedLines[i].prim.r = 255;
+            gTexturedLines[i].prim.g = 255;
+            gTexturedLines[i].prim.b = 255;
+            gTexturedLines[i].prim.a = 255;
 
             gTexturedLines[i].posBB.x = gActors[i].obj.pos.x;
             gTexturedLines[i].posBB.y = gActors[i].obj.pos.y;
@@ -173,7 +174,7 @@ void Turret_Update(Player* player) {
     gPathProgress = player->zPath;
 
     // Moves the camera around unless locked in place with Z. Condition seems incorrect. 
-    if (!(gControllerHold[player->num].button & Z_TRIG) && (sqrtf(SQ(sp2C) + SQ(sp28)) > 55.0f)) {
+    if (!(gControllerHold[player->num].button & Z_TRIG) /*&& (sqrtf(SQ(sp2C) + SQ(sp28)) > 55.0f)*/) {
         if ((gControllerHold[player->num].button & R_CBUTTONS) || (sp2C > 40.0f)) {
             player->unk_008 += 2.0f;
         }
@@ -246,7 +247,7 @@ void Turret_UpdateCamera(Player* player) {
     player->cam.eye.y = player->pos.y;
     player->cam.eye.z = player->pos.z + gPathProgress;
 }
-f32 D_i6_801A6B80 = -100.0f;
+f32 D_i6_801A6B80 = 50.0f;
 void Turret_Draw(Player* player) {
 
     // Probably a Y-offset adjustment, for debug?
@@ -284,19 +285,23 @@ void Turret_Draw(Player* player) {
     Matrix_Translate(gGfxMatrix, -100.0f, -100.0f, -200.0f + player->turretRecoil, MTXF_APPLY);
     Matrix_RotateY(gGfxMatrix, player->rot.y * M_DTOR, MTXF_APPLY);
     Matrix_RotateX(gGfxMatrix, -player->rot.x * M_DTOR, MTXF_APPLY);
-    // Matrix_RotateY(gGfxMatrix, M_PI, MTXF_APPLY);
-    Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 1.0f, MTXF_APPLY);
+    Matrix_RotateZ(gGfxMatrix, M_PI, MTXF_APPLY);
+    Matrix_RotateY(gGfxMatrix, M_PI / 2, MTXF_APPLY);
+    Matrix_Translate(gGfxMatrix, D_i6_801A6B80, 0.0f, 0.0f, MTXF_APPLY);
+    Matrix_Scale(gGfxMatrix, 4.0f, 1.0f, 1.0f, MTXF_APPLY);
     Matrix_SetGfxMtx(&gMasterDisp);
-    gSPDisplayList(gMasterDisp++, D_ENMY_SPACE_4001310);
+    gSPDisplayList(gMasterDisp++, D_arwing_3011720);
     Matrix_Pop(&gGfxMatrix);
     Matrix_Push(&gGfxMatrix);
     Matrix_Translate(gGfxMatrix, 100.0f, -100.0f, -200.0f + player->turretRecoil, MTXF_APPLY);
     Matrix_RotateY(gGfxMatrix, player->rot.y * M_DTOR, MTXF_APPLY);
     Matrix_RotateX(gGfxMatrix, -player->rot.x * M_DTOR, MTXF_APPLY);
-    // Matrix_RotateY(gGfxMatrix, M_PI, MTXF_APPLY);
-    Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 1.0f, MTXF_APPLY);
+    // Matrix_RotateZ(gGfxMatrix, M_PI, MTXF_APPLY);
+    Matrix_RotateY(gGfxMatrix, M_PI / 2, MTXF_APPLY);
+    Matrix_Translate(gGfxMatrix, D_i6_801A6B80, 0.0f, 0.0f, MTXF_APPLY);
+    Matrix_Scale(gGfxMatrix, 4.0f, 1.0f, 1.0f, MTXF_APPLY);
     Matrix_SetGfxMtx(&gMasterDisp);
-    gSPDisplayList(gMasterDisp++, D_ENMY_SPACE_4001310);
+    gSPDisplayList(gMasterDisp++, D_arwing_3011720);
     Matrix_Pop(&gGfxMatrix);
 
     // Draws muzzle flashes. This suggests the guns were 188 long

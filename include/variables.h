@@ -13,14 +13,14 @@ extern s32 gAllRangeSpawnEvent;
 extern u16 gStarColors[16];
 
 // fox_boss
-extern s32 D_boss_800C9E90[];
+extern s32 gBossBgms[];
 
 // fox_tank
 extern Vec3f D_tank_800C9F2C;
 
 // fox_display
 extern s32 D_display_800CA220;
-extern f32 D_display_800CA230;
+extern f32 gCamDistortion;
 extern Actor* gTeamHelpActor;
 extern s32 gTeamHelpTimer;
 
@@ -83,7 +83,7 @@ extern s32 gCallVoiceParam;
 // fox_hud
 extern s16 D_hud_800D1970;
 
-// fox_A4290
+// fox_col2
 extern CollisionHeader D_800D2B38[];
 extern CollisionHeader2 D_800D2CA0[];
 

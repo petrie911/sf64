@@ -2,16 +2,17 @@
 #include "global.h"
 #include "sf64dma.h"
 #include "assets/ast_logo.h"
+#include "mods.h"
 
-f32 D_game_80161A10;
-f32 D_game_80161A14;
+f32 gNextVsViewScale;
+f32 gVsViewScale;
 s32 gPlayerInactive[4];
-s32 D_game_80161A28;
+s32 gVsMenuSelection;
 u8 gShowHud;
 u16 gNextLevelPhase;
 u16 gNextLevel;
 u16 gNextGameState;
-u16 D_game_80161A34;
+u16 gLastGameState;
 u16 gBgColor;
 u8 gBlurAlpha;
 u8 gGameStandby;
@@ -19,8 +20,8 @@ f32 gFovY;
 f32 gProjectNear;
 f32 gProjectFar;
 
-s32 gShowCrosshairs[4] = { true, true, true, true };
-s32 D_game_800D2870 = 0;
+bool gShowCrosshairs[4] = { true, true, true, true };
+bool D_game_800D2870 = false;
 static s32 sVsCameraULx[] = { 0, SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2 };
 static s32 sVsCameraLRx[] = { SCREEN_WIDTH / 2 - 1, SCREEN_WIDTH - 1, SCREEN_WIDTH / 2 - 1, SCREEN_WIDTH - 1 };
 static s32 sVsCameraULy[] = { 0, 0, SCREEN_HEIGHT / 2, SCREEN_HEIGHT / 2 };
@@ -54,13 +55,25 @@ void Game_Initialize(void) {
     Rand_Init();
     Rand_SetSeed(1, 29000, 9876);
     gGameState = GSTATE_BOOT;
+#ifdef MODS_BOOT_STATE
+    gNextGameState = GSTATE_INIT;
+    if (Save_Read() != 0) {
+#ifdef AVOID_UB
+        gSaveFile.save = gDefaultSave;
+        gSaveFile.backup = gDefaultSave;
+#else
+        gSaveFile = *((SaveFile*) &gDefaultSave);
+#endif
+        Save_Write();
+    }
+#endif
     gNextGameStateTimer = 0;
     gBgColor = 0;
     gBlurAlpha = 255;
     gFovY = 45.0f;
     gProjectNear = 10.0f;
     gProjectFar = 12800.0f;
-    D_game_80161A10 = D_game_80161A14 = 0.0f;
+    gNextVsViewScale = gVsViewScale = 0.0f;
     gSceneId = SCENE_LOGO;
     gSceneSetup = 0;
     Load_InitDmaAndMsg();
@@ -68,7 +81,7 @@ void Game_Initialize(void) {
 }
 
 void Game_SetGameState(void) {
-    D_game_80161A14 = D_game_80161A10;
+    gVsViewScale = gNextVsViewScale;
 
     if (gNextGameState == GSTATE_NONE) {
         return;
@@ -186,63 +199,66 @@ void Game_InitFullViewport(void) {
 }
 
 void Game_InitViewport(Gfx** dList, u8 camCount, u8 camIndex) {
-    if ((camCount != 1) && (camCount == 4)) {
-        switch (camIndex) {
-            case 0:
-                gViewport->vp.vscale[0] = SCREEN_WIDTH * (D_game_80161A14 - 1.0f) * 2;
-                gViewport->vp.vscale[1] = SCREEN_HEIGHT * (D_game_80161A14 - 1.0f) * 2;
-                gViewport->vp.vscale[2] = G_MAXZ / 2;
-                gViewport->vp.vscale[3] = 0;
-                gViewport->vp.vtrans[0] = SCREEN_WIDTH * (2.0f - D_game_80161A14) * 2;
-                gViewport->vp.vtrans[1] = SCREEN_HEIGHT * (2.0f - D_game_80161A14) * 2;
-                gViewport->vp.vtrans[2] = G_MAXZ / 2;
-                gViewport->vp.vtrans[3] = 0;
-                gDPSetScissor((*dList)++, G_SC_NON_INTERLACE, SCREEN_MARGIN, SCREEN_MARGIN, SCREEN_WIDTH / 2,
-                              SCREEN_HEIGHT / 2);
-                break;
-            case 1:
-                gViewport->vp.vscale[0] = SCREEN_WIDTH * (D_game_80161A14 - 1.0f) * 2;
-                gViewport->vp.vscale[1] = SCREEN_HEIGHT * (D_game_80161A14 - 1.0f) * 2;
-                gViewport->vp.vscale[2] = G_MAXZ / 2;
-                gViewport->vp.vscale[3] = 0;
-                gViewport->vp.vtrans[0] = SCREEN_WIDTH * D_game_80161A14 * 2;
-                gViewport->vp.vtrans[1] = SCREEN_HEIGHT * (2.0f - D_game_80161A14) * 2;
-                gViewport->vp.vtrans[2] = G_MAXZ / 2;
-                gViewport->vp.vtrans[3] = 0;
-                gDPSetScissor((*dList)++, G_SC_NON_INTERLACE, SCREEN_WIDTH / 2, SCREEN_MARGIN,
-                              SCREEN_WIDTH - SCREEN_MARGIN, SCREEN_HEIGHT / 2);
-                break;
-            case 2:
-                gViewport->vp.vscale[0] = SCREEN_WIDTH * (D_game_80161A14 - 1.0f) * 2;
-                gViewport->vp.vscale[1] = SCREEN_HEIGHT * (D_game_80161A14 - 1.0f) * 2;
-                gViewport->vp.vscale[2] = G_MAXZ / 2;
-                gViewport->vp.vscale[3] = 0;
-                gViewport->vp.vtrans[0] = SCREEN_WIDTH * (2.0f - D_game_80161A14) * 2;
-                gViewport->vp.vtrans[1] = SCREEN_HEIGHT * D_game_80161A14 * 2;
-                gViewport->vp.vtrans[2] = G_MAXZ / 2;
-                gViewport->vp.vtrans[3] = 0;
-                gDPSetScissor((*dList)++, G_SC_NON_INTERLACE, SCREEN_MARGIN, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 2,
-                              SCREEN_HEIGHT - SCREEN_MARGIN);
-                break;
-            case 3:
-                gViewport->vp.vscale[0] = SCREEN_WIDTH * (D_game_80161A14 - 1.0f) * 2;
-                gViewport->vp.vscale[1] = SCREEN_HEIGHT * (D_game_80161A14 - 1.0f) * 2;
-                gViewport->vp.vscale[2] = G_MAXZ / 2;
-                gViewport->vp.vscale[3] = 0;
-                gViewport->vp.vtrans[0] = SCREEN_WIDTH * D_game_80161A14 * 2;
-                gViewport->vp.vtrans[1] = SCREEN_HEIGHT * D_game_80161A14 * 2;
-                gViewport->vp.vtrans[2] = G_MAXZ / 2;
-                gViewport->vp.vtrans[3] = 0;
-                gDPSetScissor((*dList)++, G_SC_NON_INTERLACE, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
-                              SCREEN_WIDTH - SCREEN_MARGIN, SCREEN_HEIGHT - SCREEN_MARGIN);
-                break;
-            default:
-                Game_InitFullViewport();
-                break;
-        }
-    } else {
-        Game_InitFullViewport();
-        if (1) {}
+    switch (camCount) {
+        case 4:
+            switch (camIndex) {
+                case 0:
+                    gViewport->vp.vscale[0] = SCREEN_WIDTH * (gVsViewScale - 1.0f) * 2;
+                    gViewport->vp.vscale[1] = SCREEN_HEIGHT * (gVsViewScale - 1.0f) * 2;
+                    gViewport->vp.vscale[2] = G_MAXZ / 2;
+                    gViewport->vp.vscale[3] = 0;
+                    gViewport->vp.vtrans[0] = SCREEN_WIDTH * (2.0f - gVsViewScale) * 2;
+                    gViewport->vp.vtrans[1] = SCREEN_HEIGHT * (2.0f - gVsViewScale) * 2;
+                    gViewport->vp.vtrans[2] = G_MAXZ / 2;
+                    gViewport->vp.vtrans[3] = 0;
+                    gDPSetScissor((*dList)++, G_SC_NON_INTERLACE, SCREEN_MARGIN, SCREEN_MARGIN, SCREEN_WIDTH / 2,
+                                  SCREEN_HEIGHT / 2);
+                    break;
+                case 1:
+                    gViewport->vp.vscale[0] = SCREEN_WIDTH * (gVsViewScale - 1.0f) * 2;
+                    gViewport->vp.vscale[1] = SCREEN_HEIGHT * (gVsViewScale - 1.0f) * 2;
+                    gViewport->vp.vscale[2] = G_MAXZ / 2;
+                    gViewport->vp.vscale[3] = 0;
+                    gViewport->vp.vtrans[0] = SCREEN_WIDTH * gVsViewScale * 2;
+                    gViewport->vp.vtrans[1] = SCREEN_HEIGHT * (2.0f - gVsViewScale) * 2;
+                    gViewport->vp.vtrans[2] = G_MAXZ / 2;
+                    gViewport->vp.vtrans[3] = 0;
+                    gDPSetScissor((*dList)++, G_SC_NON_INTERLACE, SCREEN_WIDTH / 2, SCREEN_MARGIN,
+                                  SCREEN_WIDTH - SCREEN_MARGIN, SCREEN_HEIGHT / 2);
+                    break;
+                case 2:
+                    gViewport->vp.vscale[0] = SCREEN_WIDTH * (gVsViewScale - 1.0f) * 2;
+                    gViewport->vp.vscale[1] = SCREEN_HEIGHT * (gVsViewScale - 1.0f) * 2;
+                    gViewport->vp.vscale[2] = G_MAXZ / 2;
+                    gViewport->vp.vscale[3] = 0;
+                    gViewport->vp.vtrans[0] = SCREEN_WIDTH * (2.0f - gVsViewScale) * 2;
+                    gViewport->vp.vtrans[1] = SCREEN_HEIGHT * gVsViewScale * 2;
+                    gViewport->vp.vtrans[2] = G_MAXZ / 2;
+                    gViewport->vp.vtrans[3] = 0;
+                    gDPSetScissor((*dList)++, G_SC_NON_INTERLACE, SCREEN_MARGIN, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 2,
+                                  SCREEN_HEIGHT - SCREEN_MARGIN);
+                    break;
+                case 3:
+                    gViewport->vp.vscale[0] = SCREEN_WIDTH * (gVsViewScale - 1.0f) * 2;
+                    gViewport->vp.vscale[1] = SCREEN_HEIGHT * (gVsViewScale - 1.0f) * 2;
+                    gViewport->vp.vscale[2] = G_MAXZ / 2;
+                    gViewport->vp.vscale[3] = 0;
+                    gViewport->vp.vtrans[0] = SCREEN_WIDTH * gVsViewScale * 2;
+                    gViewport->vp.vtrans[1] = SCREEN_HEIGHT * gVsViewScale * 2;
+                    gViewport->vp.vtrans[2] = G_MAXZ / 2;
+                    gViewport->vp.vtrans[3] = 0;
+                    gDPSetScissor((*dList)++, G_SC_NON_INTERLACE, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
+                                  SCREEN_WIDTH - SCREEN_MARGIN, SCREEN_HEIGHT - SCREEN_MARGIN);
+                    break;
+                default:
+                    Game_InitFullViewport();
+                    break;
+            }
+            break;
+        case 1:
+        default:
+            Game_InitFullViewport();
+            break;
     }
     gSPViewport((*dList)++, gViewport++);
 }
@@ -276,7 +292,7 @@ void Game_Draw(s32 playerNum) {
             break;
         case DRAW_UNK_7:
             gPlayerNum = playerNum;
-            func_800A3CA0();
+            func_pause_800A3CA0();
             break;
         case DRAW_ENDING:
             Background_DrawStarfield();
@@ -350,31 +366,36 @@ void Game_Update(void) {
                 }
                 break;
             case GSTATE_SHOW_LOGO:
-                RCP_SetupDL(&gMasterDisp, 0x4C);
+                RCP_SetupDL(&gMasterDisp, SETUPDL_76);
                 gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 255);
-                TextureRect_8bIA(&gMasterDisp, &gNintendoLogo[128 * 16 * 0], 128, 16, 100.0f, 86.0f, 1.0f, 1.0f);
-                TextureRect_8bIA(&gMasterDisp, &gNintendoLogo[128 * 16 * 1], 128, 16, 100.0f, 102.0f, 1.0f, 1.0f);
-                TextureRect_8bIA(&gMasterDisp, &gNintendoLogo[128 * 16 * 2], 128, 16, 100.0f, 118.0f, 1.0f, 1.0f);
-                TextureRect_8bIA(&gMasterDisp, &gNintendoLogo[128 * 16 * 3], 128, 16, 100.0f, 134.0f, 1.0f, 1.0f);
-                TextureRect_8bIA(&gMasterDisp, &gNintendoLogo[128 * 16 * 4], 128, 10, 100.0f, 150.0f, 1.0f, 1.0f);
+                TextureRect_IA8(&gMasterDisp, &gNintendoLogo[128 * 16 * 0], 128, 16, 100.0f, 86.0f, 1.0f, 1.0f);
+                TextureRect_IA8(&gMasterDisp, &gNintendoLogo[128 * 16 * 1], 128, 16, 100.0f, 102.0f, 1.0f, 1.0f);
+                TextureRect_IA8(&gMasterDisp, &gNintendoLogo[128 * 16 * 2], 128, 16, 100.0f, 118.0f, 1.0f, 1.0f);
+                TextureRect_IA8(&gMasterDisp, &gNintendoLogo[128 * 16 * 3], 128, 16, 100.0f, 134.0f, 1.0f, 1.0f);
+                TextureRect_IA8(&gMasterDisp, &gNintendoLogo[128 * 16 * 4], 128, 10, 100.0f, 150.0f, 1.0f, 1.0f);
                 gGameState++;
                 break;
             case GSTATE_CHECK_SAVE:
                 if (Save_Read() != 0) {
+#ifdef AVOID_UB
+                    gSaveFile.save = gDefaultSave;
+                    gSaveFile.backup = gDefaultSave;
+#else
                     gSaveFile = *((SaveFile*) &gDefaultSave);
+#endif
                     Save_Write();
                 }
                 gGameState++;
                 Timer_CreateTask(MSEC_TO_CYCLES(1000), Timer_Increment, (s32*) &gGameState, 1);
                 /* fallthrough */
             case GSTATE_LOGO_WAIT:
-                RCP_SetupDL(&gMasterDisp, 0x4C);
+                RCP_SetupDL(&gMasterDisp, SETUPDL_76);
                 gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 255);
-                TextureRect_8bIA(&gMasterDisp, &gNintendoLogo[128 * 16 * 0], 128, 16, 100.0f, 86.0f, 1.0f, 1.0f);
-                TextureRect_8bIA(&gMasterDisp, &gNintendoLogo[128 * 16 * 1], 128, 16, 100.0f, 102.0f, 1.0f, 1.0f);
-                TextureRect_8bIA(&gMasterDisp, &gNintendoLogo[128 * 16 * 2], 128, 16, 100.0f, 118.0f, 1.0f, 1.0f);
-                TextureRect_8bIA(&gMasterDisp, &gNintendoLogo[128 * 16 * 3], 128, 16, 100.0f, 134.0f, 1.0f, 1.0f);
-                TextureRect_8bIA(&gMasterDisp, &gNintendoLogo[128 * 16 * 4], 128, 10, 100.0f, 150.0f, 1.0f, 1.0f);
+                TextureRect_IA8(&gMasterDisp, &gNintendoLogo[128 * 16 * 0], 128, 16, 100.0f, 86.0f, 1.0f, 1.0f);
+                TextureRect_IA8(&gMasterDisp, &gNintendoLogo[128 * 16 * 1], 128, 16, 100.0f, 102.0f, 1.0f, 1.0f);
+                TextureRect_IA8(&gMasterDisp, &gNintendoLogo[128 * 16 * 2], 128, 16, 100.0f, 118.0f, 1.0f, 1.0f);
+                TextureRect_IA8(&gMasterDisp, &gNintendoLogo[128 * 16 * 3], 128, 16, 100.0f, 134.0f, 1.0f, 1.0f);
+                TextureRect_IA8(&gMasterDisp, &gNintendoLogo[128 * 16 * 4], 128, 10, 100.0f, 150.0f, 1.0f, 1.0f);
                 break;
             case GSTATE_START:
                 gGameState = GSTATE_INIT;
@@ -395,7 +416,10 @@ void Game_Update(void) {
                         gPlayState = gOptionMenuStatus = gDrawMode = gShowBossHealth = gShowHud = gBgColor =
                             gFillScreenAlpha = 0;
                 gNextGameState = D_ctx_80177C94 = D_ctx_80177CAC = D_ctx_80177CB4 = D_ctx_80177CBC = D_ctx_80177CC4 =
-                    D_ctx_80177C9C = D_ctx_80177CA4 = D_play_80161A5C = D_game_80161A34 = 0;
+                    D_ctx_80177C9C = D_ctx_80177CA4 = D_play_80161A5C = gLastGameState = GSTATE_NONE;
+#ifdef MODS_BOOT_STATE
+                gNextGameState = MODS_BOOT_STATE;
+#endif
                 for (i = 0; i < 4; i++) {
                     gBoostButton[i] = L_CBUTTONS;
                     gBrakeButton[i] = D_CBUTTONS;
@@ -547,14 +571,29 @@ void Game_Update(void) {
         if ((gGameState == GSTATE_PLAY) && gVersusMode) {
             Versus_Draw();
         }
-        func_fade_80084688(0, D_ctx_80177C50);
+
+        Wipe_Draw(WIPE_CIRCULAR, gCircleWipeFrame);
+
         if (!partialFill) {
             Graphics_FillRectangle(&gMasterDisp, 0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1, gFillScreenRed,
                                    gFillScreenGreen, gFillScreenBlue, gFillScreenAlpha);
         }
         Audio_dummy_80016A50();
+#if MODS_RAM_MOD == 1
+        RamMod_Update();
+#endif
+#if MODS_FPS_COUNTER == 1
+        Play_RenderFps();
+#endif
     }
 }
+
+#if MODS_FPS_COUNTER == 1
+#include "../mods/fpscounter.c"
+#endif
+#if MODS_RAM_MOD == 1
+#include "../mods/object_ram.c"
+#endif
 
 Actor* Game_SpawnActor(ObjectId objId) {
     Actor* actor = gActors;

@@ -2,6 +2,15 @@
 #define MODS_H
 
 /**
+ * Quick Boot:
+ * Define this variable to a game state to boot into that
+ * state. Two presets (map and main menu) are provided. 
+ * For the full list of game states, see sf64thread.h.
+*/
+#define MODS_BOOT_STATE 3  // main menu
+// #define MODS_BOOT_STATE 4 // map
+
+/**
  * Level Select:
  * Use the D-Pad to select a level. Press L to start in
  * an advanced level phase (warp zone or Andross fight).
@@ -31,14 +40,21 @@
 #define MODS_FPS_COUNTER 0
 
 /**
- * Object Ram Watch:
+ * RAM modifier:
+ * Press C> while paused to cycle modes
+ * 
+ * Cheats:
+ * Use D-Pad up and down to select a cheat
+ * Use D-Pad left and right to set its value
+ * Press L to set the value or twice to lock it
+ * 
+ * Object Ram Editor:
  * Watch up to seven addresses from the player and object arrays
- * Press C> while paused to enable/disable
- * Use D-PAD to move the cursor and change values
+ * Use D-Pad to move the cursor and change values
  * Press L to edit the highlighted value
 */
 
-#define MODS_OBJECT_RAM 1
+#define MODS_RAM_MOD 1
 
 /* ************************* */
 
@@ -50,8 +66,8 @@ void Map_LevelSelect(void);
 static void Play_RenderFps(void);
 #endif
 
-#if MODS_OBJECT_RAM == 1
-void ObjectRam_Update(void);
+#if MODS_RAM_MOD == 1
+void RamMod_Update(void);
 #endif
 
 #endif

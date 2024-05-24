@@ -216,11 +216,8 @@ f32 Venom1_801920F0(f32* arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32* arg5
         if ((arg4 <= temp) || ((temp <= -arg4))) {
             if (arg3 < temp) {
                 temp = arg3;
-            } else {
-
-                if (-arg3 > temp) {
-                    temp = -arg3;
-                }
+            } else if (-arg3 > temp) {
+                temp = -arg3;
             }
             *arg0 += temp;
         } else {
@@ -315,8 +312,8 @@ void Venom1_801924A8(Scenery* scenery) {
     switch (scenery->state) {
         case 0:
             if (gPlayer[0].pos.z < scenery->obj.pos.z) {
-                D_ctx_80177AB0 = 0;
-                D_ctx_80177A98 = 0;
+                gDrawBackdrop = 0;
+                gDrawGround = false;
 
                 scenery->state++;
             }
@@ -628,7 +625,7 @@ void Venom1_80192CD4(Actor* actor) {
 
     if (actor->iwork[1] > 0) {
         gControllerRumbleFlags[0] = 1;
-        actor->iwork[1] -= 1;
+        actor->iwork[1]--;
     }
 
     switch (actor->state) {
@@ -640,8 +637,10 @@ void Venom1_80192CD4(Actor* actor) {
                 actor->state++;
             }
             break;
+
         case 3:
             actor->state++;
+
         case 4:
             actor->fwork[0] += 0.05f;
             actor->obj.rot.x += actor->fwork[0];
@@ -655,9 +654,9 @@ void Venom1_80192CD4(Actor* actor) {
                 actor->state++;
             }
             break;
+
         case 0:
         case 5:
-        default:
             break;
     }
 }
@@ -783,15 +782,15 @@ void Venom1_801933DC(Actor* actor) {
         AUDIO_PLAY_SFX(NA_SE_EN_REFLECT, actor->sfxSource, 0);
     }
 
-    if ((actor->unk_0B6 == 38) || (actor->unk_0B6 == 58)) {
+    if ((actor->animFrame == 38) || (actor->animFrame == 58)) {
         AUDIO_PLAY_SFX(NA_SE_OB_ARM_SWING, actor->sfxSource, 0);
     }
-    Animation_GetFrameData(&D_VE1_900D098, actor->unk_0B6, actor->vwork);
+    Animation_GetFrameData(&D_VE1_900D098, actor->animFrame, actor->vwork);
 
-    if (actor->unk_0B6 < (Animation_GetFrameCount(&D_VE1_900D098) - 1)) {
-        actor->unk_0B6++;
+    if (actor->animFrame < (Animation_GetFrameCount(&D_VE1_900D098) - 1)) {
+        actor->animFrame++;
     } else {
-        actor->unk_0B6 = 0;
+        actor->animFrame = 0;
     }
     hitboxData = actor->info.hitbox;
     hitboxData[1 + (10 * 0) + 7] = actor->vwork[3].y;
@@ -814,12 +813,12 @@ void Venom1_Boss319_Init(Boss319* this) {
     s32 var_v0;
     s32 j;
 
-    D_ctx_8017812C = 1;
+    gGroundClipMode = 1;
     D_i1_8019C0B8 = 0;
     D_i1_8019C0BC = 0;
     D_i1_8019C0C0 = 0;
-    gBossActive = 1;
-    this->unk_05E = 1;
+    gBossActive = true;
+    this->drawShadow = true;
     this->fwork[2] = D_i1_8019A04C[this->swork[13]][0];
     this->fwork[14] = D_i1_8019A04C[this->swork[13]][1];
     this->health = 100;
@@ -857,7 +856,7 @@ void Venom1_Boss319_Init(Boss319* this) {
     }
     this->swork[29] = this->swork[30] = var_v0 + 100;
     Animation_GetFrameData(D_i1_8019ACD4[this->swork[5]], 0, this->vwork);
-    AUDIO_PLAY_BGM(SEQ_ID_VE_BOSS | SEQ_FLAG);
+    AUDIO_PLAY_BGM(NA_BGM_BOSS_VE);
 }
 
 bool Venom1_801937F4(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* thisx) {
@@ -892,20 +891,20 @@ bool Venom1_801937F4(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* t
             if (!(D_i1_8019B838[D_i1_8019A748[i].index].unk_7C & 1)) {
                 if (D_i1_8019B838[D_i1_8019A748[i].index].unk_00 > 0) {
                     if ((D_i1_8019B838[D_i1_8019A748[i].index].unk_02[2] & 2) == 2) {
-                        RCP_SetupDL(&gMasterDisp, 0x1E);
+                        RCP_SetupDL(&gMasterDisp, SETUPDL_30);
                         gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 0, 0, 255);
                         if (*dList != NULL) {
                             gSPDisplayList(gMasterDisp++, *dList);
                         }
-                        RCP_SetupDL(&gMasterDisp, 0x1D);
+                        RCP_SetupDL(&gMasterDisp, SETUPDL_29);
                     } else if (i == 15) {
-                        RCP_SetupDL(&gMasterDisp, 0x1E);
+                        RCP_SetupDL(&gMasterDisp, SETUPDL_30);
                         blue = 255 - (s32) this->fwork[16];
                         gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, blue, blue, 255);
                         if (*dList != NULL) {
                             gSPDisplayList(gMasterDisp++, *dList);
                         }
-                        RCP_SetupDL(&gMasterDisp, 0x1D);
+                        RCP_SetupDL(&gMasterDisp, SETUPDL_29);
                     } else {
                         if (*dList != NULL) {
                             gSPDisplayList(gMasterDisp++, *dList);
@@ -917,7 +916,7 @@ bool Venom1_801937F4(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* t
                         green = D_i1_8019B838[D_i1_8019A748[i].index].unk_6C;
                         red = D_i1_8019B838[D_i1_8019A748[i].index].unk_64;
                         if (*dList != NULL) {
-                            RCP_SetupDL(&gMasterDisp, 0x1F);
+                            RCP_SetupDL(&gMasterDisp, SETUPDL_31);
                             if (blue > 128) {
                                 blue = 128;
                             }
@@ -930,18 +929,18 @@ bool Venom1_801937F4(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* t
                             gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, red, green, blue, 255);
                             gDPSetEnvColor(gMasterDisp++, 255, 255, 255, 0);
                             gSPDisplayList(gMasterDisp++, D_i1_8019A748[i].dList);
-                            RCP_SetupDL(&gMasterDisp, 0x1D);
+                            RCP_SetupDL(&gMasterDisp, SETUPDL_29);
                         }
                     } else {
                         gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 255);
                         gSPDisplayList(gMasterDisp++, D_i1_8019A748[i].dList);
                     }
                 } else {
-                    RCP_SetupDL(&gMasterDisp, 0x22);
+                    RCP_SetupDL(&gMasterDisp, SETUPDL_34);
                     lum = D_i1_8019AD68[(s32) this->fwork[8]];
                     gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, lum, lum, lum, 255);
                     gSPDisplayList(gMasterDisp++, D_i1_8019A748[i].dList);
-                    RCP_SetupDL(&gMasterDisp, 0x1D);
+                    RCP_SetupDL(&gMasterDisp, SETUPDL_29);
                 }
             }
             override = true;
@@ -1041,7 +1040,7 @@ void Venom1_80193D64(s32 limbIndex, Vec3f* rot, void* thisx) {
             }
             break;
     }
-    RCP_SetupDL(&gMasterDisp, 0x40);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_64);
     gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
     var_s6 = D_i1_8019A820;
     var_s7 = D_i1_8019B838;
@@ -1069,7 +1068,7 @@ void Venom1_80193D64(s32 limbIndex, Vec3f* rot, void* thisx) {
             }
         }
     }
-    RCP_SetupDL(&gMasterDisp, 0x1D);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_29);
 }
 
 #ifdef NON_MATCHING
@@ -1263,7 +1262,7 @@ void Venom1_Boss_Update(Boss* boss) {
                         D_i1_8019B838[is4].unk_02[1] = D_i1_8019A820[spF4].unk_0C;
                         D_i1_8019B838[is4].unk_7C |= 4;
                         AUDIO_PLAY_SFX(NA_SE_EN_EXPLOSION_S, boss->sfxSource, 4);
-                        AUDIO_PLAY_SFX(NA_SE_EN_BMBOSS_BROKEN, boss->sfxSource, 4);
+                        AUDIO_PLAY_SFX(NA_SE_EN_VEBOSS_BROKEN, boss->sfxSource, 4);
                     }
                     is4 = D_i1_8019A820[spF4].unk_0A;
                     if (is4 != -1) {
@@ -1550,7 +1549,7 @@ void Venom1_Boss_Update(Boss* boss) {
 
                         if (D_i1_8019B838[is4].unk_00 <= 0) {
                             AUDIO_PLAY_SFX(NA_SE_EN_EXPLOSION_S, boss->sfxSource, 4);
-                            AUDIO_PLAY_SFX(NA_SE_EN_BMBOSS_BROKEN, boss->sfxSource, 4);
+                            AUDIO_PLAY_SFX(NA_SE_EN_VEBOSS_BROKEN, boss->sfxSource, 4);
                             D_i1_8019B838[is4].unk_00 = -1;
                             D_i1_8019B838[is4].unk_02[0] = 16;
                             D_i1_8019B838[is4].unk_02[1] = 0;
@@ -1570,7 +1569,7 @@ void Venom1_Boss_Update(Boss* boss) {
                 break;
             case 2:
                 if (D_i1_8019A500[boss->dmgPart] == 15) {
-                    AUDIO_PLAY_SFX(NA_SE_EN_BMBOSS_DAMAGE, boss->sfxSource, 4);
+                    AUDIO_PLAY_SFX(NA_SE_EN_VEBOSS_DAMAGE, boss->sfxSource, 4);
                     D_i1_8019B838[15].unk_02[2] = 10;
                     D_i1_8019B838[15].unk_02[3] = 0;
                     D_i1_8019B838[15].unk_7C |= 0x80;
@@ -1581,7 +1580,7 @@ void Venom1_Boss_Update(Boss* boss) {
                         if (boss->health <= 0) {
                             gScreenFlashTimer = 8;
                             gTeamLowHealthMsgTimer = -1;
-                            D_ctx_8017828C = 1;
+                            gKillEventActors = true;
                             AUDIO_PLAY_SFX(NA_SE_EN_DOWN_IMPACT, boss->sfxSource, 4);
                             boss->health = 0;
                         }
@@ -1606,7 +1605,7 @@ void Venom1_Boss_Update(Boss* boss) {
                             D_i1_8019B838[is4].unk_02[1] = 0;
                             D_i1_8019B838[is4].unk_7C |= 0xC;
                             AUDIO_PLAY_SFX(NA_SE_EN_EXPLOSION_S, boss->sfxSource, 4);
-                            AUDIO_PLAY_SFX(NA_SE_EN_BMBOSS_BROKEN, boss->sfxSource, 4);
+                            AUDIO_PLAY_SFX(NA_SE_EN_VEBOSS_BROKEN, boss->sfxSource, 4);
                         } else if (is4 == 14) {
                             D_i1_8019B838[is4].unk_7C |= 8;
                         }
@@ -1619,7 +1618,7 @@ void Venom1_Boss_Update(Boss* boss) {
             if (((gGameFrameCount % 4) == 0) && (boss->timer_05A == 0)) {
                 for (spF4 = 0; spF4 < 33U; spF4++) {
                     if ((D_i1_8019A500[spF4] == 15) && (D_i1_8019B7F0[spF4] != 0)) {
-                        AUDIO_PLAY_SFX(NA_SE_EN_BMBOSS_DAMAGE, boss->sfxSource, 4);
+                        AUDIO_PLAY_SFX(NA_SE_EN_VEBOSS_DAMAGE, boss->sfxSource, 4);
                         D_i1_8019B838[15].unk_02[3] = 10;
                         D_i1_8019B838[15].unk_02[4] = 0;
                         D_i1_8019B838[15].unk_7C |= 0x80;
@@ -1629,7 +1628,7 @@ void Venom1_Boss_Update(Boss* boss) {
                             if (boss->health <= 0) {
                                 gScreenFlashTimer = 8;
                                 gTeamLowHealthMsgTimer = -1;
-                                D_ctx_8017828C = 1;
+                                gKillEventActors = true;
                                 AUDIO_PLAY_SFX(NA_SE_EN_DOWN_IMPACT, boss->sfxSource, 4);
                                 boss->health = 0;
                             }
@@ -1721,7 +1720,7 @@ void Venom1_Boss_Update(Boss* boss) {
                 boss->swork[10] = 16;
                 gCameraShake = 40;
                 boss->swork[23] = RAND_FLOAT(5.0f);
-                AUDIO_PLAY_SFX(NA_SE_OB_BMBOSS_LAND, boss->sfxSource, 4);
+                AUDIO_PLAY_SFX(NA_SE_OB_VEBOSS_LAND, boss->sfxSource, 4);
                 spB8 = 3;
                 boss->swork[28] = 5;
             }
@@ -1787,13 +1786,13 @@ void Venom1_Boss_Update(Boss* boss) {
         switch (boss->swork[27]) {
             case 0:
                 if (boss->fwork[10] > 14.0f) {
-                    AUDIO_PLAY_SFX(NA_SE_OB_BMBOSS_WALK, boss->sfxSource, 4);
+                    AUDIO_PLAY_SFX(NA_SE_OB_VEBOSS_WALK, boss->sfxSource, 4);
                     boss->swork[27]++;
                 }
                 break;
             case 1:
                 if (boss->fwork[10] > 45.0f) {
-                    AUDIO_PLAY_SFX(NA_SE_OB_BMBOSS_WALK, boss->sfxSource, 4);
+                    AUDIO_PLAY_SFX(NA_SE_OB_VEBOSS_WALK, boss->sfxSource, 4);
                     boss->swork[27]++;
                 }
                 break;
@@ -1832,7 +1831,7 @@ void Venom1_Boss_Update(Boss* boss) {
                 case 122:
                     gCameraShake = 20;
                     boss->swork[28] = 7;
-                    AUDIO_PLAY_SFX(NA_SE_OB_BMBOSS_BOUND, boss->sfxSource, 4);
+                    AUDIO_PLAY_SFX(NA_SE_OB_VEBOSS_BOUND, boss->sfxSource, 4);
                     D_i1_8019B838[2].unk_60 = 5.0f;
                     D_i1_8019B838[2].unk_7C |= 0x800;
                     D_i1_8019B838[5].unk_7C |= 0x800;
@@ -1848,7 +1847,7 @@ void Venom1_Boss_Update(Boss* boss) {
                 case 118:
                     gCameraShake = 30;
                     boss->swork[28] = 7;
-                    AUDIO_PLAY_SFX(NA_SE_OB_BMBOSS_BOUND, boss->sfxSource, 4);
+                    AUDIO_PLAY_SFX(NA_SE_OB_VEBOSS_BOUND, boss->sfxSource, 4);
                     D_i1_8019B838[8].unk_7C |= 0x800;
                     D_i1_8019B838[8].unk_60 = 10.0f;
                     break;
@@ -1857,11 +1856,11 @@ void Venom1_Boss_Update(Boss* boss) {
                     break;
                 case 91:
                     boss->swork[28] = 7;
-                    AUDIO_PLAY_SFX(NA_SE_OB_BMBOSS_BOUND, boss->sfxSource, 4);
+                    AUDIO_PLAY_SFX(NA_SE_OB_VEBOSS_BOUND, boss->sfxSource, 4);
                     break;
                 case 78:
                     boss->swork[28] = 7;
-                    AUDIO_PLAY_SFX(NA_SE_OB_BMBOSS_BOUND, boss->sfxSource, 4);
+                    AUDIO_PLAY_SFX(NA_SE_OB_VEBOSS_BOUND, boss->sfxSource, 4);
                     gCameraShake = 20;
                     D_i1_8019B838[10].unk_7C |= 0x800;
                     D_i1_8019B838[10].unk_60 = 10.0f;
@@ -1871,7 +1870,7 @@ void Venom1_Boss_Update(Boss* boss) {
                     break;
                 case 66:
                     boss->swork[28] = 7;
-                    AUDIO_PLAY_SFX(NA_SE_OB_BMBOSS_BOUND, boss->sfxSource, 4);
+                    AUDIO_PLAY_SFX(NA_SE_OB_VEBOSS_BOUND, boss->sfxSource, 4);
                     D_i1_8019B838[11].unk_7C |= 0x20;
                     break;
                 case 65:
@@ -1913,10 +1912,10 @@ void Venom1_Boss_Update(Boss* boss) {
                     Boss_AwardBonus(boss);
                     gShowBossHealth = 0;
                     boss->swork[28] = 9;
-                    AUDIO_PLAY_SFX(NA_SE_OB_BMBOSS_BOUND, boss->sfxSource, 4);
+                    AUDIO_PLAY_SFX(NA_SE_OB_VEBOSS_BOUND, boss->sfxSource, 4);
                     boss->swork[26] = 1;
                     boss->info.hitbox = gNoHitbox;
-                    boss->unk_05E = 0;
+                    boss->drawShadow = false;
                     func_effect_8007A568(boss->obj.pos.x, boss->obj.pos.y + 10.0f, boss->obj.pos.z, 40.0f);
                     gCameraShake = 40;
                     break;
@@ -1938,7 +1937,7 @@ void Venom1_Boss_Update(Boss* boss) {
                         boss->swork[11] |= 1;
                         break;
                     case 1:
-                        AUDIO_PLAY_SFX(NA_SE_OB_BMBOSS_ATTACK, boss->sfxSource, 4);
+                        AUDIO_PLAY_SFX(NA_SE_OB_VEBOSS_ATTACK, boss->sfxSource, 4);
                         gCameraShake = 40;
                         boss->swork[28] = 5;
                         spB8 = spB4 = 1;
@@ -1956,7 +1955,7 @@ void Venom1_Boss_Update(Boss* boss) {
                         break;
                     case 1:
                         spB4 = 1;
-                        AUDIO_PLAY_SFX(NA_SE_OB_BMBOSS_ATTACK, boss->sfxSource, 4);
+                        AUDIO_PLAY_SFX(NA_SE_OB_VEBOSS_ATTACK, boss->sfxSource, 4);
                         gCameraShake = 40;
                         boss->swork[28] = 5;
                         spB8 = 2;
@@ -2149,7 +2148,7 @@ void Venom1_Boss_Update(Boss* boss) {
                     }
                     break;
                 case 4:
-                    AUDIO_PLAY_SFX(NA_SE_OB_BMBOSS_JUMP, boss->sfxSource, 4);
+                    AUDIO_PLAY_SFX(NA_SE_OB_VEBOSS_JUMP, boss->sfxSource, 4);
                     boss->swork[7] = 1;
                     boss->fwork[10] = 0;
                     boss->gravity = 0;
@@ -2317,11 +2316,11 @@ void Venom1_Boss_Update(Boss* boss) {
 }
 #else
 void Venom1_Boss_Update(Boss* boss);
-#pragma GLOBAL_ASM("asm/us/nonmatchings/overlays/ovl_i1/fox_ve1/Venom1_Boss_Update.s")
+#pragma GLOBAL_ASM("asm/us/rev1/nonmatchings/overlays/ovl_i1/fox_ve1/Venom1_Boss_Update.s")
 #endif
 
 void Venom1_80198310(Boss* boss) {
-    RCP_SetupDL(&gMasterDisp, 0x41);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_65);
     gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 0, 0, 0, 255);
     gDPSetEnvColor(gMasterDisp++, 0, 0, 0, 0);
     Matrix_Translate(gGfxMatrix, 0.0f, -5.0f + gCameraShakeY, 0.0f, MTXF_APPLY);

@@ -1326,7 +1326,7 @@ void Macbeth_8019E624(Actor* actor, s32* arg1, s32* arg2, s32 arg3, f32 arg4, f3
                 if ((*arg2 <= 0) ||
                     ((D_MA_801BE2F0[1] - 1 == actor->iwork[5]) && (actor->iwork[5] < D_MA_801BE2F0[3])) ||
                     (((D_MA_801BE2F0[1] + 1) == actor->iwork[5]) && (D_MA_801BE2F0[3] < actor->iwork[5]))) {
-                    gHitCount += 1;
+                    gHitCount++;
                     (*arg1)++;
                 }
             } else {
@@ -2005,7 +2005,7 @@ void Macbeth_801A0E2C(s32 limbIndex, Vec3f* rot, void* data) {
 bool Macbeth_801A0EB8(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* data) {
     Actor* actor = (Actor*) data;
 
-    RCP_SetupDL(&gMasterDisp, 0x1D);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_29);
     gSPClearGeometryMode(gMasterDisp++, G_TEXTURE_GEN);
     if ((limbIndex == 3) || (limbIndex == 6) || (limbIndex == 9)) {
         gSPTexture(gMasterDisp++, 3000, 3000, 0, G_TX_RENDERTILE, G_ON);
@@ -2021,10 +2021,10 @@ bool Macbeth_801A0EB8(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* 
         }
         rot->x += actor->fwork[2];
         if (limbIndex == 5) {
-            RCP_SetupDL(&gMasterDisp, 0x22);
+            RCP_SetupDL(&gMasterDisp, SETUPDL_34);
             gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, D_i5_801BE368[20], D_i5_801BE368[21], D_i5_801BE368[22], 255);
             gSPDisplayList(gMasterDisp++, D_MA_6010470);
-            RCP_SetupDL(&gMasterDisp, 0x1D);
+            RCP_SetupDL(&gMasterDisp, SETUPDL_29);
         }
     }
     switch (limbIndex) {
@@ -2144,10 +2144,10 @@ void Macbeth_801A12C4(Actor* actor) {
                     gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK);
                     gSPDisplayList(gMasterDisp++, D_MA_6004440);
                 } else {
-                    RCP_SetupDL(&gMasterDisp, 0x39);
+                    RCP_SetupDL(&gMasterDisp, SETUPDL_57);
                     gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
                     gSPDisplayList(gMasterDisp++, D_MA_6022200);
-                    RCP_SetupDL(&gMasterDisp, 0x1D);
+                    RCP_SetupDL(&gMasterDisp, SETUPDL_29);
                 }
                 RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
             }
@@ -2156,7 +2156,7 @@ void Macbeth_801A12C4(Actor* actor) {
             if (actor->iwork[13] < 2) {
                 Matrix_Translate(gGfxMatrix, 0.0f, -5.0f, 0.0f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
-                RCP_SetupDL(&gMasterDisp, 0x39);
+                RCP_SetupDL(&gMasterDisp, SETUPDL_57);
                 if ((actor->iwork[7] % 2) != 0) {
                     RCP_SetupDL_27();
                     gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 0, 0, 255);
@@ -2165,7 +2165,7 @@ void Macbeth_801A12C4(Actor* actor) {
                     actor->iwork[7]--;
                 }
                 gSPDisplayList(gMasterDisp++, D_MA_6024670);
-                RCP_SetupDL(&gMasterDisp, 0x1D);
+                RCP_SetupDL(&gMasterDisp, SETUPDL_29);
             }
             break;
         case OBJ_ACTOR_208:
@@ -2204,7 +2204,7 @@ void Macbeth_801A12C4(Actor* actor) {
             }
             Animation_DrawSkeleton(1, D_MA_601042C, spD0, Macbeth_801A0EB8, Macbeth_801A1268, actor, &gIdentityMatrix);
             if (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE) {
-                RCP_SetupDL(&gMasterDisp, 0x1D);
+                RCP_SetupDL(&gMasterDisp, SETUPDL_29);
                 gSPClearGeometryMode(gMasterDisp++, G_TEXTURE_GEN);
                 gSPDisplayList(gMasterDisp++, D_MA_6003370);
             }
@@ -2231,7 +2231,7 @@ void Macbeth_801A12C4(Actor* actor) {
     Matrix_RotateX(gGfxMatrix, actor->fwork[28] * M_DTOR, MTXF_APPLY);
     Matrix_Scale(gGfxMatrix, actor->scale, actor->scale, actor->scale, MTXF_APPLY);
     Matrix_SetGfxMtx(&gMasterDisp);
-    RCP_SetupDL(&gMasterDisp, 0x1D);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_29);
     if ((gPlayer[0].trueZpos - actor->obj.pos.z) > 3000.0f) {
         gSPDisplayList(gMasterDisp++, D_MA_6027D40);
     } else if (actor->vel.z > -2.0f) {
@@ -2259,10 +2259,10 @@ void Macbeth_801A12C4(Actor* actor) {
                 gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK);
                 gSPDisplayList(gMasterDisp++, D_MA_6004440);
             } else {
-                RCP_SetupDL(&gMasterDisp, 0x39);
+                RCP_SetupDL(&gMasterDisp, SETUPDL_57);
                 gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
                 gSPDisplayList(gMasterDisp++, D_MA_6022200);
-                RCP_SetupDL(&gMasterDisp, 0x1D);
+                RCP_SetupDL(&gMasterDisp, SETUPDL_29);
             }
             RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
             Matrix_Pop(&gGfxMatrix);
@@ -2284,10 +2284,10 @@ void Macbeth_801A12C4(Actor* actor) {
                 gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK);
                 gSPDisplayList(gMasterDisp++, D_MA_6004440);
             } else {
-                RCP_SetupDL(&gMasterDisp, 0x39);
+                RCP_SetupDL(&gMasterDisp, SETUPDL_57);
                 gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
                 gSPDisplayList(gMasterDisp++, D_MA_6022200);
-                RCP_SetupDL(&gMasterDisp, 0x1D);
+                RCP_SetupDL(&gMasterDisp, SETUPDL_29);
             }
             RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
             Matrix_Pop(&gGfxMatrix);
@@ -2298,7 +2298,7 @@ void Macbeth_801A12C4(Actor* actor) {
 void Macbeth_801A23AC(Scenery* scenery) {
     Vec3f sp78[50];
 
-    RCP_SetupDL(&gMasterDisp, 0x39);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_57);
     switch (scenery->obj.id) {
         case OBJ_SCENERY_94:
         case OBJ_SCENERY_97:
@@ -2329,7 +2329,7 @@ void Macbeth_801A23AC(Scenery* scenery) {
             gSPDisplayList(gMasterDisp++, D_MA_6030750);
             break;
         case OBJ_SCENERY_105:
-            RCP_SetupDL(&gMasterDisp, 0x1D);
+            RCP_SetupDL(&gMasterDisp, SETUPDL_29);
             gSPDisplayList(gMasterDisp++, D_MA_602D380);
             break;
         case OBJ_SCENERY_104:
@@ -2357,7 +2357,7 @@ void Macbeth_801A23AC(Scenery* scenery) {
                 Matrix_Scale(gGfxMatrix, scenery->vel.z, scenery->vel.z / 2, scenery->vel.z, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
                 gSPDisplayList(gMasterDisp++, D_1024AC0);
-                RCP_SetupDL(&gMasterDisp, 0x1D);
+                RCP_SetupDL(&gMasterDisp, SETUPDL_29);
                 Matrix_Pop(&gGfxMatrix);
             } else if (scenery->state == 2) {
                 Matrix_Push(&gGfxMatrix);
@@ -2370,7 +2370,7 @@ void Macbeth_801A23AC(Scenery* scenery) {
                 Matrix_Scale(gGfxMatrix, scenery->vel.z, scenery->vel.z / 2, scenery->vel.z, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
                 gSPDisplayList(gMasterDisp++, D_1024AC0);
-                RCP_SetupDL(&gMasterDisp, 0x1D);
+                RCP_SetupDL(&gMasterDisp, SETUPDL_29);
                 Matrix_Pop(&gGfxMatrix);
             }
             if (D_MA_801BE2F0[5] != 0) {
@@ -2395,23 +2395,23 @@ void Macbeth_801A23AC(Scenery* scenery) {
             gSPDisplayList(gMasterDisp++, D_MA_6001180);
             break;
     }
-    RCP_SetupDL(&gMasterDisp, 0x1D);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_29);
 }
 
 void Macbeth_801A2A78(Scenery* scenery) {
-    RCP_SetupDL(&gMasterDisp, 0x39);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_57);
     gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
     gSPDisplayList(gMasterDisp++, D_MA_60253E0);
     gSPDisplayList(gMasterDisp++, D_MA_601C000);
     gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK);
-    RCP_SetupDL(&gMasterDisp, 0x1D);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_29);
 }
 
 void Macbeth_801A2B24(Scenery* scenery) {
     if (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE) {
         Object_Kill(&scenery->obj, scenery->sfxSource);
     }
-    RCP_SetupDL(&gMasterDisp, 0x39);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_57);
     switch (scenery->obj.id) {
         case OBJ_SCENERY_77:
             gSPDisplayList(gMasterDisp++, D_MA_60066A0);
@@ -2456,7 +2456,7 @@ void Macbeth_801A2B24(Scenery* scenery) {
             gSPDisplayList(gMasterDisp++, D_MA_6009C50);
             break;
     }
-    RCP_SetupDL(&gMasterDisp, 0x1D);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_29);
 }
 
 void Macbeth_801A2DD8(Scenery* scenery) {
@@ -2524,7 +2524,7 @@ void Macbeth_801A30B8(s32 limbIndex, Vec3f* rot, void* data) {
 void Macbeth_801A3240(Scenery* scenery) {
     Vec3f sp38[50];
 
-    RCP_SetupDL(&gMasterDisp, 0x1D);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_29);
     gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
     Animation_GetFrameData(&D_MA_600C4D0, 0, sp38);
     Animation_DrawSkeleton(1, D_MA_600C65C, sp38, NULL, Macbeth_801A30B8, scenery, &gIdentityMatrix);
@@ -2785,14 +2785,14 @@ void Macbeth_801A3E98(Actor* actor) {
         case 0:
             if ((actor->dmgType != DMG_NONE) && (actor->dmgType != DMG_COLLISION)) {
                 actor->dmgType = DMG_NONE;
-                AUDIO_PLAY_SFX(NA_SE_OB_MC_SWITCH_ON, actor->sfxSource, 0);
+                AUDIO_PLAY_SFX(NA_SE_OB_MA_SWITCH_ON, actor->sfxSource, 0);
                 actor->state = 1;
             }
             break;
         case 1:
             Math_SmoothStepToF(&actor->fwork[1], -181.0f, 0.6f, 20.0f, 0.0f);
             if (actor->fwork[1] <= -180.0f) {
-                AUDIO_PLAY_SFX(NA_SE_OB_MC_SWITCH_UP, actor->sfxSource, 0);
+                AUDIO_PLAY_SFX(NA_SE_OB_MA_SWITCH_UP, actor->sfxSource, 0);
                 actor->info.hitbox = SEGMENTED_TO_VIRTUAL(D_MA_603648C);
                 actor->iwork[0] = 2;
                 actor->state = 2;
@@ -2820,9 +2820,9 @@ void Macbeth_801A3E98(Actor* actor) {
     Math_SmoothStepToF(&actor->fwork[4], 30.0f, 0.4f, 10.0f, 0.0f);
     if (actor->fwork[0] < 31.0f) {
         if (actor->state >= 3) {
-            AUDIO_PLAY_SFX(NA_SE_OB_MC_SWITCH_GRN, actor->sfxSource, 0);
+            AUDIO_PLAY_SFX(NA_SE_OB_MA_SWITCH_GRN, actor->sfxSource, 0);
         } else {
-            AUDIO_PLAY_SFX(NA_SE_OB_MC_SWITCH_RED, actor->sfxSource, 0);
+            AUDIO_PLAY_SFX(NA_SE_OB_MA_SWITCH_RED, actor->sfxSource, 0);
         }
         actor->fwork[0] = 255.0f;
         actor->fwork[4] = 170.0f;
@@ -2832,10 +2832,10 @@ void Macbeth_801A3E98(Actor* actor) {
 bool Macbeth_801A41B0(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* data) {
     Actor* actor = (Actor*) data;
 
-    RCP_SetupDL(&gMasterDisp, 0x1D);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_29);
     gDPSetTextureFilter(gMasterDisp++, G_TF_BILERP);
     if (limbIndex == 2) {
-        RCP_SetupDL(&gMasterDisp, 0x22);
+        RCP_SetupDL(&gMasterDisp, SETUPDL_34);
         gDPSetTextureFilter(gMasterDisp++, G_TF_POINT);
         if (actor->state >= 2) {
             gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 0, actor->fwork[0], actor->fwork[4], 255);
@@ -2854,14 +2854,14 @@ void Macbeth_801A43BC(Actor* actor) {
     Animation_GetFrameData(&D_MA_602FEB4, 0, sp50);
     Animation_DrawSkeleton(1, D_MA_602FFA0, sp50, Macbeth_801A41B0, NULL, actor, &gIdentityMatrix);
     Matrix_Pop(&gGfxMatrix);
-    RCP_SetupDL(&gMasterDisp, 0x1D);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_29);
     Matrix_Push(&gGfxMatrix);
     Matrix_Translate(gGfxMatrix, 0.0f, actor->fwork[2] + 204.0f, 0.0f, MTXF_APPLY);
     Matrix_RotateY(gGfxMatrix, actor->fwork[1] * M_DTOR, MTXF_APPLY);
     Matrix_SetGfxMtx(&gMasterDisp);
     gSPDisplayList(gMasterDisp++, D_MA_602FFC0);
     Matrix_Pop(&gGfxMatrix);
-    RCP_SetupDL(&gMasterDisp, 0x22);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_34);
     gDPSetTextureFilter(gMasterDisp++, G_TF_POINT);
     gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, actor->fwork[0], 0, 0, 255);
     Matrix_Push(&gGfxMatrix);
@@ -3085,13 +3085,13 @@ void Macbeth_801A4B24(Actor* actor) {
 bool Macbeth_801A5124(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* data) {
     Actor* actor = (Actor*) data;
 
-    RCP_SetupDL(&gMasterDisp, 0x1D);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_29);
     gDPSetTextureFilter(gMasterDisp++, G_TF_BILERP);
     if ((limbIndex == 9) || (limbIndex == 10)) {
-        RCP_SetupDL(&gMasterDisp, 0x39);
+        RCP_SetupDL(&gMasterDisp, SETUPDL_57);
     }
     if ((limbIndex > 0) && (limbIndex < 9)) {
-        RCP_SetupDL(&gMasterDisp, 0x22);
+        RCP_SetupDL(&gMasterDisp, SETUPDL_34);
         gDPSetTextureFilter(gMasterDisp++, G_TF_POINT);
         if (D_i5_801BE308[limbIndex - 1] != 0) {
             gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 0, actor->fwork[0], actor->fwork[4], 255);
@@ -3131,7 +3131,7 @@ void Macbeth_801A54E8(Actor* actor) {
     Animation_GetFrameData(&D_MA_602F098, 0, sp28);
     Animation_DrawSkeleton(1, D_MA_602F264, sp28, Macbeth_801A5124, NULL, actor, &gIdentityMatrix);
     Matrix_Pop(&gGfxMatrix);
-    RCP_SetupDL(&gMasterDisp, 0x1D);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_29);
 }
 
 s32 Macbeth_801A55D4(s32 arg0, Vec3f* arg1, Vec3f* arg2, s32 arg3) {
@@ -3221,9 +3221,9 @@ void Macbeth_801A57D0(Effect* effect) {
 }
 
 void Macbeth_801A5AF0(Effect* effect) {
-    RCP_SetupDL(&gMasterDisp, 0x3C);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_60);
     gSPDisplayList(gMasterDisp++, D_MA_601A840);
-    RCP_SetupDL(&gMasterDisp, 0x40);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_64);
 }
 
 void Macbeth_801A5B4C(Effect* effect) {
@@ -3261,12 +3261,12 @@ void Macbeth_801A5B4C(Effect* effect) {
 }
 
 void Macbeth_801A5D68(Effect* effect) {
-    RCP_SetupDL(&gMasterDisp, 0x43);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_67);
     gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 112, 255, 243, effect->unk_44);
     gDPSetEnvColor(gMasterDisp++, 255, 255, 255, effect->unk_44);
     Matrix_SetGfxMtx(&gMasterDisp);
     gSPDisplayList(gMasterDisp++, D_MA_6012A60);
-    RCP_SetupDL(&gMasterDisp, 0x40);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_64);
 }
 
 void Macbeth_801A5E2C(Actor* actor) {
@@ -3307,7 +3307,7 @@ void Macbeth_801A5FD0(Actor* actor) {
     if (gPlayer[0].trueZpos - actor->obj.pos.z < actor->fwork[2]) {
         if (actor->iwork[0] == 0) {
             AUDIO_PLAY_SFX(NA_SE_OB_POST_UP, actor->sfxSource, 0);
-            actor->iwork[0] += 1;
+            actor->iwork[0]++;
         }
         Math_SmoothStepToF(&actor->obj.pos.y, actor->fwork[1] + 356.0f, 0.4f, 20.0f, 0.01f);
     }
@@ -3371,13 +3371,13 @@ void Macbeth_801A6144(Actor* actor) {
 }
 
 void Macbeth_801A6540(Actor* actor) {
-    RCP_SetupDL(&gMasterDisp, 0x39);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_57);
     if ((actor->timer_0C6 % 2) != 0) {
-        RCP_SetupDL(&gMasterDisp, 0x3A);
+        RCP_SetupDL(&gMasterDisp, SETUPDL_58);
         gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 0, 0, 255);
     }
     gSPDisplayList(gMasterDisp++, D_MA_60257B0);
-    RCP_SetupDL(&gMasterDisp, 0x1D);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_29);
 }
 
 void Macbeth_801A65E0(Scenery* scenery) {
@@ -3395,11 +3395,11 @@ void Macbeth_801A6608(Scenery* scenery) {
                 scenery->vel.x = 255.0f;
             }
         }
-        RCP_SetupDL(&gMasterDisp, 0x22);
+        RCP_SetupDL(&gMasterDisp, SETUPDL_34);
         gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, scenery->vel.x, 0, 0, 255);
     }
     gSPDisplayList(gMasterDisp++, D_MA_6010700);
-    RCP_SetupDL(&gMasterDisp, 0x1D);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_29);
     gSPDisplayList(gMasterDisp++, D_MA_601F270);
 }
 
@@ -3432,8 +3432,8 @@ void Macbeth_801A68F8(Actor* actor, s16 arg1, f32 arg2, f32 arg3, f32 arg4, f32 
     gTexturedLines[arg1].posAA.x = arg2;
     gTexturedLines[arg1].posAA.y = arg3;
     gTexturedLines[arg1].xyScale = 5.0f;
-    gTexturedLines[arg1].red = gTexturedLines[arg1].green = gTexturedLines[arg1].blue = gTexturedLines[arg1].alpha =
-        255;
+    gTexturedLines[arg1].prim.r = gTexturedLines[arg1].prim.g = gTexturedLines[arg1].prim.b =
+        gTexturedLines[arg1].prim.a = 255;
     gTexturedLines[arg1].timer = 3;
     gTexturedLines[arg1].posAA.z = arg4;
     gTexturedLines[arg1].posBB.x = arg5;
@@ -3813,7 +3813,7 @@ void Macbeth_801A7E7C(Actor* actor) {
             Macbeth_8019A830(actor);
             Macbeth_8019A728(actor);
             if (actor->iwork[1] != 0) {
-                AUDIO_PLAY_BGM(SEQ_ID_MA_BOSS | SEQ_FLAG);
+                AUDIO_PLAY_BGM(NA_BGM_BOSS_MA);
                 actor->state = 1;
             }
             Macbeth_801A6984(actor);
@@ -3917,7 +3917,7 @@ void Macbeth_801A7E7C(Actor* actor) {
                                 D_i5_801BE320[2] = 5;
                                 D_i5_801BE320[31] = 30;
                                 actor->timer_0BC = 100;
-                                AUDIO_PLAY_SFX(NA_SE_EN_MCBOSS_CHARGE0, actor->sfxSource, 4);
+                                AUDIO_PLAY_SFX(NA_SE_EN_MABOSS_CHARGE0, actor->sfxSource, 4);
                                 actor->state = 12;
                             }
                         } else if ((D_i5_801BE320[26] != 0) && (D_i5_801BE320[10] > 0)) {
@@ -4035,7 +4035,7 @@ void Macbeth_801A7E7C(Actor* actor) {
         case 8:
             Macbeth_8019A198(actor);
             if (((gGameFrameCount % 16) == 0)) {
-                AUDIO_PLAY_SFX(NA_SE_EN_MCBOSS_RAGE, actor->sfxSource, 4);
+                AUDIO_PLAY_SFX(NA_SE_EN_MABOSS_RAGE, actor->sfxSource, 4);
             }
             Macbeth_801A74C4(actor);
             Macbeth_801A6984(actor);
@@ -4169,24 +4169,24 @@ void Macbeth_801A7E7C(Actor* actor) {
                 switch (D_i5_801BE320[18]) {
                     case 0:
                     case 1:
-                        var_v0 = 0xF;
+                        var_v0 = 16 - 1;
                         var_s0 = 10;
                         break;
                     case 2:
-                        var_v0 = 0xF;
+                        var_v0 = 16 - 1;
                         var_s0 = 20;
                         break;
                     case 3:
-                        var_v0 = 7;
+                        var_v0 = 8 - 1;
                         var_s0 = 20;
                         break;
 
                     default:
-                        var_v0 = 3;
+                        var_v0 = 4 - 1;
                         var_s0 = 10;
                         break;
                 }
-                if (!(var_v0 & gGameFrameCount)) {
+                if ((var_v0 & gGameFrameCount) == 0) {
                     Macbeth_801ADCEC(actor->obj.pos.x, actor->obj.pos.y - 90.0f, actor->obj.pos.z - 50.0f,
                                      D_i5_801BE368[0] * 0.8f, -10.0f, 8.0f);
                     D_i5_801BE320[11]++;
@@ -4235,7 +4235,7 @@ void Macbeth_801A7E7C(Actor* actor) {
             Macbeth_801A72DC(actor);
             Macbeth_801A6984(actor);
             if (D_i5_801BE320[9] <= 0) {
-                Audio_KillSfxBySourceAndId(actor->sfxSource, NA_SE_EN_MCBOSS_CHARGE0);
+                Audio_KillSfxBySourceAndId(actor->sfxSource, NA_SE_EN_MABOSS_CHARGE0);
                 actor->state = 14;
                 actor->vel.y = -20.0f;
             }
@@ -4255,7 +4255,7 @@ void Macbeth_801A7E7C(Actor* actor) {
                 }
             }
             if (actor->timer_0BC == 0) {
-                Audio_KillSfxBySourceAndId(actor->sfxSource, NA_SE_EN_MCBOSS_CHARGE0);
+                Audio_KillSfxBySourceAndId(actor->sfxSource, NA_SE_EN_MABOSS_CHARGE0);
                 D_i5_801BE320[3] = 0;
                 D_i5_801BE320[2] = 6;
                 D_i5_801BE320[31] = 30;
@@ -4277,7 +4277,7 @@ void Macbeth_801A7E7C(Actor* actor) {
             D_i5_801BE320[5] = 0;
             D_i5_801BE320[7] = 0;
             if (actor->timer_0BC == 60) {
-                AUDIO_PLAY_SFX(NA_SE_EN_MCBOSS_SHOT0, actor->sfxSource, 4);
+                AUDIO_PLAY_SFX(NA_SE_EN_MABOSS_SHOT0, actor->sfxSource, 4);
                 D_i5_801BE320[24] = 0;
 
                 spC6 = RAND_INT(5.0f);
@@ -4334,7 +4334,7 @@ void Macbeth_801A7E7C(Actor* actor) {
             Macbeth_801A6984(actor);
             if (actor->timer_0BC < 100) {
                 if (actor->timer_0BC == 98) {
-                    AUDIO_PLAY_SFX(NA_SE_EN_MCBOSS_PLATECHARGE, actor->sfxSource, 4);
+                    AUDIO_PLAY_SFX(NA_SE_EN_MABOSS_PLATECHARGE, actor->sfxSource, 4);
                 }
                 Matrix_RotateY(gCalcMatrix, RAND_FLOAT(2.0f) * (M_DTOR * 180.0f), MTXF_NEW);
                 sp360.x = 0.0f;
@@ -4366,7 +4366,7 @@ void Macbeth_801A7E7C(Actor* actor) {
                 }
                 actor->timer_0BC = D_i5_801BE320[27];
                 actor->state = 16;
-                Audio_KillSfxBySourceAndId(actor->sfxSource, NA_SE_EN_MCBOSS_PLATECHARGE);
+                Audio_KillSfxBySourceAndId(actor->sfxSource, NA_SE_EN_MABOSS_PLATECHARGE);
             }
             break;
         case 16:
@@ -4706,7 +4706,7 @@ bool Macbeth_801ABC14(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* 
     Actor* actor = (Actor*) data;
     s16 sp62;
 
-    RCP_SetupDL(&gMasterDisp, 0x1D);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_29);
     gSPClearGeometryMode(gMasterDisp++, G_TEXTURE_GEN);
     gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK);
     switch (limbIndex) {
@@ -4743,7 +4743,7 @@ bool Macbeth_801ABC14(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* 
             gSPSetGeometryMode(gMasterDisp++, G_TEXTURE_GEN);
             break;
         case 8:
-            RCP_SetupDL(&gMasterDisp, 0x22);
+            RCP_SetupDL(&gMasterDisp, SETUPDL_34);
             gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, D_i5_801BE368[20], D_i5_801BE368[21], D_i5_801BE368[22], 255);
             break;
         case 2:
@@ -4784,7 +4784,7 @@ bool Macbeth_801ABC14(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* 
     switch (limbIndex) {
         case 14:
             if ((actor->iwork[7] % 2) != 0) {
-                RCP_SetupDL(&gMasterDisp, 0x1C);
+                RCP_SetupDL(&gMasterDisp, SETUPDL_28);
                 gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 0, 0, 255);
             }
             if (D_i5_801BE320[9] <= 0) {
@@ -4799,7 +4799,7 @@ bool Macbeth_801ABC14(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* 
         case 19:
         case 20:
             if ((actor->iwork[8] % 2) != 0) {
-                RCP_SetupDL(&gMasterDisp, 0x1C);
+                RCP_SetupDL(&gMasterDisp, SETUPDL_28);
                 gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 0, 0, 255);
             }
             if (D_i5_801BE320[10] <= 0) {
@@ -4811,7 +4811,7 @@ bool Macbeth_801ABC14(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* 
     }
 
     if ((actor->iwork[9] % 2) != 0) {
-        RCP_SetupDL(&gMasterDisp, 0x1C);
+        RCP_SetupDL(&gMasterDisp, SETUPDL_28);
         gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 0, 0, 255);
     }
     return false;
@@ -4870,9 +4870,9 @@ void Macbeth_801AC438(Actor* actor) {
             Macbeth_8019A728(actor);
             if (actor->iwork[1] != 0) {
                 Radio_PlayMessage(gMsg_ID_17420, RCID_BOSS_MACBETH);
-                AUDIO_PLAY_SFX(NA_SE_EN_MCBOSS_HATCH, actor->sfxSource, 4);
+                AUDIO_PLAY_SFX(NA_SE_EN_MABOSS_HATCH, actor->sfxSource, 4);
                 actor->info.hitbox = SEGMENTED_TO_VIRTUAL(D_MA_6035A94);
-                actor->state += 1;
+                actor->state++;
             }
             Macbeth_8019A830(actor);
             break;
@@ -4890,7 +4890,7 @@ void Macbeth_801AC438(Actor* actor) {
 }
 
 bool Macbeth_801AC5AC(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* data) {
-    RCP_SetupDL(&gMasterDisp, 0x1D);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_29);
     gSPClearGeometryMode(gMasterDisp++, G_TEXTURE_GEN);
     if ((limbIndex == 1) || (limbIndex == 3)) {
         gSPTexture(gMasterDisp++, 3000, 3000, 0, G_TX_RENDERTILE, G_ON);
@@ -4914,7 +4914,7 @@ void Macbeth_801AC6B4(Actor* actor) {
     actor->obj.rot.y = 180.0f;
     Object_SetInfo(&actor->info, actor->obj.id);
     AUDIO_PLAY_SFX(NA_SE_GREATFOX_ENGINE, actor->sfxSource, 0);
-    actor->unk_0B6 = 1;
+    actor->animFrame = 1;
 }
 
 static f32 D_i5_801BA768 = 0.0f;
@@ -5010,7 +5010,7 @@ void Macbeth_LevelStart(Player* player) {
             }
             break;
         case 3:
-            AUDIO_PLAY_BGM(SEQ_ID_MACBETH | SEQ_FLAG);
+            AUDIO_PLAY_BGM(NA_BGM_STAGE_MA);
             gLevelStartStatusScreenTimer = 50;
             player->state_1C8 = PLAYERSTATE_1C8_ACTIVE;
             player->csState = player->csTimer = player->csEventTimer = player->unk_240 = 0;
@@ -5262,7 +5262,7 @@ void Macbeth_801ADAC8(Actor* actor) {
             Graphics_SetScaleMtx(actor->scale);
             RCP_SetupDL_60(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
             gSPDisplayList(gMasterDisp++, D_ENMY_PLANET_4008CE0);
-            RCP_SetupDL(&gMasterDisp, 0x40);
+            RCP_SetupDL(&gMasterDisp, SETUPDL_64);
             break;
         case 1:
             Matrix_Scale(gGfxMatrix, actor->fwork[0], actor->scale, 2.5f, MTXF_APPLY);
@@ -5270,7 +5270,7 @@ void Macbeth_801ADAC8(Actor* actor) {
             RCP_SetupDL_40();
             gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
             gSPDisplayList(gMasterDisp++, D_ENMY_PLANET_4008F70);
-            RCP_SetupDL(&gMasterDisp, 0x40);
+            RCP_SetupDL(&gMasterDisp, SETUPDL_64);
             break;
     }
 }
@@ -5410,18 +5410,18 @@ void Macbeth_801AE2C0(Actor* actor) {
     if (actor->state < 2) {
         Graphics_SetScaleMtx(actor->scale);
         if (actor->iwork[0] >= 128) {
-            RCP_SetupDL(&gMasterDisp, 0x43);
+            RCP_SetupDL(&gMasterDisp, SETUPDL_67);
             gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, actor->iwork[0]);
             gDPSetEnvColor(gMasterDisp++, 255, 48, 0, actor->iwork[0]);
             Matrix_Scale(gGfxMatrix, 1.0f, actor->fwork[2], 1.0f, MTXF_APPLY);
             Matrix_SetGfxMtx(&gMasterDisp);
             gSPDisplayList(gMasterDisp++, D_MA_6013060);
-            RCP_SetupDL(&gMasterDisp, 0x43);
+            RCP_SetupDL(&gMasterDisp, SETUPDL_67);
             Matrix_Scale(gGfxMatrix, 1.0f, actor->fwork[2], 1.0f, MTXF_APPLY);
             gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 53, 53, 53, 255 - actor->iwork[0]);
             gDPSetEnvColor(gMasterDisp++, 0, 0, 0, actor->iwork[0]);
         } else {
-            RCP_SetupDL(&gMasterDisp, 0x17);
+            RCP_SetupDL(&gMasterDisp, SETUPDL_23);
             if ((actor->iwork[7] % 2) != 0) {
                 RCP_SetupDL_27();
                 gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 0, 0, 255);
@@ -5558,7 +5558,7 @@ void Macbeth_801AE87C(Effect* effect) {
 }
 
 void Macbeth_801AEAA0(Effect* effect) {
-    RCP_SetupDL(&gMasterDisp, 0x43);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_67);
     if (effect->scale2 >= 3.0f) {
         gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, effect->unk_44);
         gDPSetEnvColor(gMasterDisp++, 255, 0, 0, effect->unk_44);
@@ -5569,7 +5569,7 @@ void Macbeth_801AEAA0(Effect* effect) {
     Matrix_Scale(gGfxMatrix, 0.5f, 0.5f, 0.5f, MTXF_APPLY);
     Matrix_SetGfxMtx(&gMasterDisp);
     gSPDisplayList(gMasterDisp++, D_1024AC0);
-    RCP_SetupDL(&gMasterDisp, 0x40);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_64);
 }
 
 void Macbeth_801AEC04(Actor* actor) {
@@ -5635,7 +5635,7 @@ void Macbeth_801AEEFC(Actor* actor) {
     Matrix_Scale(gGfxMatrix, actor->fwork[0], actor->fwork[2], 1.0f, MTXF_APPLY);
     Matrix_Push(&gGfxMatrix);
     Matrix_Translate(gGfxMatrix, 0.0f, -10.0f, 0.0f, MTXF_APPLY);
-    RCP_SetupDL(&gMasterDisp, 0x43);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_67);
     gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 111, 175, 64, actor->fwork[1]);
     gDPSetEnvColor(gMasterDisp++, 255, 255, 208, actor->fwork[1]);
     Matrix_SetGfxMtx(&gMasterDisp);
@@ -5698,12 +5698,12 @@ void Macbeth_801AF27C(Actor* actor, s32 arg1) {
     Object_SetInfo(&actor->info, actor->obj.id);
     if (arg1 < 3) {
         actor->iwork[11] = 1;
-        actor->unk_0C9 = 1;
+        actor->drawShadow = true;
         actor->fwork[3] = D_i5_801BA820[arg1];
         actor->state = 30;
         AUDIO_PLAY_SFX(NA_SE_ARWING_ENGINE_FG, actor->sfxSource, 4);
     } else {
-        actor->unk_0B6 = 1;
+        actor->animFrame = 1;
         actor->state = 21;
         actor->obj.rot.z = 32.5f;
         AUDIO_PLAY_SFX(NA_SE_GREATFOX_ENGINE, actor->sfxSource, 0);
@@ -5726,14 +5726,14 @@ void Macbeth_801AF44C(void) {
     actor->fwork[7] = RAND_FLOAT(360.0f);
     actor->fwork[8] = RAND_FLOAT(360.0f);
     actor->fwork[9] = 30.0f;
-    actor->unk_0F4.y = D_i5_801BA820[4];
-    actor->unk_0F4.x = 0.0f;
-    actor->unk_0F4.z = 330.0f;
+    actor->rot_0F4.y = D_i5_801BA820[4];
+    actor->rot_0F4.x = 0.0f;
+    actor->rot_0F4.z = 330.0f;
     actor->obj.rot.x = -0.0f;
-    actor->obj.rot.y = actor->unk_0F4.y;
+    actor->obj.rot.y = actor->rot_0F4.y;
     actor->obj.rot.z = -330.0f;
     actor->fwork[0] = 0.0f;
-    actor->unk_0B6 = 24;
+    actor->animFrame = 24;
     actor->iwork[11] = 1;
     actor->state = 15;
     actor->fwork[3] = D_i5_801BA820[4];
@@ -5755,7 +5755,7 @@ void Macbeth_801AF628(Actor* actor, s32 arg1) {
     actor->obj.pos.x = gPlayer[0].xPath + D_i5_801BA834[arg1].x;
     actor->obj.pos.y = D_i5_801BA834[arg1].y;
     actor->obj.pos.z = D_i5_801BA834[arg1].z - gPathProgress;
-    actor->unk_0B6 = 37;
+    actor->animFrame = 37;
     actor->obj.rot.y = D_i5_801BA84C[arg1];
     actor->iwork[4] = actor->iwork[5] = 192;
     actor->iwork[0] = actor->iwork[1] = actor->iwork[2] = actor->iwork[7] = actor->iwork[3] = 255;
@@ -5925,9 +5925,9 @@ void Macbeth_LevelComplete2(Player* player) {
             player->vel.z = gActors[D_i5_801BE314].vel.z;
             if (gCsFrameCount == 252) {
                 gCsCamEyeY = 570.0f;
-                player->timer_210 = 1000;
+                player->pathChangeTimer = 1000;
                 player->xPathTarget = 20000.0f;
-                player->yRot_118 = -23.0f;
+                player->pathChangeYaw = -23.0f;
                 player->pathStep = 0.0f;
             }
             if (gCsFrameCount >= 252) {
@@ -5950,7 +5950,7 @@ void Macbeth_LevelComplete2(Player* player) {
                 player->zPathVel = 0.0f;
                 gPathVelX = 0.0f;
                 gPathVelY = 0.0f;
-                player->timer_210 = 0;
+                player->pathChangeTimer = 0;
                 player->cam.eye.x = gCsCamEyeX = 2750.0f;
                 player->cam.eye.y = gCsCamEyeY = 50.0f;
                 player->cam.eye.z = gCsCamEyeZ = -620.0f;
@@ -5987,9 +5987,9 @@ void Macbeth_LevelComplete2(Player* player) {
                 player->cam.at.y = gCsCamAtY = 10.0f;
                 player->cam.eye.x = gCsCamEyeX = D_ctx_80177A48[7] + gCsCamAtX;
                 player->cam.eye.z = gCsCamEyeZ = D_ctx_80177A48[8] + gCsCamAtZ;
-                player->yRot_118 = -30.0f;
+                player->pathChangeYaw = -30.0f;
                 player->xPathTarget = 10014.0f;
-                player->timer_210 = 1000;
+                player->pathChangeTimer = 1000;
                 player->pathStep = 0.0f;
                 gFillScreenAlphaTarget = 0;
                 gFillScreenAlphaStep = 127;
@@ -6063,7 +6063,7 @@ void Macbeth_LevelComplete2(Player* player) {
                 gPathVelZ = 0.0f;
                 gPathVelX = 0.0f;
                 gPathVelY = 0.0f;
-                player->timer_210 = 10000;
+                player->pathChangeTimer = 10000;
                 D_ctx_80177A48[0] = 1.0f;
                 D_i5_801BA1DC = 0.0f;
                 gControllerRumbleFlags[0] = 1;
@@ -6208,7 +6208,7 @@ void Macbeth_LevelComplete2(Player* player) {
                 gFillScreenAlphaTarget = 255;
                 gFillScreenAlphaStep = 20;
                 AUDIO_PLAY_SFX(NA_SE_EN_STAR_EXPLOSION, gActors[D_i5_801BE314].sfxSource, 4);
-                gBossActive = gLoadLevelObjects = 0;
+                gBossActive = gLoadLevelObjects = false;
             }
             if (gCsFrameCount == 940) {
                 player->csState++;
@@ -6226,8 +6226,8 @@ void Macbeth_LevelComplete2(Player* player) {
                 player->cam.eye.y = gCsCamEyeY = player->pos.y + 30.0f;
                 player->cam.eye.z = gCsCamEyeZ = (player->trueZpos + gPathProgress) - 300.0f;
                 player->cam.at.z = gCsCamAtZ = player->trueZpos + gPathProgress;
-                player->savedCockpitView = player->timer_210 = 0;
-                player->unk_190 = player->unk_194 = player->unk_188 = player->unk_18C = player->yRot_118 =
+                player->savedAlternateView = player->pathChangeTimer = 0;
+                player->unk_190 = player->unk_194 = player->unk_188 = player->unk_18C = player->pathChangeYaw =
                     player->yRot_114 = player->aerobaticPitch = player->camRoll = player->unk_174 = player->unk_178 =
                         player->unk_17C = player->unk_180 = player->unk_184 = player->wings.unk_04 = player->unk_170 =
                             player->unk_16C = player->rockAngle = player->yBob = player->wings.unk_0C =
@@ -6324,7 +6324,7 @@ void Macbeth_LevelComplete2(Player* player) {
             D_ctx_80177A48[5] = 360.0f;
             break;
         case 910:
-            AUDIO_PLAY_BGM(SEQ_ID_GOOD_END);
+            AUDIO_PLAY_BGM(NA_BGM_COURSE_CLEAR);
             break;
         case 1040:
             Radio_PlayMessage(gMsg_ID_20010, RCID_FOX);
@@ -6440,9 +6440,9 @@ void Macbeth_LevelComplete2(Player* player) {
             break;
     }
 
-    if (player->timer_210 != 0) {
-        player->timer_210--;
-        Math_SmoothStepToF(&player->yRot_114, -player->yRot_118, 0.03f, 0.5f, 0.0001f);
+    if (player->pathChangeTimer != 0) {
+        player->pathChangeTimer--;
+        Math_SmoothStepToF(&player->yRot_114, -player->pathChangeYaw, 0.03f, 0.5f, 0.0001f);
         Math_SmoothStepToF(&player->pathStep, gPathVelZ * .3f, 0.1f, 2.0f, 0.0001f);
         gPathVelX = Math_SmoothStepToF(&player->xPath, player->xPathTarget, 0.1f, player->pathStep, 0.0001f);
         gPathVelY = Math_SmoothStepToF(&player->yPath, player->yPathTarget, 0.1f, player->pathStep, 0.0001f);
@@ -6481,7 +6481,7 @@ void Macbeth_801B28BC(Actor* actor) {
 
     player = &gPlayer[0];
     actor->fwork[7] += 3.0f;
-    actor->unk_0F4.z = SIN_DEG(actor->fwork[7]) * 1.5f;
+    actor->rot_0F4.z = SIN_DEG(actor->fwork[7]) * 1.5f;
     actor->fwork[8] += 2.0f;
     sp3C = SIN_DEG(actor->fwork[8]) * 10.0f;
 
@@ -6613,14 +6613,14 @@ void Macbeth_801B28BC(Actor* actor) {
             break;
         case 31:
             AUDIO_PLAY_SFX(NA_SE_ARWING_BOOST, actor->sfxSource, 0);
-            actor->unk_0C9 = 0;
+            actor->drawShadow = false;
             actor->timer_0BC = 20;
             actor->state++;
             actor->fwork[29] = 5.0f;
             /* fallthrough */
         case 32:
             if (actor->timer_0BC <= 0) {
-                actor->unk_0C9 = 1;
+                actor->drawShadow = true;
             }
             actor->iwork[11] = 2;
             Math_SmoothStepToF(&actor->obj.rot.x, -20.0f, 0.1f, 0.5f, 0.0f);
@@ -6666,13 +6666,13 @@ void Macbeth_801B3554(Actor* actor, s32 arg1) {
     Object_SetInfo(&actor->info, actor->obj.id);
     if (arg1 < 3) {
         actor->iwork[11] = 1;
-        actor->unk_0C9 = 1;
+        actor->drawShadow = true;
         actor->fwork[3] = D_i5_801BA8F0[arg1];
         actor->state = 30;
         AUDIO_PLAY_SFX(NA_SE_ARWING_ENGINE_FG, actor->sfxSource, 4);
         return;
     }
-    actor->unk_0B6 = 1;
+    actor->animFrame = 1;
     actor->state = 20;
     AUDIO_PLAY_SFX(NA_SE_GREATFOX_ENGINE, actor->sfxSource, 0);
     actor->fwork[9] = 20.0f;
@@ -6694,13 +6694,13 @@ void Macbeth_801B3718(void) {
     actor->vel.z = gPlayer[0].vel.z;
     actor->fwork[7] = RAND_FLOAT(360.0f);
     actor->fwork[8] = RAND_FLOAT(360.0f);
-    actor->unk_0F4.y = 180.0f;
-    actor->unk_0F4.x = 0.0f;
+    actor->rot_0F4.y = 180.0f;
+    actor->rot_0F4.x = 0.0f;
     actor->obj.rot.x = -0.0f;
-    actor->obj.rot.y = actor->unk_0F4.y;
-    actor->obj.rot.z = -actor->unk_0F4.z;
+    actor->obj.rot.y = actor->rot_0F4.y;
+    actor->obj.rot.z = -actor->rot_0F4.z;
     actor->fwork[0] = 30.0f;
-    actor->unk_0B6 = 24;
+    actor->animFrame = 24;
     actor->iwork[11] = 1;
     actor->state = 10;
     actor->fwork[3] = D_i5_801BA900;
@@ -6757,8 +6757,8 @@ void Macbeth_801B38E0(void) {
         PlayerShot_Initialize(&gPlayerShots[i]);
     }
 
-    D_ctx_801782B8 = D_ctx_801782BC = D_ctx_801782C0 = D_ctx_801782D0 = gBossActive = D_ctx_8017828C = D_ctx_8017812C =
-        gPrevEventActorIndex = gFormationLeaderIndex = gRingPassCount = 0;
+    gDrawSmallRocks = D_ctx_801782BC = D_ctx_801782C0 = D_ctx_801782D0 = gBossActive = gKillEventActors =
+        gGroundClipMode = gPrevEventActorIndex = gFormationLeaderIndex = gRingPassCount = 0;
     gFormationInitPos.x = gFormationInitPos.y = gFormationInitPos.z = gFormationInitRot.x = gFormationInitRot.y =
         gFormationInitRot.z = 0.0f;
 
@@ -6914,7 +6914,7 @@ void Macbeth_LevelComplete1(Player* player) {
             gShowLevelClearStatusScreen = 0;
             break;
         case 50:
-            AUDIO_PLAY_BGM(SEQ_ID_GOOD_END);
+            AUDIO_PLAY_BGM(NA_BGM_COURSE_CLEAR);
             break;
         case 100:
             gLevelClearScreenTimer = 100;

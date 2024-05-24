@@ -34,31 +34,31 @@ void Ending_8018CE20(u32 arg0) {
                 if ((D_ending_80192E74[i].unk_11 == 0) || (gVenomHardClear == 1)) {
                     if (D_ending_80192E74[i].unk_10 == 1) {
                         xPos = (SCREEN_WIDTH - Graphics_GetLargeTextWidth(D_ending_80192E74[i].unk_00)) / 2;
-                        RCP_SetupDL(&gMasterDisp, 0x53);
+                        RCP_SetupDL(&gMasterDisp, SETUPDL_83);
                         gDPSetTextureFilter(gMasterDisp++, G_TF_POINT);
                         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, alpha);
                         Graphics_DisplayLargeText(xPos, D_ending_80192E74[i].unk_0E, 1.0f, 1.0f,
                                                   D_ending_80192E74[i].unk_00);
 
                     } else if (D_ending_80192E74[i].unk_10 == 2) {
-                        RCP_SetupDL(&gMasterDisp, 0x53);
+                        RCP_SetupDL(&gMasterDisp, SETUPDL_83);
                         gDPSetTextureFilter(gMasterDisp++, G_TF_POINT);
                         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, alpha);
-                        TextureRect_8bIA(&gMasterDisp, D_ending_80192E74[i].unk_00 + 192 * 5 * 0, 192, 5, 64.0f, 105.0f,
-                                         1.0f, 1.0f);
-                        TextureRect_8bIA(&gMasterDisp, D_ending_80192E74[i].unk_00 + 192 * 5 * 1, 192, 5, 64.0f, 110.0f,
-                                         1.0f, 1.0f);
-                        TextureRect_8bIA(&gMasterDisp, D_ending_80192E74[i].unk_00 + 192 * 5 * 2, 192, 5, 64.0f, 115.0f,
-                                         1.0f, 1.0f);
-                        TextureRect_8bIA(&gMasterDisp, D_ending_80192E74[i].unk_00 + 192 * 5 * 3, 192, 5, 64.0f, 120.0f,
-                                         1.0f, 1.0f);
-                        TextureRect_8bIA(&gMasterDisp, D_ending_80192E74[i].unk_00 + 192 * 5 * 4, 192, 5, 64.0f, 125.0f,
-                                         1.0f, 1.0f);
-                        TextureRect_8bIA(&gMasterDisp, D_ending_80192E74[i].unk_00 + 192 * 5 * 5, 192, 5, 64.0f, 130.0f,
-                                         1.0f, 1.0f);
+                        TextureRect_IA8(&gMasterDisp, D_ending_80192E74[i].unk_00 + 192 * 5 * 0, 192, 5, 64.0f, 105.0f,
+                                        1.0f, 1.0f);
+                        TextureRect_IA8(&gMasterDisp, D_ending_80192E74[i].unk_00 + 192 * 5 * 1, 192, 5, 64.0f, 110.0f,
+                                        1.0f, 1.0f);
+                        TextureRect_IA8(&gMasterDisp, D_ending_80192E74[i].unk_00 + 192 * 5 * 2, 192, 5, 64.0f, 115.0f,
+                                        1.0f, 1.0f);
+                        TextureRect_IA8(&gMasterDisp, D_ending_80192E74[i].unk_00 + 192 * 5 * 3, 192, 5, 64.0f, 120.0f,
+                                        1.0f, 1.0f);
+                        TextureRect_IA8(&gMasterDisp, D_ending_80192E74[i].unk_00 + 192 * 5 * 4, 192, 5, 64.0f, 125.0f,
+                                        1.0f, 1.0f);
+                        TextureRect_IA8(&gMasterDisp, D_ending_80192E74[i].unk_00 + 192 * 5 * 5, 192, 5, 64.0f, 130.0f,
+                                        1.0f, 1.0f);
                     } else {
                         xPos = (320 - Graphics_GetSmallTextWidth(D_ending_80192E74[i].unk_00)) / 2;
-                        RCP_SetupDL(&gMasterDisp, 0x53);
+                        RCP_SetupDL(&gMasterDisp, SETUPDL_83);
                         gDPSetTextureFilter(gMasterDisp++, G_TF_POINT);
                         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 155, 155, alpha);
                         Graphics_DisplaySmallText(xPos, D_ending_80192E74[i].unk_0E, 1.0f, 1.0f,
@@ -77,8 +77,8 @@ void Ending_8018D250(u32 arg0, AssetInfo* asset) {
 }
 
 void Ending_8018D28C(s32 arg0, AssetInfo* asset) {
-    D_ctx_8017842C += asset->unk_18.x;
-    D_ctx_80178430 += asset->unk_18.y;
+    gStarfieldScrollX += asset->unk_18.x;
+    gStarfieldScrollY += asset->unk_18.y;
 }
 
 void Ending_8018D2C8(u32 arg0, AssetInfo* asset) {
@@ -92,9 +92,9 @@ void Ending_8018D2C8(u32 arg0, AssetInfo* asset) {
         alpha = (asset->unk_0C + asset->unk_10 - arg0 - 1) * 255 / asset->fogFar;
     }
 
-    gFillScreenRed = asset->primRed;
-    gFillScreenGreen = asset->primGreen;
-    gFillScreenBlue = asset->primBlue;
+    gFillScreenRed = asset->prim.r;
+    gFillScreenGreen = asset->prim.g;
+    gFillScreenBlue = asset->prim.b;
 
     gFillScreenAlpha = gFillScreenAlphaTarget = alpha;
     gFillScreenAlphaStep = 0;
@@ -115,7 +115,7 @@ void Ending_8018D398(u32 arg0, AssetInfo* asset) {
         gFillScreenAlphaStep = 0;
 
     Graphics_FillRectangle(&gMasterDisp, SCREEN_MARGIN, SCREEN_MARGIN, SCREEN_WIDTH - SCREEN_MARGIN,
-                           SCREEN_HEIGHT - SCREEN_MARGIN, asset->primRed, asset->primGreen, asset->primBlue, alpha);
+                           SCREEN_HEIGHT - SCREEN_MARGIN, asset->prim.r, asset->prim.g, asset->prim.b, alpha);
 }
 
 void Ending_8018D4BC(s32 arg0, AssetInfo* asset) {
@@ -144,23 +144,23 @@ void Ending_8018D638(u32 arg0, AssetInfo* asset) {
         alpha = (asset->unk_0C + asset->fogFar - arg0) * 255 / asset->fogFar;
     }
 
-    gFillScreenRed = asset->primRed;
-    gFillScreenGreen = asset->primGreen;
-    gFillScreenBlue = asset->primBlue;
+    gFillScreenRed = asset->prim.r;
+    gFillScreenGreen = asset->prim.g;
+    gFillScreenBlue = asset->prim.b;
 
     gFillScreenAlpha = gFillScreenAlphaTarget = alpha;
     gFillScreenAlphaStep = 0;
 
-    RCP_SetupDL(&gMasterDisp, 0x53);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_83);
 
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
 
     if (gExpertMode != 0) {
         for (i = 0; i < 240; i += 4) {
             if (gVenomHardClear == 0) {
-                TextureRect_16bRGBA(&gMasterDisp, gEndingNormalReward + 316 * i, 316, 4, 0.0f, i, 1.0f, 1.0f);
+                TextureRect_RGBA16(&gMasterDisp, gEndingNormalReward + 316 * i, 316, 4, 0.0f, i, 1.0f, 1.0f);
             } else {
-                TextureRect_16bRGBA(&gMasterDisp, gEndingExpertReward + 316 * i, 316, 4, 0.0f, i, 1.0f, 1.0f);
+                TextureRect_RGBA16(&gMasterDisp, gEndingExpertReward + 316 * i, 316, 4, 0.0f, i, 1.0f, 1.0f);
             }
         }
     } else {
@@ -181,12 +181,12 @@ void Ending_8018D814(u32 arg0, AssetInfo* asset) {
 
     RCP_SetupDL(&gMasterDisp, asset->unk_08);
 
-    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->primRed, asset->primGreen, asset->primBlue, alpha);
+    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->prim.r, asset->prim.g, asset->prim.b, alpha);
 
-    TextureRect_8bIA(&gMasterDisp, sLargeText_1997_1, 16, 15, asset->unk_18.x, asset->unk_18.y, 1.0f, 1.0f);
-    TextureRect_8bIA(&gMasterDisp, sLargeText_1997_9, 16, 15, asset->unk_18.x + 16.0f * 1, asset->unk_18.y, 1.0f, 1.0f);
-    TextureRect_8bIA(&gMasterDisp, sLargeText_1997_9, 16, 15, asset->unk_18.x + 16.0f * 2, asset->unk_18.y, 1.0f, 1.0f);
-    TextureRect_8bIA(&gMasterDisp, sLargeText_1997_7, 16, 15, asset->unk_18.x + 16.0f * 3, asset->unk_18.y, 1.0f, 1.0f);
+    TextureRect_IA8(&gMasterDisp, sLargeText_1997_1, 16, 15, asset->unk_18.x, asset->unk_18.y, 1.0f, 1.0f);
+    TextureRect_IA8(&gMasterDisp, sLargeText_1997_9, 16, 15, asset->unk_18.x + 16.0f * 1, asset->unk_18.y, 1.0f, 1.0f);
+    TextureRect_IA8(&gMasterDisp, sLargeText_1997_9, 16, 15, asset->unk_18.x + 16.0f * 2, asset->unk_18.y, 1.0f, 1.0f);
+    TextureRect_IA8(&gMasterDisp, sLargeText_1997_7, 16, 15, asset->unk_18.x + 16.0f * 3, asset->unk_18.y, 1.0f, 1.0f);
 }
 
 void Ending_8018DA0C(u32 arg0, AssetInfo* asset) {
@@ -197,7 +197,7 @@ void Ending_8018DA0C(u32 arg0, AssetInfo* asset) {
     }
 
     RCP_SetupDL(&gMasterDisp, asset->unk_08);
-    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->primRed, asset->primGreen, asset->primBlue, alpha);
+    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->prim.r, asset->prim.g, asset->prim.b, alpha);
 
     Graphics_DisplaySmallText((s16) asset->unk_18.x, (s16) asset->unk_18.y, asset->unk_30.x, asset->unk_30.y,
                               "TOTAL HITS");
@@ -222,7 +222,7 @@ void Ending_8018DA0C(u32 arg0, AssetInfo* asset) {
                 alpha = 42 * (10 - alpha);
                 break;
         }
-        gDPSetPrimColor(gMasterDisp++, 0, 0, asset->primRed, asset->primGreen, asset->primBlue, alpha);
+        gDPSetPrimColor(gMasterDisp++, 0, 0, asset->prim.r, asset->prim.g, asset->prim.b, alpha);
         Graphics_DisplaySmallText((s16) (asset->unk_18.x + 7), (s16) (asset->unk_18.y + 31), asset->unk_30.x,
                                   asset->unk_30.y, "RANK IN!!");
     }
@@ -312,15 +312,15 @@ void Ending_8018E1B8(u32 arg0, AssetInfo* asset) {
     f32 temp;
 
     if ((asset->unk_18.z + (arg0 - asset->unk_0C) * asset->unk_3C.z) < D_ending_801985D0.z) {
-        RCP_SetupDL(&gMasterDisp, 0x43);
+        RCP_SetupDL(&gMasterDisp, SETUPDL_67);
     } else {
-        RCP_SetupDL(&gMasterDisp, 0x3F);
+        RCP_SetupDL(&gMasterDisp, SETUPDL_63);
     }
 
     gSPFogPosition(gMasterDisp++, asset->fogNear, asset->fogFar);
-    gDPSetFogColor(gMasterDisp++, asset->fogRed, asset->fogGreen, asset->fogBlue, 0);
-    gDPSetEnvColor(gMasterDisp++, asset->envRed, asset->envGreen, asset->envBlue, asset->envAlpha);
-    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->primRed, asset->primGreen, asset->primBlue, asset->primAlpha);
+    gDPSetFogColor(gMasterDisp++, asset->fog.r, asset->fog.g, asset->fog.b, 0);
+    gDPSetEnvColor(gMasterDisp++, asset->env.r, asset->env.g, asset->env.b, asset->env.a);
+    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->prim.r, asset->prim.g, asset->prim.b, asset->prim.a);
 
     Matrix_Translate(gGfxMatrix, asset->unk_18.x + (arg0 - asset->unk_0C) * asset->unk_3C.x,
                      asset->unk_18.y + (arg0 - asset->unk_0C) * asset->unk_3C.y,
@@ -371,15 +371,15 @@ void Ending_8018E7B8(u32 arg0, AssetInfo* asset) {
     f32 temp;
 
     if ((asset->unk_18.z + (arg0 - asset->unk_0C) * asset->unk_3C.z) < D_ending_801985D0.z) {
-        RCP_SetupDL(&gMasterDisp, 0x43);
+        RCP_SetupDL(&gMasterDisp, SETUPDL_67);
     } else {
-        RCP_SetupDL(&gMasterDisp, 0x3F);
+        RCP_SetupDL(&gMasterDisp, SETUPDL_63);
     }
 
     gSPFogPosition(gMasterDisp++, asset->fogNear, asset->fogFar);
-    gDPSetFogColor(gMasterDisp++, asset->fogRed, asset->fogGreen, asset->fogBlue, 0);
-    gDPSetEnvColor(gMasterDisp++, asset->envRed, asset->envGreen, asset->envBlue, asset->envAlpha);
-    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->primRed, asset->primGreen, asset->primBlue, asset->primAlpha);
+    gDPSetFogColor(gMasterDisp++, asset->fog.r, asset->fog.g, asset->fog.b, 0);
+    gDPSetEnvColor(gMasterDisp++, asset->env.r, asset->env.g, asset->env.b, asset->env.a);
+    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->prim.r, asset->prim.g, asset->prim.b, asset->prim.a);
 
     Matrix_Translate(gGfxMatrix, asset->unk_18.x + (arg0 - asset->unk_0C) * asset->unk_3C.x,
                      asset->unk_18.y + (arg0 - asset->unk_0C) * asset->unk_3C.y,
@@ -435,8 +435,8 @@ void Ending_8018EDB8(u32 arg0, AssetInfo* asset) {
     RCP_SetupDL(&gMasterDisp, asset->unk_08);
 
     gSPFogPosition(gMasterDisp++, asset->fogNear, asset->fogFar);
-    gDPSetFogColor(gMasterDisp++, asset->fogRed, asset->fogGreen, asset->fogBlue, 0);
-    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->primRed, asset->primGreen, asset->primBlue, asset->primAlpha);
+    gDPSetFogColor(gMasterDisp++, asset->fog.r, asset->fog.g, asset->fog.b, 0);
+    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->prim.r, asset->prim.g, asset->prim.b, asset->prim.a);
 
     Matrix_Translate(gGfxMatrix, asset->unk_18.x + (arg0 - asset->unk_0C) * asset->unk_3C.x,
                      asset->unk_18.y + (arg0 - asset->unk_0C) * asset->unk_3C.y,
@@ -471,8 +471,8 @@ void Ending_8018F2A8(u32 arg0, AssetInfo* asset) {
     RCP_SetupDL(&gMasterDisp, asset->unk_08);
 
     gSPFogPosition(gMasterDisp++, asset->fogNear, asset->fogFar);
-    gDPSetFogColor(gMasterDisp++, asset->fogRed, asset->fogGreen, asset->fogBlue, 0);
-    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->primRed, asset->primGreen, asset->primBlue, asset->primAlpha);
+    gDPSetFogColor(gMasterDisp++, asset->fog.r, asset->fog.g, asset->fog.b, 0);
+    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->prim.r, asset->prim.g, asset->prim.b, asset->prim.a);
 
     Matrix_Translate(gGfxMatrix, asset->unk_18.x + (arg0 - asset->unk_0C) * asset->unk_3C.x,
                      asset->unk_18.y + (arg0 - asset->unk_0C) * asset->unk_3C.y,
@@ -509,9 +509,9 @@ void Ending_8018F64C(u32 arg0, AssetInfo* asset) {
     RCP_SetupDL(&gMasterDisp, asset->unk_08);
 
     gSPFogPosition(gMasterDisp++, asset->fogNear, asset->fogFar);
-    gDPSetFogColor(gMasterDisp++, asset->fogRed, asset->fogGreen, asset->fogBlue, 0);
-    gDPSetEnvColor(gMasterDisp++, asset->envRed, asset->envGreen, asset->envBlue, asset->envAlpha);
-    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->primRed, asset->primGreen, asset->primBlue, asset->primAlpha);
+    gDPSetFogColor(gMasterDisp++, asset->fog.r, asset->fog.g, asset->fog.b, 0);
+    gDPSetEnvColor(gMasterDisp++, asset->env.r, asset->env.g, asset->env.b, asset->env.a);
+    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->prim.r, asset->prim.g, asset->prim.b, asset->prim.a);
 
     Matrix_Translate(gGfxMatrix, asset->unk_18.x + (arg0 - asset->unk_0C) * asset->unk_3C.x,
                      asset->unk_18.y + (arg0 - asset->unk_0C) * asset->unk_3C.y,
@@ -556,7 +556,7 @@ void Ending_8018F64C(u32 arg0, AssetInfo* asset) {
     Matrix_SetGfxMtx(&gMasterDisp);
     gSPDisplayList(gMasterDisp++, D_D009A40);
 
-    RCP_SetupDL(&gMasterDisp, 0x43);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_67);
     Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -60.0f, MTXF_APPLY);
 
     Matrix_Scale(gGfxMatrix, 0.8f + (arg0 % 3) * 0.01f, 0.3f + (arg0 % 3) * 0.01f, 0.8f + (arg0 % 3) * 0.01f,
@@ -576,9 +576,9 @@ void Ending_8018FC60(u32 arg0, AssetInfo* asset) {
     RCP_SetupDL(&gMasterDisp, asset->unk_08);
 
     gSPFogPosition(gMasterDisp++, asset->fogNear, asset->fogFar);
-    gDPSetFogColor(gMasterDisp++, asset->fogRed, asset->fogGreen, asset->fogBlue, 0);
-    gDPSetEnvColor(gMasterDisp++, asset->envRed, asset->envGreen, asset->envBlue, asset->envAlpha);
-    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->primRed, asset->primGreen, asset->primBlue, asset->primAlpha);
+    gDPSetFogColor(gMasterDisp++, asset->fog.r, asset->fog.g, asset->fog.b, 0);
+    gDPSetEnvColor(gMasterDisp++, asset->env.r, asset->env.g, asset->env.b, asset->env.a);
+    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->prim.r, asset->prim.g, asset->prim.b, asset->prim.a);
 
     Matrix_Translate(gGfxMatrix, asset->unk_18.x + (arg0 - asset->unk_0C) * asset->unk_3C.x,
                      asset->unk_18.y + (arg0 - asset->unk_0C) * asset->unk_3C.y,
@@ -623,7 +623,7 @@ void Ending_8018FC60(u32 arg0, AssetInfo* asset) {
     Matrix_SetGfxMtx(&gMasterDisp);
     gSPDisplayList(gMasterDisp++, D_D00B880);
 
-    RCP_SetupDL(&gMasterDisp, 0x43);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_67);
     Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -50.0f, MTXF_APPLY);
 
     Matrix_Scale(gGfxMatrix, 0.5f + (arg0 % 3) * 0.01f, 0.3f + (arg0 % 3) * 0.01f, 0.5f + (arg0 % 3) * 0.01f,
@@ -639,8 +639,8 @@ void Ending_80190274(u32 arg0, AssetInfo* asset) {
     RCP_SetupDL(&gMasterDisp, asset->unk_08);
 
     gSPFogPosition(gMasterDisp++, asset->fogNear, asset->fogFar);
-    gDPSetFogColor(gMasterDisp++, asset->fogRed, asset->fogGreen, asset->fogBlue, 0);
-    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->primRed, asset->primGreen, asset->primBlue, asset->primAlpha);
+    gDPSetFogColor(gMasterDisp++, asset->fog.r, asset->fog.g, asset->fog.b, 0);
+    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->prim.r, asset->prim.g, asset->prim.b, asset->prim.a);
 
     Matrix_Translate(gGfxMatrix, D_ending_801985D0.x + asset->unk_18.x + (arg0 - asset->unk_0C) * asset->unk_3C.x,
                      D_ending_801985D0.y + asset->unk_18.y + (arg0 - asset->unk_0C) * asset->unk_3C.y,
@@ -685,9 +685,9 @@ void Ending_80190778(u32 arg0, AssetInfo* asset) {
     RCP_SetupDL(&gMasterDisp, asset->unk_08);
 
     gSPFogPosition(gMasterDisp++, asset->fogNear, asset->fogFar);
-    gDPSetFogColor(gMasterDisp++, asset->fogRed, asset->fogGreen, asset->fogBlue, 0);
-    gDPSetEnvColor(gMasterDisp++, asset->envRed, asset->envGreen, asset->envBlue, asset->envAlpha);
-    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->primRed, asset->primGreen, asset->primBlue, asset->primAlpha);
+    gDPSetFogColor(gMasterDisp++, asset->fog.r, asset->fog.g, asset->fog.b, 0);
+    gDPSetEnvColor(gMasterDisp++, asset->env.r, asset->env.g, asset->env.b, asset->env.a);
+    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->prim.r, asset->prim.g, asset->prim.b, asset->prim.a);
 
     Matrix_Translate(gGfxMatrix, asset->unk_18.x + (arg0 - asset->unk_0C) * asset->unk_3C.x,
                      asset->unk_18.y - 6.0f + (arg0 - asset->unk_0C) * asset->unk_3C.y,
@@ -745,19 +745,19 @@ void Ending_80190CF0(u32 arg0, AssetInfo* asset) {
     }
 
     if (arg0 == asset->unk_0C) {
-        AUDIO_PLAY_SFX(NA_SE_VO_ANDORF_LAUGH, gDefaultSfxSource, 4);
+        AUDIO_PLAY_SFX(NA_SE_VO_ANDROSS_LAUGH, gDefaultSfxSource, 4);
     }
 
     RCP_SetupDL(&gMasterDisp, asset->unk_08);
 
-    gDPSetFogColor(gMasterDisp++, asset->fogRed, asset->fogGreen, asset->fogBlue, 0);
-    gDPSetEnvColor(gMasterDisp++, asset->envRed, asset->envGreen, asset->envBlue, asset->envAlpha);
+    gDPSetFogColor(gMasterDisp++, asset->fog.r, asset->fog.g, asset->fog.b, 0);
+    gDPSetEnvColor(gMasterDisp++, asset->env.r, asset->env.g, asset->env.b, asset->env.a);
 
     if ((asset->unk_0C + asset->fogNear) > arg0) {
         alpha = (arg0 - asset->unk_0C) * 255 / asset->fogNear;
     }
 
-    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->primRed, asset->primGreen, asset->primBlue, alpha);
+    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->prim.r, asset->prim.g, asset->prim.b, alpha);
 
     Matrix_Translate(gGfxMatrix, asset->unk_18.x + (arg0 - asset->unk_0C) * asset->unk_3C.x,
                      asset->unk_18.y + (arg0 - asset->unk_0C) * asset->unk_3C.y,
@@ -804,7 +804,7 @@ void Ending_80190CF0(u32 arg0, AssetInfo* asset) {
 }
 
 void Ending_80191234(s32 arg0, s32 arg1) {
-    D_game_80161A34 = 8;
+    gLastGameState = GSTATE_ENDING;
     gGameState = GSTATE_MENU;
     gNextGameStateTimer = 2;
     gOptionMenuStatus = OPTION_WAIT;
@@ -820,9 +820,9 @@ void Ending_80191294(u32 arg0, AssetInfo* asset) {
     RCP_SetupDL(&gMasterDisp, asset->unk_08);
 
     gSPFogPosition(gMasterDisp++, asset->fogNear, asset->fogFar);
-    gDPSetFogColor(gMasterDisp++, asset->fogRed, asset->fogGreen, asset->fogBlue, 0);
-    gDPSetEnvColor(gMasterDisp++, asset->envRed, asset->envGreen, asset->envBlue, asset->envAlpha);
-    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->primRed, asset->primGreen, asset->primBlue, asset->primAlpha);
+    gDPSetFogColor(gMasterDisp++, asset->fog.r, asset->fog.g, asset->fog.b, 0);
+    gDPSetEnvColor(gMasterDisp++, asset->env.r, asset->env.g, asset->env.b, asset->env.a);
+    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->prim.r, asset->prim.g, asset->prim.b, asset->prim.a);
 
     Matrix_Translate(gGfxMatrix, asset->unk_18.x + (arg0 - asset->unk_0C) * asset->unk_3C.x,
                      asset->unk_18.y + (arg0 - asset->unk_0C) * asset->unk_3C.y,
@@ -877,9 +877,9 @@ void Ending_80191710(u32 arg0, AssetInfo* asset) {
     RCP_SetupDL(&gMasterDisp, asset->unk_08);
 
     gSPFogPosition(gMasterDisp++, asset->fogNear, asset->fogFar);
-    gDPSetFogColor(gMasterDisp++, asset->fogRed, asset->fogGreen, asset->fogBlue, 0);
-    gDPSetEnvColor(gMasterDisp++, asset->envRed, asset->envGreen, asset->envBlue, asset->envAlpha);
-    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->primRed, asset->primGreen, asset->primBlue, asset->primAlpha);
+    gDPSetFogColor(gMasterDisp++, asset->fog.r, asset->fog.g, asset->fog.b, 0);
+    gDPSetEnvColor(gMasterDisp++, asset->env.r, asset->env.g, asset->env.b, asset->env.a);
+    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->prim.r, asset->prim.g, asset->prim.b, asset->prim.a);
 
     Matrix_Translate(gGfxMatrix, asset->unk_18.x + (arg0 - asset->unk_0C) * asset->unk_3C.x,
                      asset->unk_18.y + (arg0 - asset->unk_0C) * asset->unk_3C.y,
@@ -936,9 +936,9 @@ void Ending_80191C7C(u32 arg0, AssetInfo* asset) {
     RCP_SetupDL(&gMasterDisp, asset->unk_08);
 
     gSPFogPosition(gMasterDisp++, asset->fogNear, asset->fogFar);
-    gDPSetFogColor(gMasterDisp++, asset->fogRed, asset->fogGreen, asset->fogBlue, 0);
-    gDPSetEnvColor(gMasterDisp++, asset->envRed, asset->envGreen, asset->envBlue, asset->envAlpha);
-    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->primRed, asset->primGreen, asset->primBlue, asset->primAlpha);
+    gDPSetFogColor(gMasterDisp++, asset->fog.r, asset->fog.g, asset->fog.b, 0);
+    gDPSetEnvColor(gMasterDisp++, asset->env.r, asset->env.g, asset->env.b, asset->env.a);
+    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->prim.r, asset->prim.g, asset->prim.b, asset->prim.a);
 
     Matrix_Translate(gGfxMatrix, asset->unk_18.x + (arg0 - asset->unk_0C) * asset->unk_3C.x,
                      asset->unk_18.y + (arg0 - asset->unk_0C) * asset->unk_3C.y,
@@ -1081,14 +1081,14 @@ void Ending_801926D4(void) {
         } else {
             D_ending_80198590.rightState = D_ending_80198590.leftState = WINGSTATE_INTACT;
         }
-        AUDIO_PLAY_BGM(SEQ_ID_ENDING);
+        AUDIO_PLAY_BGM(NA_BGM_STAFF_ROLL);
     }
 
     if ((2790 <= D_ending_80192E70) && (D_ending_80192E70 < 3000)) {
         D_ending_80192E70 = 3099;
     }
 
-    if ((4891 <= D_ending_80192E70) && (D_ending_80192E70 < 4999)) {
+    if ((4890 < D_ending_80192E70) && (D_ending_80192E70 < 4999)) {
         D_ending_80192E70 = 4999;
     }
 

@@ -68,7 +68,7 @@ s32 D_menu_801B91B8;
 s32 D_menu_801B91BC;
 s32 D_menu_801B91C0;
 s32 D_menu_801B91C4;
-s32 D_menu_801B91C8;
+bool D_menu_801B91C8;
 s32 D_menu_801B91CC;
 s32 D_menu_801B91D0;
 f32 D_menu_801B91D4;
@@ -416,8 +416,8 @@ void Option_Setup(void) {
     gBgColor = 0;
 
     D_menu_801B91A4 = 0;
-    if ((D_game_80161A34 == 7) && (gCurrentLevel == LEVEL_TRAINING)) {
-        D_game_80161A34 = 0;
+    if ((gLastGameState == GSTATE_PLAY) && (gCurrentLevel == LEVEL_TRAINING)) {
+        gLastGameState = GSTATE_NONE;
         D_menu_801B91A4 = 1;
     }
 
@@ -434,8 +434,8 @@ void Option_Setup(void) {
 
     D_menu_801B9124 = OPTION_MAIN_MENU;
 
-    if ((D_game_80161A34 == 5) || (D_game_80161A34 == 8)) {
-        if (D_game_80161A34 == 8) {
+    if ((gLastGameState == GSTATE_GAME_OVER) || (gLastGameState == GSTATE_ENDING)) {
+        if (gLastGameState == GSTATE_ENDING) {
             gMissionPlanet[gMissionNumber] = PLANET_VENOM;
             if (gLeveLClearStatus[LEVEL_VENOM_ANDROSS] == 1) {
                 gSaveFile.save.data.planet[SAVE_SLOT_VENOM_1].played = 1;
@@ -467,43 +467,41 @@ void Option_Setup(void) {
         } else {
             D_menu_801B9124 = 300;
         }
-    } else {
-        if (D_game_800D2870 != 0) {
-            D_menu_801B91A4 = 2;
-            D_menu_801B91A8 = gVsMatchType;
-            for (i = 0; i < OPTION_COUNT; i++) {
-                if (i == 2) {
-                    continue;
-                }
-                sOptionCardList[i].unk_38.unk_0C = 0.01f;
-                sOptionCardList[i].unk_38.unk_10 = 0.21f;
-                sOptionCardList[i].unk_38.unk_04 = sOptionCardPosY[i];
-                sOptionCardList[i].unk_38.unk_00 = 0.0f;
-                sOptionCardList[i].unk_38.unk_08 = 0.0f;
-                sOptionCardList[i].unk_5C = 0;
-
-                sOptionCardList[i].unk_00.unk_20 = 0.01f;
-                sOptionCardList[i].unk_00.unk_24 = 1.0f;
-                sOptionCardList[i].unk_00.unk_18 = 158.0f;
-                sOptionCardList[i].unk_00.unk_1C = sOptionCardCurTextPosY[i];
-                sOptionCardList[i].unk_58 = 0;
+    } else if (D_game_800D2870) {
+        D_menu_801B91A4 = 2;
+        D_menu_801B91A8 = gVsMatchType;
+        for (i = 0; i < OPTION_COUNT; i++) {
+            if (i == 2) {
+                continue;
             }
-            sOptionCardList[2].unk_38.unk_00 = 0.0f;
-            sOptionCardList[2].unk_38.unk_08 = 0.0f;
-            sOptionCardList[2].unk_38.unk_04 = 90.0f;
-            sOptionCardList[2].unk_38.unk_0C = 0.4f;
-            sOptionCardList[2].unk_38.unk_10 = 0.21f;
-            sOptionCardList[2].unk_5C = 1;
-            sOptionCardList[2].unk_00.unk_20 = 1.0f;
-            sOptionCardList[2].unk_00.unk_24 = 1.0f;
-            sOptionCardList[2].unk_00.unk_18 = 145.0f;
-            sOptionCardList[2].unk_00.unk_1C = 25.0f;
-            sOptionCardList[2].unk_58 = 1;
+            sOptionCardList[i].unk_38.unk_0C = 0.01f;
+            sOptionCardList[i].unk_38.unk_10 = 0.21f;
+            sOptionCardList[i].unk_38.unk_04 = sOptionCardPosY[i];
+            sOptionCardList[i].unk_38.unk_00 = 0.0f;
+            sOptionCardList[i].unk_38.unk_08 = 0.0f;
+            sOptionCardList[i].unk_5C = 0;
 
-            D_menu_801B9124 = OPTION_VERSUS;
-        } else {
-            D_menu_801B9124 = OPTION_MAIN_MENU;
+            sOptionCardList[i].unk_00.unk_20 = 0.01f;
+            sOptionCardList[i].unk_00.unk_24 = 1.0f;
+            sOptionCardList[i].unk_00.unk_18 = 158.0f;
+            sOptionCardList[i].unk_00.unk_1C = sOptionCardCurTextPosY[i];
+            sOptionCardList[i].unk_58 = 0;
         }
+        sOptionCardList[2].unk_38.unk_00 = 0.0f;
+        sOptionCardList[2].unk_38.unk_08 = 0.0f;
+        sOptionCardList[2].unk_38.unk_04 = 90.0f;
+        sOptionCardList[2].unk_38.unk_0C = 0.4f;
+        sOptionCardList[2].unk_38.unk_10 = 0.21f;
+        sOptionCardList[2].unk_5C = 1;
+        sOptionCardList[2].unk_00.unk_20 = 1.0f;
+        sOptionCardList[2].unk_00.unk_24 = 1.0f;
+        sOptionCardList[2].unk_00.unk_18 = 145.0f;
+        sOptionCardList[2].unk_00.unk_1C = 25.0f;
+        sOptionCardList[2].unk_58 = 1;
+
+        D_menu_801B9124 = OPTION_VERSUS;
+    } else {
+        D_menu_801B9124 = OPTION_MAIN_MENU;
     }
 
     D_menu_801B912C = 0;
@@ -544,7 +542,7 @@ void Option_Setup(void) {
     D_menu_801B91EC = 0;
     D_menu_801B9244 = 0;
     D_menu_801B9248 = 0;
-    AUDIO_PLAY_BGM(SEQ_ID_MENU);
+    AUDIO_PLAY_BGM(NA_BGM_SELECT);
 }
 
 void Option_Main(void) {
@@ -690,7 +688,7 @@ void Option_DrawEntry(void) {
 
     if (D_menu_801B8280 != 0) {
         Option_8019BDF0();
-        func_fade_80084688(2, D_menu_801B8284);
+        Wipe_Draw(WIPE_VERTICAL, D_menu_801B8284);
         Matrix_Pop(&gGfxMatrix);
     }
 }
@@ -819,7 +817,7 @@ void Option_TrainingUpdate(void) {
 void Option_801929F0(void) {
     s32 i;
 
-    D_game_800D2870 = 0;
+    D_game_800D2870 = false;
     gBlurAlpha = 255;
     gControllerLock = 0;
     gStarCount = 800;
@@ -866,8 +864,6 @@ void Option_MainMenuUpdate(void) {
     s32 i;
     f32 var_fs0;
     f32 var_fs1;
-    s32 temp1;
-    s32 temp2;
 
     switch (D_menu_801B912C) {
         case 0:
@@ -919,49 +915,46 @@ void Option_MainMenuUpdate(void) {
             break;
 
         case 1:
-            temp1 =
-                Option_8019C418(&D_menu_801B91A4, OPTION_COUNT - 1, 1, 0, 20, 5, 4, gMainController, &D_menu_801B9180);
             // clang-format off
-            if (temp1 != 0) { AUDIO_PLAY_SFX(NA_SE_ARWING_CURSOR, gDefaultSfxSource, 4); }
+            if (Option_8019C418(&D_menu_801B91A4, OPTION_COUNT - 1, 1, 0, 20, 5, 4, gMainController, &D_menu_801B9180)) {\
+                AUDIO_PLAY_SFX(NA_SE_ARWING_CURSOR, gDefaultSfxSource, 4);\
+            }
             // clang-format on
 
-            if ((D_menu_801B91A4 == 0) && (D_menu_801B91C8 != 0)) {
-                temp2 = Option_8019C418(&D_menu_801B91B0, 1, 0, 0, 20, 5, 4, gMainController, &D_menu_801B9190);
-                if (temp2 != 0) {
-                    AUDIO_PLAY_SFX(NA_SE_ARWING_CURSOR, gDefaultSfxSource, 4);
-                    if (D_menu_801B91B0) {
-                        sOptionCardList[0].unk_00.unk_08 = D_OPT_8004C50;
-                        sOptionCardList[0].unk_00.unk_10 = 80;
-                        sOptionCardList[0].unk_00.unk_14 = 12;
-                        sOptionCardList[0].unk_00.unk_18 = 125.0f;
-                        sOptionCardList[0].unk_00.unk_1C = 55.0f;
-                    } else {
-                        sOptionCardList[0].unk_00.unk_08 = D_OPT_8003B50;
-                        sOptionCardList[0].unk_00.unk_10 = 72;
-                        sOptionCardList[0].unk_00.unk_14 = 12;
-                        sOptionCardList[0].unk_00.unk_18 = 124.0f;
-                        sOptionCardList[0].unk_00.unk_1C = 54.0f;
-                    }
-                    gExpertMode = D_menu_801B91B0;
+            if ((D_menu_801B91A4 == 0) && D_menu_801B91C8 &&
+                Option_8019C418(&D_menu_801B91B0, 1, 0, 0, 20, 5, 4, gMainController, &D_menu_801B9190)) {
+                AUDIO_PLAY_SFX(NA_SE_ARWING_CURSOR, gDefaultSfxSource, 4);
+                if (D_menu_801B91B0) {
+                    sOptionCardList[0].unk_00.unk_08 = D_OPT_8004C50;
+                    sOptionCardList[0].unk_00.unk_10 = 80;
+                    sOptionCardList[0].unk_00.unk_14 = 12;
+                    sOptionCardList[0].unk_00.unk_18 = 125.0f;
+                    sOptionCardList[0].unk_00.unk_1C = 55.0f;
+                } else {
+                    sOptionCardList[0].unk_00.unk_08 = D_OPT_8003B50;
+                    sOptionCardList[0].unk_00.unk_10 = 72;
+                    sOptionCardList[0].unk_00.unk_14 = 12;
+                    sOptionCardList[0].unk_00.unk_18 = 124.0f;
+                    sOptionCardList[0].unk_00.unk_1C = 54.0f;
                 }
+                gExpertMode = D_menu_801B91B0;
             }
-            if ((D_menu_801B91A4 == 4) && (D_menu_801B91C8 != 0)) {
-                temp2 = Option_8019C418(&D_menu_801B91AC, 1, 0, 0, 20, 5, 4, gMainController, &D_menu_801B9198);
-                if (temp2 != 0) {
-                    AUDIO_PLAY_SFX(NA_SE_ARWING_CURSOR, gDefaultSfxSource, 4);
-                    if (D_menu_801B91AC) {
-                        sOptionCardList[4].unk_00.unk_08 = D_OPT_8004C50;
-                        sOptionCardList[4].unk_00.unk_10 = 80;
-                        sOptionCardList[4].unk_00.unk_14 = 12;
-                        sOptionCardList[4].unk_00.unk_18 = 125.0f;
-                        sOptionCardList[4].unk_00.unk_1C = 151.0f;
-                    } else {
-                        sOptionCardList[4].unk_00.unk_08 = D_OPT_80046B0;
-                        sOptionCardList[4].unk_00.unk_10 = 64;
-                        sOptionCardList[4].unk_00.unk_14 = 10;
-                        sOptionCardList[4].unk_00.unk_18 = 133.0f;
-                        sOptionCardList[4].unk_00.unk_1C = 151.0f;
-                    }
+
+            if ((D_menu_801B91A4 == 4) && D_menu_801B91C8 &&
+                Option_8019C418(&D_menu_801B91AC, 1, 0, 0, 20, 5, 4, gMainController, &D_menu_801B9198)) {
+                AUDIO_PLAY_SFX(NA_SE_ARWING_CURSOR, gDefaultSfxSource, 4);
+                if (D_menu_801B91AC) {
+                    sOptionCardList[4].unk_00.unk_08 = D_OPT_8004C50;
+                    sOptionCardList[4].unk_00.unk_10 = 80;
+                    sOptionCardList[4].unk_00.unk_14 = 12;
+                    sOptionCardList[4].unk_00.unk_18 = 125.0f;
+                    sOptionCardList[4].unk_00.unk_1C = 151.0f;
+                } else {
+                    sOptionCardList[4].unk_00.unk_08 = D_OPT_80046B0;
+                    sOptionCardList[4].unk_00.unk_10 = 64;
+                    sOptionCardList[4].unk_00.unk_14 = 10;
+                    sOptionCardList[4].unk_00.unk_18 = 133.0f;
+                    sOptionCardList[4].unk_00.unk_1C = 151.0f;
                 }
             }
 
@@ -1016,33 +1009,31 @@ void Option_MainMenuUpdate(void) {
                 }
             }
 
-            if (D_menu_801B917C != 0) {
-                break;
-            }
+            if (D_menu_801B917C == 0) {
+                var_fs0 = 25.0f;
+                var_fs1 = 90.0f;
 
-            var_fs0 = 25.0f;
-            var_fs1 = 90.0f;
-
-            if ((D_menu_801B91A4 == 0) || (D_menu_801B91A4 == 1)) {
-                var_fs0 = 0.0f;
-                var_fs1 = 120.0f;
-            }
-
-            Math_SmoothStepToF(&sOptionCardList[D_menu_801B91A4].unk_00.unk_1C, var_fs0, 0.25f, 100.0f, 0.1f);
-            Math_SmoothStepToF(&sOptionCardList[D_menu_801B91A4].unk_38.unk_04, var_fs1, 0.25f, 100.0f, 0.1f);
-
-            gBlurAlpha += 4;
-
-            if ((sOptionCardList[D_menu_801B91A4].unk_00.unk_1C == var_fs0) &&
-                (sOptionCardList[D_menu_801B91A4].unk_38.unk_04 == var_fs1)) {
-                gBlurAlpha += 255;
-                D_menu_801B9124 = D_menu_801B91A4;
-
-                if (D_menu_801B91A4 == 4 && D_menu_801B91AC) {
-                    D_menu_801B9124 = 6;
+                if ((D_menu_801B91A4 == 0) || (D_menu_801B91A4 == 1)) {
+                    var_fs0 = 0.0f;
+                    var_fs1 = 120.0f;
                 }
 
-                Option_InitEntry();
+                Math_SmoothStepToF(&sOptionCardList[D_menu_801B91A4].unk_00.unk_1C, var_fs0, 0.25f, 100.0f, 0.1f);
+                Math_SmoothStepToF(&sOptionCardList[D_menu_801B91A4].unk_38.unk_04, var_fs1, 0.25f, 100.0f, 0.1f);
+
+                gBlurAlpha += 4;
+
+                if ((sOptionCardList[D_menu_801B91A4].unk_00.unk_1C == var_fs0) &&
+                    (sOptionCardList[D_menu_801B91A4].unk_38.unk_04 == var_fs1)) {
+                    gBlurAlpha += 255;
+                    D_menu_801B9124 = D_menu_801B91A4;
+
+                    if (D_menu_801B91A4 == 4 && D_menu_801B91AC) {
+                        D_menu_801B9124 = 6;
+                    }
+
+                    Option_InitEntry();
+                }
             }
             break;
 
@@ -1082,10 +1073,10 @@ void Option_MainMenuDraw(void) {
         if (!(sOptionCardList[i].unk_58) || (sOptionCardList[i].unk_00.unk_20) <= 0.0f) {
             continue;
         }
-        if ((i == 0) && (D_menu_801B91C8 != 0) && ((D_menu_801B912C == 0) || (D_menu_801B912C == 1))) {
+        if ((i == 0) && D_menu_801B91C8 && ((D_menu_801B912C == 0) || (D_menu_801B912C == 1))) {
             Option_8019B6D8(106.0f, 56.0f, 98.0f, 20, 0, 75);
         }
-        if ((i == 4) && (D_menu_801B91C8 != 0) && ((D_menu_801B912C == 0) || (D_menu_801B912C == 1))) {
+        if ((i == 4) && D_menu_801B91C8 && ((D_menu_801B912C == 0) || (D_menu_801B912C == 1))) {
             Option_8019B6D8(106.0f, 152.0f, 98.0f, 20, 0, 75);
         }
         Option_DrawCardLabel(sOptionCardList[i].unk_00);
@@ -1363,12 +1354,9 @@ void Option_SoundInit(void) {
 }
 
 void Option_SoundUpdate(void) {
-    s32 sp34;
-    s32 temp;
+    s32 sp34 = D_menu_801B9288;
 
-    sp34 = D_menu_801B9288;
-    temp = Option_8019C418(&D_menu_801B9288, 3, 1, 0, 20, 5, 4, gMainController, &D_menu_801B9250);
-    if (temp != 0) {
+    if (Option_8019C418(&D_menu_801B9288, 3, 1, 0, 20, 5, 4, gMainController, &D_menu_801B9250)) {
         D_menu_801B9270[sp34] = 255.0f;
         AUDIO_PLAY_SFX(NA_SE_CURSOR, gDefaultSfxSource, 4);
     }
@@ -1466,14 +1454,14 @@ void Option_SoundDraw(void) {
 
     Option_801952B4();
 
-    RCP_SetupDL(&gMasterDisp, 0x4C);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_76);
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
-    TextureRect_16bRGBA(&gMasterDisp, D_MAP_60447A0, 8, 8, D_menu_801AEFA8[0], D_menu_801AEFD4[0], D_menu_801AF000,
-                        0.2f);
+    TextureRect_RGBA16(&gMasterDisp, D_MAP_60447A0, 8, 8, D_menu_801AEFA8[0], D_menu_801AEFD4[0], D_menu_801AF000,
+                       0.2f);
 
-    RCP_SetupDL(&gMasterDisp, 0x53);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_83);
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
-    TextureRect_8bIA(&gMasterDisp, D_OPT_8005CD0, 112, 13, D_menu_801AEFA8[1], D_menu_801AEFD4[1], 1.0f, 1.0f);
+    TextureRect_IA8(&gMasterDisp, D_OPT_8005CD0, 112, 13, D_menu_801AEFA8[1], D_menu_801AEFD4[1], 1.0f, 1.0f);
 
     for (i = 0; i < 4; i++) {
         if (D_menu_801B9288 == i) {
@@ -1485,43 +1473,43 @@ void Option_SoundDraw(void) {
 
     colorGB = D_menu_801B9270[0];
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, colorGB, colorGB, 255);
-    TextureRect_8bIA(&gMasterDisp, D_OPT_8006280, 48, 13, D_menu_801AEFA8[2], D_menu_801AEFD4[2], 1.0f, 1.0f);
+    TextureRect_IA8(&gMasterDisp, D_OPT_8006280, 48, 13, D_menu_801AEFA8[2], D_menu_801AEFD4[2], 1.0f, 1.0f);
 
     colorGB = D_menu_801B9270[1];
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, colorGB, colorGB, 255);
-    TextureRect_8bIA(&gMasterDisp, D_OPT_80064F0, 88, 14, D_menu_801AEFA8[3], D_menu_801AEFD4[3], 1.0f, 1.0f);
+    TextureRect_IA8(&gMasterDisp, D_OPT_80064F0, 88, 14, D_menu_801AEFA8[3], D_menu_801AEFD4[3], 1.0f, 1.0f);
 
     colorGB = D_menu_801B9270[2];
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, colorGB, colorGB, 255);
-    TextureRect_8bIA(&gMasterDisp, D_OPT_80069C0, 56, 15, D_menu_801AEFA8[4], D_menu_801AEFD4[4], 1.0f, 1.0f);
+    TextureRect_IA8(&gMasterDisp, D_OPT_80069C0, 56, 15, D_menu_801AEFA8[4], D_menu_801AEFD4[4], 1.0f, 1.0f);
 
     colorGB = D_menu_801B9270[3];
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, colorGB, colorGB, 255);
-    TextureRect_8bIA(&gMasterDisp, D_OPT_8006D10, 24, 13, D_menu_801AEFA8[5], D_menu_801AEFD4[5], 1.0f, 1.0f);
+    TextureRect_IA8(&gMasterDisp, D_OPT_8006D10, 24, 13, D_menu_801AEFA8[5], D_menu_801AEFD4[5], 1.0f, 1.0f);
 
     if (D_menu_801B9288 == 0) {
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
-        TextureRect_8bIA_MirX(&gMasterDisp, D_OPT_800E130, 8, 8, D_menu_801AEFA8[6], D_menu_801AEFD4[6], 1.0f, 1.0f);
-        TextureRect_8bIA(&gMasterDisp, D_OPT_800E130, 8, 8, D_menu_801AEFA8[7], D_menu_801AEFD4[7], 1.0f, 1.0f);
+        TextureRect_IA8_MirX(&gMasterDisp, D_OPT_800E130, 8, 8, D_menu_801AEFA8[6], D_menu_801AEFD4[6], 1.0f, 1.0f);
+        TextureRect_IA8(&gMasterDisp, D_OPT_800E130, 8, 8, D_menu_801AEFA8[7], D_menu_801AEFD4[7], 1.0f, 1.0f);
     }
 
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
 
     switch (gOptionSoundMode) {
         case OPTIONSOUND_STEREO:
-            TextureRect_8bIA(&gMasterDisp, D_OPT_800CD90, 56, 13, D_menu_801AEFA8[8], D_menu_801AEFD4[8], 1.0f, 1.0f);
+            TextureRect_IA8(&gMasterDisp, D_OPT_800CD90, 56, 13, D_menu_801AEFA8[8], D_menu_801AEFD4[8], 1.0f, 1.0f);
             break;
 
         case OPTIONSOUND_MONO:
-            TextureRect_8bIA(&gMasterDisp, D_OPT_80076E0, 56, 14, D_menu_801AEFA8[9], D_menu_801AEFD4[9], 1.0f, 1.0f);
+            TextureRect_IA8(&gMasterDisp, D_OPT_80076E0, 56, 14, D_menu_801AEFA8[9], D_menu_801AEFD4[9], 1.0f, 1.0f);
             break;
 
         case OPTIONSOUND_HEADSET:
-            TextureRect_8bIA(&gMasterDisp, D_OPT_8007210, 88, 14, D_menu_801AEFA8[10], D_menu_801AEFD4[10], 1.0f, 1.0f);
+            TextureRect_IA8(&gMasterDisp, D_OPT_8007210, 88, 14, D_menu_801AEFA8[10], D_menu_801AEFD4[10], 1.0f, 1.0f);
             break;
     }
 
-    TextureRect_8bIA(&gMasterDisp, D_OPT_8006E50, 96, 10, 166.0f, 213.0f, 1.0f, 1.0f);
+    TextureRect_IA8(&gMasterDisp, D_OPT_8006E50, 96, 10, 166.0f, 213.0f, 1.0f, 1.0f);
 
     for (i = 0; i < 3; i++) {
         Option_DrawCardLabel(D_menu_801AEAA0[i]);
@@ -1539,8 +1527,8 @@ void Option_801952B4(void) {
                 break;
 
             case 1:
-                if (D_menu_801B9178) {
-                    break;
+                if (D_menu_801B9178 != 0) {
+                    break; // looks fake, but isn't
                 }
 
                 for (i = 2; i < 4; i++) {
@@ -1554,17 +1542,14 @@ void Option_801952B4(void) {
                 break;
 
             case 2:
-                if (D_menu_801B9178) {
-                    break;
+                if (D_menu_801B9178 == 0) {
+                    for (i = 2; i < 4; i++) {
+                        D_menu_801AE9C0[i].unk_20 -= 0.02f;
+                        D_menu_801AE9C0[i].unk_24 -= 0.02f;
+                        D_menu_801AE9C0[i].unk_18 += 0.1f;
+                    }
+                    D_menu_801B914C++;
                 }
-
-                for (i = 2; i < 4; i++) {
-                    D_menu_801AE9C0[i].unk_20 -= 0.02f;
-                    D_menu_801AE9C0[i].unk_24 -= 0.02f;
-                    D_menu_801AE9C0[i].unk_18 += 0.1f;
-                }
-
-                D_menu_801B914C++;
                 break;
 
             case 3:
@@ -1575,44 +1560,39 @@ void Option_801952B4(void) {
 
         switch (D_menu_801B9158) {
             case 0:
-                if (D_menu_801B917C) {
-                    break;
-                }
+                if (D_menu_801B917C == 0) {
+                    for (i = 0; i < 4; i++) {
+                        D_menu_801AE9C0[i].unk_20 += 0.08f;
+                        D_menu_801AE9C0[i].unk_24 += 0.08f;
+                        D_menu_801AE9C0[i].unk_18 -= 0.4f;
+                        D_menu_801AE9C0[i].unk_1C -= 0.4f;
+                    }
 
-                for (i = 0; i < 4; i++) {
-                    D_menu_801AE9C0[i].unk_20 += 0.08f;
-                    D_menu_801AE9C0[i].unk_24 += 0.08f;
-                    D_menu_801AE9C0[i].unk_18 -= 0.4f;
-                    D_menu_801AE9C0[i].unk_1C -= 0.4f;
+                    D_menu_801B917C = 2;
+                    D_menu_801B9158++;
                 }
-
-                D_menu_801B917C = 2;
-                D_menu_801B9158++;
                 break;
 
             case 1:
-                if (D_menu_801B917C) {
-                    break;
-                }
+                if (D_menu_801B917C == 0) {
 
-                for (i = 0; i < 4; i++) {
-                    D_menu_801AE9C0[i].unk_20 -= 0.08f;
-                    D_menu_801AE9C0[i].unk_24 -= 0.08f;
-                    D_menu_801AE9C0[i].unk_18 += 0.4f;
-                    D_menu_801AE9C0[i].unk_1C += 0.4f;
-                }
+                    for (i = 0; i < 4; i++) {
+                        D_menu_801AE9C0[i].unk_20 -= 0.08f;
+                        D_menu_801AE9C0[i].unk_24 -= 0.08f;
+                        D_menu_801AE9C0[i].unk_18 += 0.4f;
+                        D_menu_801AE9C0[i].unk_1C += 0.4f;
+                    }
 
-                D_menu_801B917C = 2;
-                D_menu_801B9158++;
+                    D_menu_801B917C = 2;
+                    D_menu_801B9158++;
+                }
                 break;
 
             case 2:
-                if (D_menu_801B917C) {
-                    break;
+                if (D_menu_801B917C == 0) {
+                    D_menu_801B917C = RAND_INT(30.0f);
+                    D_menu_801B9158 = 0;
                 }
-
-                D_menu_801B917C = RAND_INT(30.0f);
-                D_menu_801B9158 = 0;
                 break;
         }
 
@@ -1685,7 +1665,7 @@ void Option_ExpertSoundUpdate(void) {
     if (gControllerPress[gMainController].button & B_BUTTON) {
         if (!D_menu_801B9320) {
             AUDIO_PLAY_SFX(NA_SE_ARWING_CANCEL, gDefaultSfxSource, 4);
-            AUDIO_PLAY_BGM(SEQ_ID_MENU);
+            AUDIO_PLAY_BGM(NA_BGM_SELECT);
             gDrawMode = DRAW_NONE;
             D_menu_801B9124 = 1000;
             D_menu_801B912C = 0;
@@ -1742,16 +1722,16 @@ void Option_ExpertSoundDraw(void) {
     if (!showJukebox) {
 #endif
 
-        RCP_SetupDL(&gMasterDisp, 0x53);
+        RCP_SetupDL(&gMasterDisp, SETUPDL_83);
 
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
 
-        TextureRect_8bIA(&gMasterDisp, D_OPT_80079F0, 128, 14, 49.0f, 81.0f, 1.0f, 1.0f);
+        TextureRect_IA8(&gMasterDisp, D_OPT_80079F0, 128, 14, 49.0f, 81.0f, 1.0f, 1.0f);
 
-        TextureRect_8bIA(&gMasterDisp, D_menu_801AECF8[D_menu_801B931C / 10], 16, 15, 230.0f, 82.0f, 1.0f, 1.0f);
+        TextureRect_IA8(&gMasterDisp, D_menu_801AECF8[D_menu_801B931C / 10], 16, 15, 230.0f, 82.0f, 1.0f, 1.0f);
 
-        TextureRect_8bIA(&gMasterDisp, D_menu_801AECF8[D_menu_801B931C % 10], 16, 15, 244.0f, 82.0f, 1.0f, 1.0f);
+        TextureRect_IA8(&gMasterDisp, D_menu_801AECF8[D_menu_801B931C % 10], 16, 15, 244.0f, 82.0f, 1.0f, 1.0f);
 
 #if MODS_SFX_JUKEBOX == 1
     }
@@ -1759,13 +1739,13 @@ void Option_ExpertSoundDraw(void) {
 
     Option_8019B7D4();
 
-    RCP_SetupDL(&gMasterDisp, 0x4C);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_76);
 
     gDPSetPrimColor(gMasterDisp++, 0, 0, 50, 50, 200, 255);
 
     for (i = 0; i < 4; i++) {
-        TextureRect_16bRGBA(&gMasterDisp, D_MAP_60447A0, 8, 8, D_menu_801AF014[i], D_menu_801AF024[i],
-                            D_menu_801AF034[i], D_menu_801AF044[i]);
+        TextureRect_RGBA16(&gMasterDisp, D_MAP_60447A0, 8, 8, D_menu_801AF014[i], D_menu_801AF024[i],
+                           D_menu_801AF034[i], D_menu_801AF044[i]);
     }
 
     if (D_menu_801B9320 != 0) {
@@ -1791,7 +1771,7 @@ void Option_ExpertSoundDraw(void) {
 
     Lib_InitOrtho(&gMasterDisp);
 
-    RCP_SetupDL(&gMasterDisp, 5);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_5);
 
     Matrix_Push(&gGfxMatrix);
     Matrix_LookAt(gGfxMatrix, 0.0f, 0.0f, 100.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, MTXF_APPLY);
@@ -1838,7 +1818,7 @@ void Option_DataUpdate(void) {
 
         case 2:
             if (D_menu_801B9330[D_menu_801B91C0] != 0) {
-                break;
+                break; // looks fake, but isn't
             }
             D_menu_801B91CC = 0;
             D_menu_801B91C0 = 0;
@@ -1846,74 +1826,71 @@ void Option_DataUpdate(void) {
             break;
 
         case 3:
-            if (D_menu_801B9330[D_menu_801B91C0]) {
-                break;
+            if (D_menu_801B9330[D_menu_801B91C0] == 0) {
+                gDrawMode = DRAW_NONE;
+                D_menu_801B9124 = 1000;
+                D_menu_801B912C = 0;
+                D_menu_801B9244 = 1;
             }
-            gDrawMode = DRAW_NONE;
-            D_menu_801B9124 = 1000;
-            D_menu_801B912C = 0;
-            D_menu_801B9244 = 1;
             break;
 
         case 4:
-            if (D_menu_801B9330[D_menu_801B91C0]) {
-                break;
-            }
+            if (D_menu_801B9330[D_menu_801B91C0] == 0) {
+                switch (D_menu_801B91CC) {
+                    case 0:
+                        D_menu_801B91CC = 1;
+                        D_menu_801B91C0 = 0;
+                        D_menu_801B912C = 0;
+                        break;
 
-            switch (D_menu_801B91CC) {
-                case 0:
-                    D_menu_801B91CC = 1;
-                    D_menu_801B91C0 = 0;
-                    D_menu_801B912C = 0;
-                    break;
+                    case 1:
+                        D_menu_801B91CC = 2;
+                        AUDIO_PLAY_SFX(NA_SE_BACKUP_CLEAR, gDefaultSfxSource, 4);
+                        D_ctx_801779A8[gMainController] = 50.0f;
+                        D_ctx_80177990[gMainController] = 0;
+                        break;
 
-                case 1:
-                    D_menu_801B91CC = 2;
-                    AUDIO_PLAY_SFX(NA_SE_BACKUP_CLEAR, gDefaultSfxSource, 4);
-                    D_ctx_801779A8[gMainController] = 50.0f;
-                    D_ctx_80177990[gMainController] = 0;
-                    break;
+                    case 2:
+                        D_ctx_80177990[gMainController] += (s32) D_ctx_801779A8[gMainController];
+                        temp_fv0 = Math_SmoothStepToF(&D_ctx_801779A8[gMainController], 100.0f, 0.05f, 100.0f, 0.1f);
 
-                case 2:
-                    D_ctx_80177990[gMainController] += (s32) D_ctx_801779A8[gMainController];
-                    temp_fv0 = Math_SmoothStepToF(&D_ctx_801779A8[gMainController], 100.0f, 0.05f, 100.0f, 0.1f);
-
-                    if (D_ctx_80177990[gMainController] >= 100) {
-                        D_ctx_80177990[gMainController] -= 100;
-                        gControllerRumbleFlags[gMainController] = 1;
-                    }
-
-                    if (temp_fv0 == 0.0f) {
-                        D_menu_801B91CC = 3;
-
-                        gSaveFile = *(SaveFile*) &gDefaultSave;
-
-                        Save_Write();
-
-                        D_menu_801B91AC = 0;
-                        D_menu_801B91B0 = 0;
-                        D_menu_801B91C8 = 0;
-
-                        gExpertMode = false;
-
-                        sOptionCardList[0].unk_00.unk_08 = D_OPT_8003B50;
-                        sOptionCardList[0].unk_00.unk_10 = 72;
-                        sOptionCardList[0].unk_00.unk_14 = 12;
-                        sOptionCardList[4].unk_00.unk_08 = D_OPT_80046B0;
-                        sOptionCardList[4].unk_00.unk_10 = 64;
-                        sOptionCardList[4].unk_00.unk_14 = 10;
-
-                        for (i = 0; i < OPTION_COUNT; i++) {
-                            sOptionCardCurTextPosX[i] = sOptionCardTextPosX[i];
-                            sOptionCardCurTextPosY[i] = sOptionCardTextPosY[i];
+                        if (D_ctx_80177990[gMainController] >= 100) {
+                            D_ctx_80177990[gMainController] -= 100;
+                            gControllerRumbleFlags[gMainController] = 1;
                         }
-                        Title_80188010();
-                    }
-                    break;
 
-                case 3:
-                    D_menu_801B912C = 0;
-                    break;
+                        if (temp_fv0 == 0.0f) {
+                            D_menu_801B91CC = 3;
+
+                            gSaveFile = *(SaveFile*) &gDefaultSave;
+
+                            Save_Write();
+
+                            D_menu_801B91AC = 0;
+                            D_menu_801B91B0 = 0;
+                            D_menu_801B91C8 = false;
+
+                            gExpertMode = false;
+
+                            sOptionCardList[0].unk_00.unk_08 = D_OPT_8003B50;
+                            sOptionCardList[0].unk_00.unk_10 = 72;
+                            sOptionCardList[0].unk_00.unk_14 = 12;
+                            sOptionCardList[4].unk_00.unk_08 = D_OPT_80046B0;
+                            sOptionCardList[4].unk_00.unk_10 = 64;
+                            sOptionCardList[4].unk_00.unk_14 = 10;
+
+                            for (i = 0; i < OPTION_COUNT; i++) {
+                                sOptionCardCurTextPosX[i] = sOptionCardTextPosX[i];
+                                sOptionCardCurTextPosY[i] = sOptionCardTextPosY[i];
+                            }
+                            Title_80188010();
+                        }
+                        break;
+
+                    case 3:
+                        D_menu_801B912C = 0;
+                        break;
+                }
             }
             break;
     }
@@ -1969,20 +1946,20 @@ void Option_DataDraw(void) {
 
     Option_DrawMenuLabel();
 
-    RCP_SetupDL(&gMasterDisp, 0x53);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_83);
 
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
 
     for (i = 0; i < 2; i++) {
-        TextureRect_8bIA(&gMasterDisp, D_OPT_80084B0 + (176 * 4 * i), 176, 4, D_menu_801AF094[0],
-                         D_menu_801AF0AC[0] + (4.0f * i), 1.0f, 1.0f);
+        TextureRect_IA8(&gMasterDisp, D_OPT_80084B0 + (176 * 4 * i), 176, 4, D_menu_801AF094[0],
+                        D_menu_801AF0AC[0] + (4.0f * i), 1.0f, 1.0f);
     }
-    TextureRect_8bIA(&gMasterDisp, D_OPT_80084B0 + 176 * 4 * 2, 176, 5, D_menu_801AF094[0], D_menu_801AF0AC[0] + 8.0f,
-                     1.0f, 1.0f);
+    TextureRect_IA8(&gMasterDisp, D_OPT_80084B0 + 176 * 4 * 2, 176, 5, D_menu_801AF094[0], D_menu_801AF0AC[0] + 8.0f,
+                    1.0f, 1.0f);
 
     if (D_menu_801B91CC < 2) {
-        TextureRect_8bIA_MirX(&gMasterDisp, D_OPT_800E130, 8, 8, D_menu_801AF084[D_menu_801B91C0], 140.0f, 1.0f, 1.0f);
-        TextureRect_8bIA(&gMasterDisp, D_OPT_800E130, 8, 8, D_menu_801AF08C[D_menu_801B91C0], 140.0f, 1.0f, 1.0f);
+        TextureRect_IA8_MirX(&gMasterDisp, D_OPT_800E130, 8, 8, D_menu_801AF084[D_menu_801B91C0], 140.0f, 1.0f, 1.0f);
+        TextureRect_IA8(&gMasterDisp, D_OPT_800E130, 8, 8, D_menu_801AF08C[D_menu_801B91C0], 140.0f, 1.0f, 1.0f);
 
         Option_8019C824(&D_menu_801AED20[D_menu_801B91C0]);
         D_menu_801AED20[!D_menu_801B91C0] = 255.0f;
@@ -1990,23 +1967,23 @@ void Option_DataDraw(void) {
         sp74[0] = sp74[1] = 0xFFFFFFFF;
 
         for (i = 0; i < 2; i++) {
-            if (D_menu_801B9330[i]) {
+            if (D_menu_801B9330[i] != 0) {
                 sp74[i] = 1;
                 sp7C[i] = 255;
                 D_menu_801B9330[i]--;
             }
         }
 
-        if (gGameFrameCount & sp74[1]) {
+        if ((gGameFrameCount & sp74[1]) != 0) {
             sp7C[1] = D_menu_801AED20[1];
             gDPSetPrimColor(gMasterDisp++, 0, 0, 255, sp7C[1], sp7C[1], 255);
-            TextureRect_8bIA(&gMasterDisp, D_OPT_8009980, 32, 12, D_menu_801AF094[1], D_menu_801AF0AC[1], 1.0f, 1.0f);
+            TextureRect_IA8(&gMasterDisp, D_OPT_8009980, 32, 12, D_menu_801AF094[1], D_menu_801AF0AC[1], 1.0f, 1.0f);
         }
 
-        if (gGameFrameCount & sp74[0]) {
+        if ((gGameFrameCount & sp74[0]) != 0) {
             sp7C[0] = D_menu_801AED20[0];
             gDPSetPrimColor(gMasterDisp++, 0, 0, 255, sp7C[0], sp7C[0], 255);
-            TextureRect_8bIA(&gMasterDisp, D_OPT_8009B00, 40, 12, D_menu_801AF094[2], D_menu_801AF0AC[2], 1.0f, 1.0f);
+            TextureRect_IA8(&gMasterDisp, D_OPT_8009B00, 40, 12, D_menu_801AF094[2], D_menu_801AF0AC[2], 1.0f, 1.0f);
         }
     }
 
@@ -2015,11 +1992,11 @@ void Option_DataDraw(void) {
             gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
 
             for (i = 0; i < 9; i++) {
-                TextureRect_8bIA(&gMasterDisp, D_OPT_8008DA0 + (160 * 2 * i), 160, 2, D_menu_801AF094[3],
-                                 D_menu_801AF0AC[3] + (2.0f * i), 1.0f, 1.0f);
+                TextureRect_IA8(&gMasterDisp, D_OPT_8008DA0 + (160 * 2 * i), 160, 2, D_menu_801AF094[3],
+                                D_menu_801AF0AC[3] + (2.0f * i), 1.0f, 1.0f);
             }
-            TextureRect_8bIA(&gMasterDisp, D_OPT_8008DA0 + 160 * 2 * 9, 160, 1, D_menu_801AF094[3],
-                             D_menu_801AF0AC[3] + 18.0f, 1.0f, 1.0f);
+            TextureRect_IA8(&gMasterDisp, D_OPT_8008DA0 + 160 * 2 * 9, 160, 1, D_menu_801AF094[3],
+                            D_menu_801AF0AC[3] + 18.0f, 1.0f, 1.0f);
             break;
 
         case 1:
@@ -2027,19 +2004,19 @@ void Option_DataDraw(void) {
             gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
 
             for (i = 0; i < 20; i++) {
-                TextureRect_8bIA(&gMasterDisp, D_OPT_8009CE0 + (160 * 2 * i), 160, 2, D_menu_801AF094[4],
-                                 D_menu_801AF0AC[4] + (2.0f * i), 1.0f, 1.0f);
+                TextureRect_IA8(&gMasterDisp, D_OPT_8009CE0 + (160 * 2 * i), 160, 2, D_menu_801AF094[4],
+                                D_menu_801AF0AC[4] + (2.0f * i), 1.0f, 1.0f);
             }
-            TextureRect_8bIA(&gMasterDisp, D_OPT_8009CE0 + 160 * 2 * 20, 160, 1, D_menu_801AF094[4],
-                             D_menu_801AF0AC[4] + 40.0f, 1.0f, 1.0f);
+            TextureRect_IA8(&gMasterDisp, D_OPT_8009CE0 + 160 * 2 * 20, 160, 1, D_menu_801AF094[4],
+                            D_menu_801AF0AC[4] + 40.0f, 1.0f, 1.0f);
             break;
 
         case 3:
             gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 32, 32, 255);
 
-            TextureRect_8bIA(&gMasterDisp, D_OPT_800B680, 144, 28, D_menu_801AF094[5], D_menu_801AF0AC[5], 1.0f, 1.0f);
-            TextureRect_8bIA(&gMasterDisp, D_OPT_800B680 + 4032, 144, 13, D_menu_801AF094[5],
-                             D_menu_801AF0AC[5] + 28.0f, 1.0f, 1.0f);
+            TextureRect_IA8(&gMasterDisp, D_OPT_800B680, 144, 28, D_menu_801AF094[5], D_menu_801AF0AC[5], 1.0f, 1.0f);
+            TextureRect_IA8(&gMasterDisp, D_OPT_800B680 + 4032, 144, 13, D_menu_801AF094[5], D_menu_801AF0AC[5] + 28.0f,
+                            1.0f, 1.0f);
             break;
     }
 
@@ -2166,13 +2143,13 @@ void Option_RankingMenuDraw(void) {
         Option_8019752C();
     } else {
         Title_80187E28();
-        RCP_SetupDL(&gMasterDisp, 0x53);
+        RCP_SetupDL(&gMasterDisp, SETUPDL_83);
         Option_8019C824(&D_menu_801B93F0);
         temp_t0 = D_menu_801B93F0;
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, temp_t0, temp_t0, 255);
-        TextureRect_8bIA(&gMasterDisp, D_VS_MENU_7004010, 8, 8, 70.0f, (D_menu_801B93E4 * 17.0f) + 55.0f, 1.0f, 1.0f);
+        TextureRect_IA8(&gMasterDisp, D_VS_MENU_7004010, 8, 8, 70.0f, (D_menu_801B93E4 * 17.0f) + 55.0f, 1.0f, 1.0f);
     }
-    RCP_SetupDL(&gMasterDisp, 0x53);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_83);
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 0, 255);
     Graphics_DisplaySmallText(242, 215, 1.0f, 1.0f, "PUSH A");
 }
@@ -2205,16 +2182,16 @@ void Option_8019752C(void) {
     Option_80197914();
 
     Matrix_Pop(&gGfxMatrix);
-    RCP_SetupDL(&gMasterDisp, 0x4C);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_76);
 
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
 
-    TextureRect_8bIA(&gMasterDisp, D_OPT_800D170, 8, 16, 0.0f, D_menu_801AF0F8[0], 40.0f, 1.5f);
-    TextureRect_8bIA_MirY(&gMasterDisp, D_OPT_800D170, 8, 16, 0.0f, D_menu_801AF0F8[1], 40.0f, 1.5f);
+    TextureRect_IA8(&gMasterDisp, D_OPT_800D170, 8, 16, 0.0f, D_menu_801AF0F8[0], 40.0f, 1.5f);
+    TextureRect_IA8_MirY(&gMasterDisp, D_OPT_800D170, 8, 16, 0.0f, D_menu_801AF0F8[1], 40.0f, 1.5f);
 
     Background_DrawPartialStarfield(0, 70);
     Background_DrawPartialStarfield(170, 239);
-    RCP_SetupDL(&gMasterDisp, 0x53);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_83);
 
     if (D_menu_801B91D4 >= 114.0f) {
         gDPSetPrimColor(gMasterDisp++, 0, 0, 32, 32, 32, 255);
@@ -2224,7 +2201,7 @@ void Option_8019752C(void) {
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, temp_a0, temp_a0, 255);
     }
 
-    TextureRect_8bIA(&gMasterDisp, D_OPT_800D070, 16, 16, 150.0f, 44.0f, 1.0f, 1.0f);
+    TextureRect_IA8(&gMasterDisp, D_OPT_800D070, 16, 16, 150.0f, 44.0f, 1.0f, 1.0f);
 
     if (D_menu_801B91D4 <= -1055.0f) {
         gDPSetPrimColor(gMasterDisp++, 0, 0, 32, 32, 32, 255);
@@ -2234,7 +2211,7 @@ void Option_8019752C(void) {
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, temp_a0, temp_a0, 255);
     }
 
-    TextureRect_8bIA_MirY(&gMasterDisp, D_OPT_800D070, 16, 16, 150.0f, 200.0f, 1.0f, 1.0f);
+    TextureRect_IA8_MirY(&gMasterDisp, D_OPT_800D070, 16, 16, 150.0f, 200.0f, 1.0f, 1.0f);
 }
 
 static Vec3f D_menu_801AF100[2] = { { 0.0f, 167.0f, 0.0f }, { 0.0f, -167.0f, 0.0f } };
@@ -2245,7 +2222,7 @@ void Option_80197914(void) {
     Vec3f* vec2;
     s32 i;
 
-    RCP_SetupDL(&gMasterDisp, 0);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_0);
 
     for (i = 0, vec1 = D_menu_801AF100, vec2 = D_menu_801AF118; i < 2; i++, vec1++, vec2++) {
         Matrix_Push(&gGfxMatrix);
@@ -2258,38 +2235,36 @@ void Option_80197914(void) {
 }
 
 void Option_80197A3C(s32 arg0, s32 arg1, s32 arg2) {
-    RCP_SetupDL(&gMasterDisp, 0x53);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_83);
 
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
 
     if (arg0 != 9) {
-        TextureRect_8bIA(&gMasterDisp, D_menu_801AECF8[arg0 + 1], 16, 15, arg1, arg2 - 25.0f, 1.0f, 1.0f);
+        TextureRect_IA8(&gMasterDisp, D_menu_801AECF8[arg0 + 1], 16, 15, arg1, arg2 - 25.0f, 1.0f, 1.0f);
     } else {
-        TextureRect_8bIA(&gMasterDisp, aLargeText_1, 16, 15, arg1 - 14.0f, arg2 - 25.0f, 1.0f, 1.0f);
-        TextureRect_8bIA(&gMasterDisp, aLargeText_0, 16, 15, arg1, arg2 - 25.0f, 1.0f, 1.0f);
+        TextureRect_IA8(&gMasterDisp, aLargeText_1, 16, 15, arg1 - 14.0f, arg2 - 25.0f, 1.0f, 1.0f);
+        TextureRect_IA8(&gMasterDisp, aLargeText_0, 16, 15, arg1, arg2 - 25.0f, 1.0f, 1.0f);
     }
 
-    RCP_SetupDL(&gMasterDisp, 0x55);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_85);
 
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
 
     switch (arg0) {
         case 0:
-            TextureRect_4bCI(&gMasterDisp, D_OPT_8003A70, D_OPT_8003AB8, 16, 9, arg1 + 17.0f, arg2 - 19.0f, 1.0f, 1.0f);
+            TextureRect_CI4(&gMasterDisp, D_OPT_8003A70, D_OPT_8003AB8, 16, 9, arg1 + 17.0f, arg2 - 19.0f, 1.0f, 1.0f);
             break;
 
         case 1:
-            TextureRect_4bCI(&gMasterDisp, D_OPT_80038E0, D_OPT_8003930, 16, 10, arg1 + 17.0f, arg2 - 19.0f, 1.0f,
-                             1.0f);
+            TextureRect_CI4(&gMasterDisp, D_OPT_80038E0, D_OPT_8003930, 16, 10, arg1 + 17.0f, arg2 - 19.0f, 1.0f, 1.0f);
             break;
 
         case 2:
-            TextureRect_4bCI(&gMasterDisp, D_OPT_8003950, D_OPT_80039A8, 16, 11, arg1 + 17.0f, arg2 - 20.0f, 1.0f,
-                             1.0f);
+            TextureRect_CI4(&gMasterDisp, D_OPT_8003950, D_OPT_80039A8, 16, 11, arg1 + 17.0f, arg2 - 20.0f, 1.0f, 1.0f);
             break;
 
         default:
-            TextureRect_4bCI(&gMasterDisp, D_OPT_8003AE0, D_OPT_8003B28, 16, 9, arg1 + 17.0f, arg2 - 19.0f, 1.0f, 1.0f);
+            TextureRect_CI4(&gMasterDisp, D_OPT_8003AE0, D_OPT_8003B28, 16, 9, arg1 + 17.0f, arg2 - 19.0f, 1.0f, 1.0f);
             break;
     }
 }
@@ -2297,7 +2272,7 @@ void Option_80197A3C(s32 arg0, s32 arg1, s32 arg2) {
 void Option_80197D30(s32 arg0, s32 arg1, s32 arg2) {
     char temp[4];
 
-    RCP_SetupDL(&gMasterDisp, 0x53);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_83);
 
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 0, 255);
 
@@ -2310,9 +2285,9 @@ void Option_80197D30(s32 arg0, s32 arg1, s32 arg2) {
 }
 
 void Option_80197DE4(s32 arg0, s32 arg1, s32 arg2) {
-    RCP_SetupDL(&gMasterDisp, 0x53);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_83);
     gDPSetPrimColor(gMasterDisp++, 0, 0, 60, 60, 255, 170);
-    TextureRect_8bIA(&gMasterDisp, D_MAP_601B4B0, 24, 17, arg1, arg2, 3.17f, 1.05f);
+    TextureRect_IA8(&gMasterDisp, D_MAP_601B4B0, 24, 17, arg1, arg2, 3.17f, 1.05f);
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 0, 255);
     Graphics_DisplaySmallText(arg1, arg2, 1.0f, 1.0f, "TOTAL HITS");
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
@@ -2324,7 +2299,7 @@ void Option_80197F74(s32 arg0, s32 arg1, s32 arg2) {
     f32 temp_fs1;
     s32 i;
 
-    RCP_SetupDL(&gMasterDisp, 0x53);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_83);
 
     for (temp_fs1 = 0.0f, i = 0; i < 3; i++, temp_fs1 += 12.0f) {
         gDPSetPrimColor(gMasterDisp++, 0, 0, D_menu_801AF0D0[i], D_menu_801AF0DC[i], D_menu_801AF0E8[i], 255);
@@ -2364,7 +2339,7 @@ void Option_801982B0(s32 arg0, s32 arg1, f32 arg2, f32 arg3, s32 arg4) {
     PlanetId end;
 
     if ((arg3 > 30.0f) && (arg3 < 200.0f)) {
-        RCP_SetupDL(&gMasterDisp, 0x4C);
+        RCP_SetupDL(&gMasterDisp, SETUPDL_76);
         if (arg1 < 6) {
             b = 255;
             g = 255;
@@ -2399,10 +2374,10 @@ void Option_801982B0(s32 arg0, s32 arg1, f32 arg2, f32 arg3, s32 arg4) {
                 }
             }
             gDPSetPrimColor(gMasterDisp++, 0, 0, r, g, b, 255);
-            TextureRect_16bRGBA(&gMasterDisp, D_MAP_60447A0, 8, 8, arg2 + 24.0f, arg3 + 11.0f, 2.0f, 0.2f);
+            TextureRect_RGBA16(&gMasterDisp, D_MAP_60447A0, 8, 8, arg2 + 24.0f, arg3 + 11.0f, 2.0f, 0.2f);
         }
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
-        TextureRect_16bRGBA(&gMasterDisp, D_MAP_6047550, 24, 24, arg2, arg3, 1.0f, 1.0f);
+        TextureRect_RGBA16(&gMasterDisp, D_MAP_6047550, 24, 24, arg2, arg3, 1.0f, 1.0f);
     }
 }
 
@@ -2410,7 +2385,7 @@ void Option_801984D0(s32 arg0, s32 arg1, f32 arg2, f32 arg3) {
     s32 sp1C;
 
     if ((arg3 > 22.0f) && (arg3 < 162.0f)) {
-        RCP_SetupDL(&gMasterDisp, 0x53);
+        RCP_SetupDL(&gMasterDisp, SETUPDL_83);
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 0, 255);
         sp1C = (gSaveFile.save.data.unk_5E[arg0][arg1].unk_C & 1) << 8;
         sp1C |= gSaveFile.save.data.unk_5E[arg0][arg1].unk_0;
@@ -2424,7 +2399,7 @@ void Option_80198608(s32 arg0, s32 arg1, f32 arg2, f32 arg3) {
     s32 i;
 
     if ((arg3 > 12.0f) && (arg3 < 154.0f)) {
-        RCP_SetupDL(&gMasterDisp, 0x53);
+        RCP_SetupDL(&gMasterDisp, SETUPDL_83);
 
         sp90[0] = gSaveFile.save.data.unk_5E[arg0][arg1].unk_D & 1;
         sp90[1] = gSaveFile.save.data.unk_5E[arg0][arg1].unk_F & 1;
@@ -2449,7 +2424,7 @@ void Option_8019882C(s32 arg0, s32 arg1, f32 arg2, f32 arg3) {
     if ((arg3 > 58.0f) && (arg3 < 197.0f)) {
         temp = gSaveFile.save.data.unk_5E[arg0][arg1].unk_8 & 0xF;
         sp20 = D_menu_801AEEAC[temp];
-        RCP_SetupDL(&gMasterDisp, 0x53);
+        RCP_SetupDL(&gMasterDisp, SETUPDL_83);
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 0, 255);
         temp2 = Graphics_GetSmallTextWidth(sp20) / 2.0f;
         Graphics_DisplaySmallText(arg2 + 12.0f - temp2, arg3 - 8.0f, 1.0f, 1.0f, sp20);
@@ -2479,7 +2454,7 @@ void Option_8019896C(s32 arg0, f32 y, s32 arg2) {
 
         switch (planet) {
             case SAVE_SLOT_SOLAR:
-                RCP_SetupDL(&gMasterDisp, 0x43);
+                RCP_SetupDL(&gMasterDisp, SETUPDL_67);
 
                 gDPSetPrimColor(gMasterDisp++, 0, 0, 240, 0, 0, 255);
                 gDPSetEnvColor(gMasterDisp++, 31, 0, 0, 0);
@@ -2500,7 +2475,7 @@ void Option_8019896C(s32 arg0, f32 y, s32 arg2) {
                 break;
 
             case PLANET_METEO:
-                RCP_SetupDL(&gMasterDisp, 0x3E);
+                RCP_SetupDL(&gMasterDisp, SETUPDL_62);
 
                 gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
 
@@ -2522,7 +2497,7 @@ void Option_8019896C(s32 arg0, f32 y, s32 arg2) {
             case PLANET_SECTOR_X:
             case PLANET_SECTOR_Y:
             case PLANET_SECTOR_Z:
-                RCP_SetupDL(&gMasterDisp, 0x3E);
+                RCP_SetupDL(&gMasterDisp, SETUPDL_62);
 
                 gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 144);
 
@@ -2537,7 +2512,7 @@ void Option_8019896C(s32 arg0, f32 y, s32 arg2) {
                 break;
 
             case PLANET_BOLSE:
-                RCP_SetupDL(&gMasterDisp, 0x17);
+                RCP_SetupDL(&gMasterDisp, SETUPDL_23);
                 Lights_SetOneLight(&gMasterDisp, 0, 0, 100, 100, 100, 70, 100, 100, 100);
 
                 Matrix_Push(&gGfxMatrix);
@@ -2552,7 +2527,7 @@ void Option_8019896C(s32 arg0, f32 y, s32 arg2) {
                 break;
 
             case PLANET_AREA_6:
-                RCP_SetupDL(&gMasterDisp, 0x17);
+                RCP_SetupDL(&gMasterDisp, SETUPDL_23);
                 Lights_SetOneLight(&gMasterDisp, 0, 0, 100, 100, 100, 70, 100, 100, 100);
 
                 Matrix_Push(&gGfxMatrix);
@@ -2567,7 +2542,7 @@ void Option_8019896C(s32 arg0, f32 y, s32 arg2) {
                 break;
 
             default:
-                RCP_SetupDL(&gMasterDisp, 0x3E);
+                RCP_SetupDL(&gMasterDisp, SETUPDL_62);
 
                 gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
 
@@ -2616,7 +2591,7 @@ static f32 D_menu_801AF140 = 11.0f;
 static f32 D_menu_801AF144 = 2.7f;
 
 void Option_80199198(f32 arg0, f32 arg1, f32 arg2) {
-    RCP_SetupDL(&gMasterDisp, 0x35);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_53);
     Matrix_Push(&gGfxMatrix);
     Matrix_Translate(gGfxMatrix, arg0 - D_menu_801AF140, arg1 + D_menu_801AF144, arg2, MTXF_APPLY);
     Matrix_Scale(gGfxMatrix, D_menu_801AF13C, D_menu_801AF13C, D_menu_801AF13C, MTXF_APPLY);
@@ -2641,7 +2616,7 @@ void Option_VersusMenuInit(void) {
     s32 i;
 
     if (D_menu_801B91C4) {
-        AUDIO_PLAY_BGM(SEQ_ID_VS_MENU);
+        AUDIO_PLAY_BGM(NA_BGM_VS_SELECT);
     }
 
     D_menu_801B93D0 = D_menu_801B9124;
@@ -2655,7 +2630,7 @@ void Option_VersusMenuInit(void) {
 
     D_menu_801B9340 = 2;
 
-    D_game_80161A28 = 0;
+    gVsMenuSelection = 0;
     gStarCount = 0;
 
     D_menu_801B93C4 = 0;
@@ -2722,7 +2697,7 @@ void Option_8019949C(void) {
                 AUDIO_PLAY_SFX(NA_SE_CANCEL, gDefaultSfxSource, 4);
                 D_menu_801B93C4 &= (1 << i) ^ 15;
             } else {
-                AUDIO_PLAY_BGM(SEQ_ID_MENU);
+                AUDIO_PLAY_BGM(NA_BGM_SELECT);
                 AUDIO_PLAY_SFX(NA_SE_ARWING_CANCEL, gDefaultSfxSource, 4);
                 Option_8019B8A0(2);
                 D_menu_801B9248 = 1;
@@ -2808,25 +2783,25 @@ void Option_80199820(s32 arg0) {
     static s32 D_menu_801AF23C[4] = { 242, 30, 255, 30 };
     static s32 D_menu_801AF24C[4] = { 12, 0, 67, 255 };
 
-    RCP_SetupDL(&gMasterDisp, 0x55);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_85);
 
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
 
     for (i = 0; i < 4; i++) {
-        TextureRect_4bCI(&gMasterDisp, D_VS_MENU_70118E0 + (80 * 16 * i) / 2, D_VS_MENU_70123F8, 80, 16,
-                         D_menu_801AF148[arg0], D_menu_801AF158[arg0] + (16.0f * i), 1.0f, 1.0f);
+        TextureRect_CI4(&gMasterDisp, D_VS_MENU_70118E0 + (80 * 16 * i) / 2, D_VS_MENU_70123F8, 80, 16,
+                        D_menu_801AF148[arg0], D_menu_801AF158[arg0] + (16.0f * i), 1.0f, 1.0f);
     }
 
-    TextureRect_4bCI(&gMasterDisp, D_VS_MENU_70118E0 + (80 * 16 * 4) / 2, D_VS_MENU_70123F8, 80, 7,
-                     D_menu_801AF148[arg0], D_menu_801AF158[arg0] + (16.0f * 4), 1.0f, 1.0f);
+    TextureRect_CI4(&gMasterDisp, D_VS_MENU_70118E0 + (80 * 16 * 4) / 2, D_VS_MENU_70123F8, 80, 7,
+                    D_menu_801AF148[arg0], D_menu_801AF158[arg0] + (16.0f * 4), 1.0f, 1.0f);
 
     gDPSetPrimColor(gMasterDisp++, 0, 0, D_menu_801AF22C[arg0], D_menu_801AF23C[arg0], D_menu_801AF24C[arg0], 255);
 
-    TextureRect_8bCI(&gMasterDisp, D_menu_801AF1EC[arg0], D_menu_801AF1FC[arg0], D_menu_801AF168[arg0],
-                     D_menu_801AF178[arg0], D_menu_801AF148[arg0] + D_menu_801AF188[arg0],
-                     D_menu_801AF158[arg0] + D_menu_801AF198, 1.0f, 1.0f);
+    TextureRect_CI8(&gMasterDisp, D_menu_801AF1EC[arg0], D_menu_801AF1FC[arg0], D_menu_801AF168[arg0],
+                    D_menu_801AF178[arg0], D_menu_801AF148[arg0] + D_menu_801AF188[arg0],
+                    D_menu_801AF158[arg0] + D_menu_801AF198, 1.0f, 1.0f);
 
-    RCP_SetupDL(&gMasterDisp, 0x53);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_83);
 
     var_v0 = 0xFFFFFFFF;
     if (D_menu_801B9348[arg0] != 0) {
@@ -2834,42 +2809,42 @@ void Option_80199820(s32 arg0) {
         D_menu_801B9348[arg0]--;
     }
 
-    if (gGameFrameCount & var_v0) {
+    if ((gGameFrameCount & var_v0) != 0) {
         colorGB = D_menu_801B9358[arg0];
 
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, colorGB, colorGB, 255);
 
-        TextureRect_8bIA(&gMasterDisp, D_VS_MENU_7001030, 64, 9, D_menu_801AF148[arg0] + D_menu_801AF1BC,
-                         D_menu_801AF158[arg0] + D_menu_801AF1C0, 1.0f, 1.0f);
+        TextureRect_IA8(&gMasterDisp, D_VS_MENU_7001030, 64, 9, D_menu_801AF148[arg0] + D_menu_801AF1BC,
+                        D_menu_801AF158[arg0] + D_menu_801AF1C0, 1.0f, 1.0f);
 
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, colorGB, colorGB, 255);
 
-        TextureRect_8bIA(&gMasterDisp, D_menu_801AF1E0[D_menu_801AED3C[arg0]], 40, 12,
-                         D_menu_801AF148[arg0] + D_menu_801AF1C4, D_menu_801AF158[arg0] + D_menu_801AF1C8, 1.0f, 1.0f);
+        TextureRect_IA8(&gMasterDisp, D_menu_801AF1E0[D_menu_801AED3C[arg0]], 40, 12,
+                        D_menu_801AF148[arg0] + D_menu_801AF1C4, D_menu_801AF158[arg0] + D_menu_801AF1C8, 1.0f, 1.0f);
     }
 
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
 
-    TextureRect_8bIA_MirX(&gMasterDisp, D_OPT_800E130, 8, 8, D_menu_801AF148[arg0] + D_menu_801AF1D4,
-                          D_menu_801AF158[arg0] + D_menu_801AF1DC, 1.0f, 1.0f);
+    TextureRect_IA8_MirX(&gMasterDisp, D_OPT_800E130, 8, 8, D_menu_801AF148[arg0] + D_menu_801AF1D4,
+                         D_menu_801AF158[arg0] + D_menu_801AF1DC, 1.0f, 1.0f);
 
-    TextureRect_8bIA(&gMasterDisp, D_OPT_800E130, 8, 8, D_menu_801AF148[arg0] + D_menu_801AF1D8,
-                     D_menu_801AF158[arg0] + D_menu_801AF1DC, 1.0f, 1.0f);
+    TextureRect_IA8(&gMasterDisp, D_OPT_800E130, 8, 8, D_menu_801AF148[arg0] + D_menu_801AF1D8,
+                    D_menu_801AF158[arg0] + D_menu_801AF1DC, 1.0f, 1.0f);
 
-    TextureRect_8bIA(&gMasterDisp, D_VS_MENU_7000F10, 40, 7, D_menu_801AF148[arg0] + D_menu_801AF1CC,
-                     D_menu_801AF158[arg0] + D_menu_801AF1D0, 1.0f, 1.0f);
+    TextureRect_IA8(&gMasterDisp, D_VS_MENU_7000F10, 40, 7, D_menu_801AF148[arg0] + D_menu_801AF1CC,
+                    D_menu_801AF158[arg0] + D_menu_801AF1D0, 1.0f, 1.0f);
 
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
 
     for (i = 0; i < 2; i++) {
-        TextureRect_16bRGBA(&gMasterDisp, D_menu_801AF20C[arg0] + (44 * 20 * i), 44, 20,
-                            D_menu_801AF148[arg0] + D_menu_801AF1B4,
-                            D_menu_801AF158[arg0] + D_menu_801AF1B8 + (i * 20.0f * 0.7f), 0.7f, 0.7f);
+        TextureRect_RGBA16(&gMasterDisp, D_menu_801AF20C[arg0] + (44 * 20 * i), 44, 20,
+                           D_menu_801AF148[arg0] + D_menu_801AF1B4,
+                           D_menu_801AF158[arg0] + D_menu_801AF1B8 + (i * 20.0f * 0.7f), 0.7f, 0.7f);
     }
 
-    TextureRect_16bRGBA(&gMasterDisp, D_menu_801AF20C[arg0] + 44 * 20 * 2, 44, 4,
-                        D_menu_801AF148[arg0] + D_menu_801AF1B4, D_menu_801AF158[arg0] + D_menu_801AF1B8 + 28.0f, 0.7f,
-                        0.7f);
+    TextureRect_RGBA16(&gMasterDisp, D_menu_801AF20C[arg0] + 44 * 20 * 2, 44, 4,
+                       D_menu_801AF148[arg0] + D_menu_801AF1B4, D_menu_801AF158[arg0] + D_menu_801AF1B8 + 28.0f, 0.7f,
+                       0.7f);
 
     var_a2 = 24;
     if (arg0 == 0) {
@@ -2878,8 +2853,8 @@ void Option_80199820(s32 arg0) {
 
     gDPSetPrimColor(gMasterDisp++, 0, 0, D_menu_801AF22C[arg0], D_menu_801AF23C[arg0], D_menu_801AF24C[arg0], 255);
 
-    TextureRect_8bIA(&gMasterDisp, D_menu_801AF21C[arg0], var_a2, 13, D_menu_801AF148[arg0] + D_menu_801AF19C[arg0],
-                     D_menu_801AF158[arg0] + D_menu_801AF1AC, D_menu_801AF1B0, D_menu_801AF1B0);
+    TextureRect_IA8(&gMasterDisp, D_menu_801AF21C[arg0], var_a2, 13, D_menu_801AF148[arg0] + D_menu_801AF19C[arg0],
+                    D_menu_801AF158[arg0] + D_menu_801AF1AC, D_menu_801AF1B0, D_menu_801AF1B0);
 }
 
 void Option_80199EA8(void) {
@@ -2890,8 +2865,8 @@ void Option_80199EA8(void) {
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
 
     for (i = 0; i < 3; i++) {
-        TextureRect_16bRGBA(&gMasterDisp, D_VS_MENU_700E9A0 + (144 * 14 * i), 144, 14, 87.0f, 84 + (i * 14.0f), 1.0f,
-                            1.0f);
+        TextureRect_RGBA16(&gMasterDisp, D_VS_MENU_700E9A0 + (144 * 14 * i), 144, 14, 87.0f, 84 + (i * 14.0f), 1.0f,
+                           1.0f);
     }
 }
 
@@ -2902,7 +2877,7 @@ void Option_VersusStageInit(void) {
     D_menu_801B933C = 0;
     D_menu_801B91E8 = 255.0f;
     D_menu_801B93D4 = gVsPointsToWin - 1;
-    D_menu_801B93D8 = D_game_80161A28;
+    D_menu_801B93D8 = gVsMenuSelection;
     D_menu_801B93DC = D_menu_801B9340;
     gVsTimeTrialLimit = D_menu_801B93DC;
     // clang-format off
@@ -3052,8 +3027,8 @@ void Option_8019A2E0(void) {
 void Option_8019A4DC(void) {
     s32 i;
 
-    if (D_menu_801B937C) {
-        return;
+    if (D_menu_801B937C != 0) {
+        return; // investigate
     }
 
     if (D_menu_801B91F0) {
@@ -3063,7 +3038,7 @@ void Option_8019A4DC(void) {
     }
 
     for (i = 0; i < 4; i++) {
-        if (gControllerPlugged[i] == 0) {
+        if (!gControllerPlugged[i]) {
             continue;
         }
 
@@ -3093,8 +3068,8 @@ void Option_8019A4DC(void) {
 void Option_8019A6DC(void) {
     s32 i;
 
-    if (D_menu_801B9374) {
-        return;
+    if (D_menu_801B9374 != 0) {
+        return; // investigate
     }
 
     if (D_menu_801B91F0) {
@@ -3110,12 +3085,12 @@ void Option_8019A6DC(void) {
         }
         if (Option_8019C418(&D_menu_801B93D8, 1, 0, 1, 20, 2, 4, i, &D_menu_801B9380[i])) {
             AUDIO_PLAY_SFX(NA_SE_CURSOR, gDefaultSfxSource, 4);
-            D_game_80161A28 = D_menu_801B93D8;
+            gVsMenuSelection = D_menu_801B93D8;
         }
 
         if (gControllerPress[i].button & A_BUTTON) {
             AUDIO_PLAY_SFX(NA_SE_DECIDE, gDefaultSfxSource, 4);
-            if (D_game_80161A28 == 0) {
+            if (gVsMenuSelection == 0) {
                 gVersusStage = VS_STAGE_CORNERIA;
                 if (D_menu_801B93D0 == 30) {
                     gVersusStage = VS_STAGE_KATINA;
@@ -3148,8 +3123,8 @@ void Option_8019A6DC(void) {
 void Option_8019A954(void) {
     s32 i;
 
-    if (D_menu_801B91EC) {
-        return;
+    if (D_menu_801B91EC != 0) {
+        return; // investigate
     }
 
     if (D_menu_801B91F0) {
@@ -3208,11 +3183,11 @@ void Option_8019AB30(void) {
     s32 sp44 = gVsPointsToWin;
     s32 var_v0;
 
-    RCP_SetupDL(&gMasterDisp, 0x53);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_83);
 
     gDPSetPrimColor(gMasterDisp++, 0, 0, 60, 60, 255, 190);
 
-    TextureRect_8bIA(&gMasterDisp, D_MAP_601B4B0, 24, 17, 94.0f, 43.0f, 5.0f, 1.1f);
+    TextureRect_IA8(&gMasterDisp, D_MAP_601B4B0, 24, 17, 94.0f, 43.0f, 5.0f, 1.1f);
 
     if (D_menu_801B912C == 0) {
         Option_8019B6D8(97.0f, 50.0f, 107.0f, 255, 255, 255);
@@ -3234,16 +3209,16 @@ void Option_8019AB30(void) {
         }
     }
 
-    if (gGameFrameCount & var_v0) {
-        RCP_SetupDL(&gMasterDisp, 0x53);
+    if ((gGameFrameCount & var_v0) != 0) {
+        RCP_SetupDL(&gMasterDisp, SETUPDL_83);
 
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, colorGB, colorGB, 255);
 
-        TextureRect_8bIA(&gMasterDisp, D_menu_801AECF8[sp44], 16, 15, 109.0f, 45.0f, 1.0f, 1.0f);
+        TextureRect_IA8(&gMasterDisp, D_menu_801AECF8[sp44], 16, 15, 109.0f, 45.0f, 1.0f, 1.0f);
 
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, colorGB, colorGB, 255);
 
-        TextureRect_8bIA(&gMasterDisp, D_VS_MENU_7001DF0, 80, 10, 122.0f, 49.0f, 1.0f, 1.0f);
+        TextureRect_IA8(&gMasterDisp, D_VS_MENU_7001DF0, 80, 10, 122.0f, 49.0f, 1.0f, 1.0f);
     }
 }
 
@@ -3260,11 +3235,11 @@ void Option_8019AD84(void) {
     static u8* sTimeTrialMinuteTextures[] = { D_VS_MENU_70024D0, D_VS_MENU_7002730, D_VS_MENU_7002990,
                                               D_VS_MENU_7002BF0, D_VS_MENU_7002E50 };
 
-    RCP_SetupDL(&gMasterDisp, 0x53);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_83);
 
     gDPSetPrimColor(gMasterDisp++, 0, 0, 60, 60, 255, 190);
 
-    TextureRect_8bIA(&gMasterDisp, D_MAP_601B4B0, 24, 17, 93.0f, 42.0f, 5.1f, 1.1f);
+    TextureRect_IA8(&gMasterDisp, D_MAP_601B4B0, 24, 17, 93.0f, 42.0f, 5.1f, 1.1f);
 
     if (D_menu_801B912C == 0) {
         D_menu_801B9324 = 97.0f;
@@ -3284,22 +3259,22 @@ void Option_8019AD84(void) {
         colorGB = 255;
         var_v0 = 1;
         D_menu_801B937C--;
-        if (!D_menu_801B937C) {
+        if (D_menu_801B937C == 0) {
             D_menu_801B91F0 = 1;
         }
     }
 
-    if (gGameFrameCount & var_v0) {
-        RCP_SetupDL(&gMasterDisp, 0x53);
+    if ((gGameFrameCount & var_v0) != 0) {
+        RCP_SetupDL(&gMasterDisp, SETUPDL_83);
 
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, colorGB, colorGB, 255);
 
-        TextureRect_8bIA(&gMasterDisp, sTimeTrialMinuteTextures[D_menu_801B9340], 40, 15,
-                         D_menu_801AF25C[D_menu_801B9340 + 1], D_menu_801AF274[D_menu_801B9340 + 1], 1.0f, 1.0f);
+        TextureRect_IA8(&gMasterDisp, sTimeTrialMinuteTextures[D_menu_801B9340], 40, 15,
+                        D_menu_801AF25C[D_menu_801B9340 + 1], D_menu_801AF274[D_menu_801B9340 + 1], 1.0f, 1.0f);
 
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, colorGB, colorGB, 255);
 
-        TextureRect_8bIA(&gMasterDisp, D_VS_MENU_7002110, 80, 12, D_menu_801AF25C[0], D_menu_801AF274[0], 1.0f, 1.0f);
+        TextureRect_IA8(&gMasterDisp, D_VS_MENU_7002110, 80, 12, D_menu_801AF25C[0], D_menu_801AF274[0], 1.0f, 1.0f);
     }
 }
 
@@ -3317,7 +3292,7 @@ void Option_8019AFFC(void) {
         D_menu_801B93C8 = 88.0f;
         D_menu_801B93CC = 114.0f;
 
-        RCP_SetupDL(&gMasterDisp, 0x53);
+        RCP_SetupDL(&gMasterDisp, SETUPDL_83);
 
         Option_8019B6D8(D_menu_801B93C0, D_menu_801B93C8, D_menu_801B93CC, 255, 255, 255);
         Option_8019C824(&D_menu_801B9370);
@@ -3332,17 +3307,17 @@ void Option_8019AFFC(void) {
         var_v0 = 1;
         colorGB = 255;
         D_menu_801B9374--;
-        if (!D_menu_801B9374) {
+        if (D_menu_801B9374 == 0) {
             D_menu_801B91F0 = 1;
         }
     }
 
-    if (gGameFrameCount & var_v0) {
-        RCP_SetupDL(&gMasterDisp, 0x53);
+    if ((gGameFrameCount & var_v0) != 0) {
+        RCP_SetupDL(&gMasterDisp, SETUPDL_83);
 
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, colorGB, colorGB, 255);
 
-        TextureRect_8bIA(&gMasterDisp, D_VS_MENU_7001270, 112, 12, D_menu_801AF2A0, D_menu_801AF2A4, 1.0f, 1.0f);
+        TextureRect_IA8(&gMasterDisp, D_VS_MENU_7001270, 112, 12, D_menu_801AF2A0, D_menu_801AF2A4, 1.0f, 1.0f);
     }
 
     if (D_menu_801B93D0 == 30) {
@@ -3366,27 +3341,27 @@ void Option_8019B1F8(void) {
     static u16* D_menu_801AF2CC[] = { D_VS_MENU_7006EA0, D_VS_MENU_7006630 };
 
     for (xPos = D_menu_801AF2A8, i = 0; i < 2; i++, xPos += D_menu_801AF2B0) {
-        if (i == D_game_80161A28) {
+        if (i == gVsMenuSelection) {
             sp8C[i] = 255;
         } else {
             sp8C[i] = 32;
         }
 
-        RCP_SetupDL(&gMasterDisp, 0x55);
+        RCP_SetupDL(&gMasterDisp, SETUPDL_85);
 
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, sp8C[i]);
 
-        TextureRect_8bCI(&gMasterDisp, D_menu_801AF2C4[i], D_menu_801AF2CC[i], 48, 38, xPos, D_menu_801AF2AC, 1.0f,
-                         1.0f);
+        TextureRect_CI8(&gMasterDisp, D_menu_801AF2C4[i], D_menu_801AF2CC[i], 48, 38, xPos, D_menu_801AF2AC, 1.0f,
+                        1.0f);
 
         width = 48;
         if (i == 1) {
             width = 56;
         }
-        RCP_SetupDL(&gMasterDisp, 0x53);
+        RCP_SetupDL(&gMasterDisp, SETUPDL_83);
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, sp8C[i]);
-        TextureRect_8bIA(&gMasterDisp, D_menu_801AF2BC[i], width, 10, D_menu_801AF2B4[i], D_menu_801AF2AC + 40.0f, 1.0f,
-                         1.0f);
+        TextureRect_IA8(&gMasterDisp, D_menu_801AF2BC[i], width, 10, D_menu_801AF2B4[i], D_menu_801AF2AC + 40.0f, 1.0f,
+                        1.0f);
     }
 }
 
@@ -3412,25 +3387,25 @@ void Option_8019B3DC(void) {
     };
 
     for (xPos = D_menu_801AF2D4, i = 0; i < 2; i++, xPos += D_menu_801AF2DC) {
-        if (i == D_game_80161A28) {
+        if (i == gVsMenuSelection) {
             sp8C[i] = 255;
         } else {
             sp8C[i] = 32;
         }
 
-        RCP_SetupDL(&gMasterDisp, 0x55);
+        RCP_SetupDL(&gMasterDisp, SETUPDL_85);
 
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, sp8C[i]);
 
-        TextureRect_8bCI(&gMasterDisp, D_menu_801AF2F0[i], D_menu_801AF2F8[i], 48, 38, xPos, D_menu_801AF2D8, 1.0f,
-                         1.0f);
+        TextureRect_CI8(&gMasterDisp, D_menu_801AF2F0[i], D_menu_801AF2F8[i], 48, 38, xPos, D_menu_801AF2D8, 1.0f,
+                        1.0f);
 
-        RCP_SetupDL(&gMasterDisp, 0x53);
+        RCP_SetupDL(&gMasterDisp, SETUPDL_83);
 
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, sp8C[i]);
 
-        TextureRect_8bIA(&gMasterDisp, D_menu_801AF2E8[i], 56, 10, D_menu_801AF2E0[i], D_menu_801AF2D8 + 40.0f, 1.0f,
-                         1.0f);
+        TextureRect_IA8(&gMasterDisp, D_menu_801AF2E8[i], 56, 10, D_menu_801AF2E0[i], D_menu_801AF2D8 + 40.0f, 1.0f,
+                        1.0f);
     }
 }
 
@@ -3444,7 +3419,7 @@ void Option_8019B5AC(void) {
     colorGB = D_menu_801B91E8;
     var_v0 = 0xFFFFFFFF;
 
-    if (D_menu_801B91EC) {
+    if (D_menu_801B91EC != 0) {
         colorGB = 255;
         var_v0 = 1;
         D_menu_801B91EC--;
@@ -3453,25 +3428,25 @@ void Option_8019B5AC(void) {
         }
     }
 
-    if (gGameFrameCount & var_v0) {
-        RCP_SetupDL(&gMasterDisp, 0x53);
+    if ((gGameFrameCount & var_v0) != 0) {
+        RCP_SetupDL(&gMasterDisp, SETUPDL_83);
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, colorGB, colorGB, 255);
-        TextureRect_8bIA(&gMasterDisp, D_VS_MENU_7003650, 40, 12, 143.0f, 210.0f, 1.0f, 1.0f);
+        TextureRect_IA8(&gMasterDisp, D_VS_MENU_7003650, 40, 12, 143.0f, 210.0f, 1.0f, 1.0f);
     }
 }
 
 void Option_8019B6D8(f32 xPos, f32 yPos, f32 offset, s32 r, s32 g, s32 b) {
-    RCP_SetupDL(&gMasterDisp, 0x53);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_83);
     gDPSetPrimColor(gMasterDisp++, 0, 0, r, g, b, 255);
-    TextureRect_8bIA_MirX(&gMasterDisp, D_VS_MENU_7004010, 8, 8, xPos, yPos, 1.0f, 1.0f);
-    TextureRect_8bIA(&gMasterDisp, D_VS_MENU_7004010, 8, 8, xPos + offset, yPos, 1.0f, 1.0f);
+    TextureRect_IA8_MirX(&gMasterDisp, D_VS_MENU_7004010, 8, 8, xPos, yPos, 1.0f, 1.0f);
+    TextureRect_IA8(&gMasterDisp, D_VS_MENU_7004010, 8, 8, xPos + offset, yPos, 1.0f, 1.0f);
 }
 
 void Option_8019B7D4(void) {
-    RCP_SetupDL(&gMasterDisp, 0x53);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_83);
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
-    TextureRect_8bIA(&gMasterDisp, D_OPT_80080F0, 96, 10, 62.0f, 213.0f, 1.0f, 1.0f);
-    TextureRect_8bIA(&gMasterDisp, D_OPT_8006E50, 96, 10, 166.0f, 213.0f, 1.0f, 1.0f);
+    TextureRect_IA8(&gMasterDisp, D_OPT_80080F0, 96, 10, 62.0f, 213.0f, 1.0f, 1.0f);
+    TextureRect_IA8(&gMasterDisp, D_OPT_8006E50, 96, 10, 166.0f, 213.0f, 1.0f, 1.0f);
 }
 
 void Option_8019B8A0(s32 arg0) {
@@ -3496,7 +3471,7 @@ void Option_DrawMenuLabel(void) {
 }
 
 void Option_DrawMenuCard(MenuContext_38 arg0) {
-    RCP_SetupDL(&gMasterDisp, 0x11);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_17);
 
     Lib_InitOrtho(&gMasterDisp);
 
@@ -3600,7 +3575,7 @@ void Option_8019BF34(void) {
 }
 
 void Option_8019C04C(void) {
-    RCP_SetupDL(&gMasterDisp, 0x24);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_36);
 
     Lib_InitOrtho(&gMasterDisp);
 
@@ -3622,31 +3597,31 @@ void Option_DrawCardLabel(OptionTexture arg0) {
     if (!(arg0.unk_20 <= 0.0f) && !(arg0.unk_24 <= 0.0f)) {
         switch (arg0.unk_00) {
             case 1:
-                RCP_SetupDL(&gMasterDisp, 0x4E);
+                RCP_SetupDL(&gMasterDisp, SETUPDL_78);
                 gDPSetPrimColor(gMasterDisp++, 0, 0, arg0.unk_28, arg0.unk_2C, arg0.unk_30, arg0.unk_34);
-                TextureRect_4bCI(&gMasterDisp, arg0.unk_08, arg0.unk_0C, arg0.unk_10, arg0.unk_14, arg0.unk_18,
-                                 arg0.unk_1C, arg0.unk_20, arg0.unk_24);
+                TextureRect_CI4(&gMasterDisp, arg0.unk_08, arg0.unk_0C, arg0.unk_10, arg0.unk_14, arg0.unk_18,
+                                arg0.unk_1C, arg0.unk_20, arg0.unk_24);
                 break;
 
             case 2:
-                RCP_SetupDL(&gMasterDisp, 0x4E);
+                RCP_SetupDL(&gMasterDisp, SETUPDL_78);
                 gDPSetPrimColor(gMasterDisp++, 0, 0, arg0.unk_28, arg0.unk_2C, arg0.unk_30, arg0.unk_34);
-                TextureRect_8bCI(&gMasterDisp, arg0.unk_08, arg0.unk_0C, arg0.unk_10, arg0.unk_14, arg0.unk_18,
-                                 arg0.unk_1C, arg0.unk_20, arg0.unk_24);
+                TextureRect_CI8(&gMasterDisp, arg0.unk_08, arg0.unk_0C, arg0.unk_10, arg0.unk_14, arg0.unk_18,
+                                arg0.unk_1C, arg0.unk_20, arg0.unk_24);
                 break;
 
             case 0:
-                RCP_SetupDL(&gMasterDisp, 0x4C);
+                RCP_SetupDL(&gMasterDisp, SETUPDL_76);
                 gDPSetPrimColor(gMasterDisp++, 0, 0, arg0.unk_28, arg0.unk_2C, arg0.unk_30, arg0.unk_34);
-                TextureRect_8bIA(&gMasterDisp, arg0.unk_08, arg0.unk_10, arg0.unk_14, arg0.unk_18, arg0.unk_1C,
-                                 arg0.unk_20, arg0.unk_24);
+                TextureRect_IA8(&gMasterDisp, arg0.unk_08, arg0.unk_10, arg0.unk_14, arg0.unk_18, arg0.unk_1C,
+                                arg0.unk_20, arg0.unk_24);
                 break;
 
             case 3:
-                RCP_SetupDL(&gMasterDisp, 0x4C);
+                RCP_SetupDL(&gMasterDisp, SETUPDL_76);
                 gDPSetPrimColor(gMasterDisp++, 0, 0, arg0.unk_28, arg0.unk_2C, arg0.unk_30, arg0.unk_34);
-                TextureRect_16bRGBA(&gMasterDisp, arg0.unk_08, arg0.unk_10, arg0.unk_14, arg0.unk_18, arg0.unk_1C,
-                                    arg0.unk_20, arg0.unk_24);
+                TextureRect_RGBA16(&gMasterDisp, arg0.unk_08, arg0.unk_10, arg0.unk_14, arg0.unk_18, arg0.unk_1C,
+                                   arg0.unk_20, arg0.unk_24);
                 break;
         }
     }
@@ -3941,7 +3916,7 @@ void Option_8019CBC0(void) {
     s32 temp;
     s32 i;
 
-    AUDIO_PLAY_BGM(SEQ_ID_MENU);
+    AUDIO_PLAY_BGM(NA_BGM_SELECT);
 
     gBlurAlpha = 208;
     gStarCount = 800;
@@ -3983,14 +3958,12 @@ void Option_8019CBC0(void) {
 void Option_8019CD54(void) {
     switch (D_menu_801B9128) {
         case 0:
-            if (D_menu_801B9138 == 0) {
-                if (Option_8019C418(&D_menu_801B90A0[D_menu_801B9098], 36, 0, 0, 50, 5, 10, gMainController,
-                                    &D_menu_801B9160[D_menu_801B9098])) {
-                    AUDIO_PLAY_SFX(NA_SE_CURSOR, gDefaultSfxSource, 4);
-                    D_menu_801B9150[D_menu_801B9098][0] = D_menu_801AEF5C[D_menu_801B90A0[D_menu_801B9098]];
-                    D_menu_801B90D0[D_menu_801B9098] = 0.0f;
-                    D_menu_801B9100[D_menu_801B9098] = 0.0f;
-                }
+            if ((D_menu_801B9138 == 0) && (Option_8019C418(&D_menu_801B90A0[D_menu_801B9098], 36, 0, 0, 50, 5, 10,
+                                                           gMainController, &D_menu_801B9160[D_menu_801B9098]))) {
+                AUDIO_PLAY_SFX(NA_SE_CURSOR, gDefaultSfxSource, 4);
+                D_menu_801B9150[D_menu_801B9098][0] = D_menu_801AEF5C[D_menu_801B90A0[D_menu_801B9098]];
+                D_menu_801B90D0[D_menu_801B9098] = 0.0f;
+                D_menu_801B9100[D_menu_801B9098] = 0.0f;
             }
 
             if (gControllerPress[gMainController].button & A_BUTTON) {
@@ -4003,15 +3976,13 @@ void Option_8019CD54(void) {
                     D_menu_801B9138 = -1;
                     D_menu_801B9128 = 2;
                     break;
-
-                } else {
-                    if (D_menu_801B9098 < 3) {
-                        AUDIO_PLAY_SFX(NA_SE_DECIDE, gDefaultSfxSource, 4);
-                        D_menu_801B90D0[D_menu_801B9098] = 0.0f;
-                        D_menu_801B9140[D_menu_801B9098] = 15;
-                        D_menu_801B9128 = 1;
-                        break;
-                    }
+                }
+                if (D_menu_801B9098 < 3) {
+                    AUDIO_PLAY_SFX(NA_SE_DECIDE, gDefaultSfxSource, 4);
+                    D_menu_801B90D0[D_menu_801B9098] = 0.0f;
+                    D_menu_801B9140[D_menu_801B9098] = 15;
+                    D_menu_801B9128 = 1;
+                    break;
                 }
             }
 
@@ -4028,25 +3999,21 @@ void Option_8019CD54(void) {
 
         case 10:
             D_menu_801B9140[D_menu_801B9098]--;
-            if (D_menu_801B9140[D_menu_801B9098] != 0) {
-                break;
+            if (D_menu_801B9140[D_menu_801B9098] == 0) {
+                D_menu_801B9128 = 0;
             }
-
-            D_menu_801B9128 = 0;
             break;
 
         case 1:
             D_menu_801B9140[D_menu_801B9098]--;
-            if (D_menu_801B9140[D_menu_801B9098] != 0) {
-                break;
-            }
+            if (D_menu_801B9140[D_menu_801B9098] == 0) {
+                if ((D_menu_801B9098 + 1) > 2) {
+                    D_menu_801B9138 = 1;
+                }
 
-            if ((D_menu_801B9098 + 1) > 2) {
-                D_menu_801B9138 = 1;
+                D_menu_801B9098++;
+                D_menu_801B9128 = 0;
             }
-
-            D_menu_801B9098++;
-            D_menu_801B9128 = 0;
             break;
 
         case 2:
@@ -4055,9 +4022,8 @@ void Option_8019CD54(void) {
             D_menu_801B9140[2]--;
 
             if (D_menu_801B9140[0] != 0) {
-                break;
+                break; // looks fake
             }
-
             D_menu_801B917C = 20;
             D_menu_801B9128 = 3;
             break;
@@ -4065,8 +4031,8 @@ void Option_8019CD54(void) {
         case 3:
             if (D_menu_801B917C == 0) {
                 D_menu_801B912C = 2;
-                break;
             }
+            break;
     }
 }
 
@@ -4080,9 +4046,9 @@ void Option_8019D118(void) {
     static f32 D_menu_801AF30C[6] = { 51.0f, 138.0f, 118.0f, 166.0f, 138.0f, 267.0f };
     static f32 D_menu_801AF324[6] = { 29.0f, 49.0f, 145.0f, 155.0f, 87.0f, 127.0f };
 
-    RCP_SetupDL(&gMasterDisp, 0x4C);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_76);
 
-    if (D_game_80161A34 == 8) {
+    if (gLastGameState == GSTATE_ENDING) {
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
         Graphics_DisplayLargeText(D_menu_801AF30C[0], D_menu_801AF324[0], 1.0f, 1.0f, "CONGRATULATIONS");
     }
@@ -4096,15 +4062,15 @@ void Option_8019D118(void) {
     Graphics_DisplaySmallText(D_menu_801AF30C[2], D_menu_801AF324[2], 1.0f, 1.0f, "TOTAL HITS");
     (void) "p:%d x:%f y:%f\n";
     if (D_menu_801B9138 == 1) {
-        if (gGameFrameCount & 0x10) {
+        if ((gGameFrameCount & 0x10) != 0) {
             gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 0, 255);
-            TextureRect_8bIA(&gMasterDisp, aTextEnd, 32, 8, D_menu_801AF30C[5], D_menu_801AF324[5], 1.0f, 1.0f);
+            TextureRect_IA8(&gMasterDisp, aTextEnd, 32, 8, D_menu_801AF30C[5], D_menu_801AF324[5], 1.0f, 1.0f);
         }
     }
 
     Option_80197A3C(D_menu_801B9094, D_menu_801AF30C[4], D_menu_801AF324[4]);
 
-    RCP_SetupDL(&gMasterDisp, 0x4C);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_76);
 
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
 
@@ -4124,7 +4090,7 @@ void Option_8019D118(void) {
 
         mask[i] = 0xFFFFFFFF;
 
-        if (D_menu_801B9140[i]) {
+        if (D_menu_801B9140[i] != 0) {
             mask[i] = 0x1;
             D_menu_801B9100[i] = 0.0f;
         }
@@ -4283,7 +4249,7 @@ void Option_8019DB20(s32 character, f32 x, f32 y, f32 z, f32 scale, f32 xAngle, 
         return;
     }
 
-    RCP_SetupDL(&gMasterDisp, 0x17);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_23);
     gSPTexture(gMasterDisp++, 2500, 200, 0, G_TX_RENDERTILE, G_ON);
     gSPSetGeometryMode(gMasterDisp++, G_TEXTURE_GEN);
 
@@ -4363,12 +4329,12 @@ void Option_8019DE74(void) {
         gDrawMode = DRAW_NONE;
         D_menu_801B912C = 0;
 
-        if (D_game_80161A34 == 5) {
+        if (gLastGameState == GSTATE_GAME_OVER) {
             gStarCount = 0;
             gGameState = GSTATE_INIT;
             gLifeCount[0] = 2;
             gTotalHits = 0;
-        } else if (D_game_80161A34 == 8) {
+        } else if (gLastGameState == GSTATE_ENDING) {
             SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM, 1);
             SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_FANFARE, 1);
             D_menu_801B9124 = 400;
@@ -4443,39 +4409,39 @@ void Option_InvoiceDraw(void) {
 
     Graphics_FillRectangle(&gMasterDisp, 25, 18, SCREEN_WIDTH - 25, SCREEN_HEIGHT - 18, 255, 255, 255, 255);
 
-    RCP_SetupDL(&gMasterDisp, 0x4E);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_78);
 
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
 
-    TextureRect_4bCI(&gMasterDisp, D_OPT_8000000, D_OPT_8000680, 128, 16, D_menu_801AF3D0[0], D_menu_801AF3F0[0], 1.0f,
-                     1.0f);
+    TextureRect_CI4(&gMasterDisp, D_OPT_8000000, D_OPT_8000680, 128, 16, D_menu_801AF3D0[0], D_menu_801AF3F0[0], 1.0f,
+                    1.0f);
 
-    TextureRect_4bCI(&gMasterDisp, D_OPT_8000000 + 128 * 16 / 2, D_OPT_8000680, 128, 10, D_menu_801AF3D0[0],
-                     D_menu_801AF3F0[0] + 16.0f, 1.0f, 1.0f);
+    TextureRect_CI4(&gMasterDisp, D_OPT_8000000 + 128 * 16 / 2, D_OPT_8000680, 128, 10, D_menu_801AF3D0[0],
+                    D_menu_801AF3F0[0] + 16.0f, 1.0f, 1.0f);
 
     for (i = 0; i < 2; i++) {
-        TextureRect_4bCI(&gMasterDisp, D_OPT_80006A0 + (256 * 16 * i) / 2, D_OPT_80017A0, 256, 16, D_menu_801AF3D0[1],
-                         D_menu_801AF3F0[1] + (16 * i), 1.0f, 1.0f);
+        TextureRect_CI4(&gMasterDisp, D_OPT_80006A0 + (256 * 16 * i) / 2, D_OPT_80017A0, 256, 16, D_menu_801AF3D0[1],
+                        D_menu_801AF3F0[1] + (16 * i), 1.0f, 1.0f);
     }
 
-    TextureRect_4bCI(&gMasterDisp, D_OPT_80006A0 + 256 * 32 / 2, D_OPT_80017A0, 256, 2, D_menu_801AF3D0[1],
-                     D_menu_801AF3F0[1] + 32.0f, 1.0f, 1.0f);
+    TextureRect_CI4(&gMasterDisp, D_OPT_80006A0 + 256 * 32 / 2, D_OPT_80017A0, 256, 2, D_menu_801AF3D0[1],
+                    D_menu_801AF3F0[1] + 32.0f, 1.0f, 1.0f);
 
     for (i = 0; i < 4; i++) {
-        TextureRect_4bCI(&gMasterDisp, D_OPT_80017C0 + (256 * 16 * i) / 2, D_OPT_80038C0, 256, 16, D_menu_801AF3D0[2],
-                         D_menu_801AF3F0[2] + (16 * i), 1.0f, 1.0f);
+        TextureRect_CI4(&gMasterDisp, D_OPT_80017C0 + (256 * 16 * i) / 2, D_OPT_80038C0, 256, 16, D_menu_801AF3D0[2],
+                        D_menu_801AF3F0[2] + (16 * i), 1.0f, 1.0f);
     }
 
-    TextureRect_4bCI(&gMasterDisp, D_OPT_80017C0 + 256 * 16 * 4 / 2, D_OPT_80038C0, 256, 2, D_menu_801AF3D0[2],
-                     D_menu_801AF3F0[2] + 64.0f, 1.0f, 1.0f);
+    TextureRect_CI4(&gMasterDisp, D_OPT_80017C0 + 256 * 16 * 4 / 2, D_OPT_80038C0, 256, 2, D_menu_801AF3D0[2],
+                    D_menu_801AF3F0[2] + 64.0f, 1.0f, 1.0f);
 
-    RCP_SetupDL(&gMasterDisp, 0x4C);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_76);
 
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
 
     for (i = 0; i < 30; i++) {
-        TextureRect_16bRGBA(&gMasterDisp, D_OPT_800E170 + (188 * 2 * i), 188, 2, D_menu_801AF3D0[3],
-                            D_menu_801AF3F0[3] + (2.0f * i), 1.0f, 1.0f);
+        TextureRect_RGBA16(&gMasterDisp, D_OPT_800E170 + (188 * 2 * i), 188, 2, D_menu_801AF3D0[3],
+                           D_menu_801AF3F0[3] + (2.0f * i), 1.0f, 1.0f);
     }
 
     gDPSetPrimColor(gMasterDisp++, 0, 0, 0, 0, 0, 255);
@@ -4491,8 +4457,8 @@ void Option_InvoiceDraw(void) {
     if (D_menu_801B9090) {
         gDPSetPrimColor(gMasterDisp++, 0, 0, 120, 0, 0, 192);
         for (i = 0; i < 3; i++) {
-            TextureRect_8bIA(&gMasterDisp, D_OPT_800D1F0 + (80 * 16 * i), 80, 16, D_menu_801AF3D0[5],
-                             D_menu_801AF3F0[5] + (16.0f * i), 1.0f, 1.0f);
+            TextureRect_IA8(&gMasterDisp, D_OPT_800D1F0 + (80 * 16 * i), 80, 16, D_menu_801AF3D0[5],
+                            D_menu_801AF3F0[5] + (16.0f * i), 1.0f, 1.0f);
         }
     }
 

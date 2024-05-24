@@ -2,16 +2,14 @@
 
 s32 gBossFrameCount;
 
-s32 D_boss_800C9E90[] = {
-    SEQ_ID_CO_BOSS_1 | SEQ_FLAG, SEQ_ID_ME_BOSS | SEQ_FLAG, SEQ_ID_SX_BOSS | SEQ_FLAG,   SEQ_ID_A6_BOSS | SEQ_FLAG,
-    SEQ_ID_A6_BOSS | SEQ_FLAG,   SEQ_ID_SY_BOSS | SEQ_FLAG, SEQ_ID_VE_BOSS | SEQ_FLAG,   SEQ_ID_SO_BOSS | SEQ_FLAG,
-    SEQ_ID_ZO_BOSS | SEQ_FLAG,   SEQ_ID_VE_BOSS | SEQ_FLAG, SEQ_ID_CO_BOSS_1 | SEQ_FLAG, SEQ_ID_MA_BOSS | SEQ_FLAG,
-    SEQ_ID_TI_BOSS | SEQ_FLAG,   SEQ_ID_AQ_BOSS | SEQ_FLAG,
+s32 gBossBgms[] = {
+    NA_BGM_BOSS_CO, NA_BGM_BOSS_ME, NA_BGM_BOSS_SX, NA_BGM_BOSS_A6, NA_BGM_BOSS_SB, NA_BGM_BOSS_SY, NA_BGM_BOSS_VE,
+    NA_BGM_BOSS_SO, NA_BGM_BOSS_ZO, NA_BGM_BOSS_VE, NA_BGM_BOSS_CO, NA_BGM_BOSS_MA, NA_BGM_BOSS_TI, NA_BGM_BOSS_AQ,
 };
 
 s32 PAD_boss_C9EC4[14] = { 0 };
 
-const f32 D_boss_800D55D0[] = { 6000.0f, 18000.0f, -6000.0f, -18000.0f };
+const f32 D_boss_800D55D0[] = { 6000.0f, 18000.0f, -6000.0f, -18000.0f }; // unused?
 
 void Boss_AwardBonus(Boss* boss) {
     s32 bonus;
@@ -90,12 +88,12 @@ void Boss_SpawnDebris(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5
     for (i = (ARRAY_COUNT(gActors)) - 1; i >= 0; i--) {
         if (gActors[i].obj.status == OBJ_FREE) {
             Boss_SetupDebris(&gActors[i], arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, argA, argB);
-            return;
+            break;
         }
     }
 }
 
-void func_boss_80043188(Boss* boss) {
+void Boss_SetCullDistance(Boss* boss) {
     boss->info.cullDistance = 30000.0f;
 }
 
@@ -104,9 +102,9 @@ void Boss_CompleteLevel(Player* player, f32 xPos, f32 yPos, f32 zPos) {
     SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_FANFARE, 80);
 
     gCsFrameCount = 0;
-    D_ctx_80178448 = zPos + gPathProgress;
-    D_ctx_80178440 = xPos;
-    D_ctx_80178444 = yPos;
+    gBossDeathCamAtZ = zPos + gPathProgress;
+    gBossDeathCamAtX = xPos;
+    gBossDeathCamAtY = yPos;
 
     player->state_1C8 = PLAYERSTATE_1C8_LEVEL_COMPLETE;
     player->csState = 10;

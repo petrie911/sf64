@@ -271,11 +271,14 @@ void Graphics_ThreadEntry(void* arg0) {
             gSPEndDisplayList(gMasterDisp++);
         }
         MQ_WAIT_FOR_MESG(&gGfxTaskMesgQueue, NULL);
+
         Graphics_SetTask();
-        if (gFillScreen == 0) {
+
+        if (!gFillScreen) {
             osViSwapBuffer(&gFrameBuffers[(gSysFrameCount - 1) % 3]);
         }
-        func_80007FE4(&gFrameBuffers[(gSysFrameCount - 1) % 3], SCREEN_WIDTH, 16);
+
+        Fault_SetFrameBuffer(&gFrameBuffers[(gSysFrameCount - 1) % 3], SCREEN_WIDTH, 16);
 
         visPerFrame = MIN(gVIsPerFrame, 4);
         validVIsPerFrame = MAX(visPerFrame, gGfxVImesgQueue.validCount + 1);

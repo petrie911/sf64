@@ -28,6 +28,8 @@ void Map_LevelSelect(void) {
         "ZONESS", "CORNERIA", "TITANIA", "AQUAS",    "FORTUNA",  "VENOM 1",  "SOLAR",  "VENOM 2",
     };
     static s32 startOption = 0;
+    // static f32 zStart = 0.0f;
+    // f32 zInc;
     s32 nextPlanetId;
 
     if (gControllerPress[0].button & L_JPAD) {
@@ -45,7 +47,7 @@ void Map_LevelSelect(void) {
         if (difficulty > 2) {
             difficulty = 0;
         }
-        if ((difficulty == 1) && ((mission == 1) || (mission == 5))) {
+        if ((difficulty == 1) && ((mission == 1) || (mission == 5) || (mission == 6))) {
             difficulty = 2;
         }
     } else if ((gControllerPress[0].button & D_JPAD) && (mission != 0)) {
@@ -70,9 +72,28 @@ void Map_LevelSelect(void) {
         startOption ^= 1;
     }
 
+    // if (gControllerPress[0].button & U_CBUTTONS) {
+    //     zInc = 100.0f;
+    // } else if (gControllerPress[0].button & R_CBUTTONS) {
+    //     zInc = 1000.0f;
+    // } else if (gControllerPress[0].button & D_CBUTTONS) {
+    //     zInc = -100.0f;
+    // } else if (gControllerPress[0].button & L_CBUTTONS) {
+    //     zInc = -1000.0f;
+    // }
+    // if (gControllerHold[0].button & R_TRIG) {
+    //     zInc *= 100.0f;
+    // }
+    // zStart += zInc;
+    // if(zStart < 0.0f) {
+    //     zStart = 0.0f;
+    // } else if (zStart > 500000.0f) {
+    //     zStart = 500000.0f;
+    // }
+
     /* Draw */
     if ((sCurrentPlanetId >= 0) && (sCurrentPlanetId < PLANET_MAX)) {
-        RCP_SetupDL(&gMasterDisp, 0x53);
+        RCP_SetupDL(&gMasterDisp, SETUPDL_83);
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 0, 255);
 
         Graphics_DisplaySmallText(20, 200, 1.0f, 1.0f, "PLANET:");
@@ -84,7 +105,7 @@ void Map_LevelSelect(void) {
             } else if (sCurrentPlanetId == PLANET_VENOM) {
                 Graphics_DisplaySmallText(80, 210, 1.0f, 1.0f, "ANDROSS");
             } else if (sCurrentPlanetId == PLANET_AREA_6) {
-                Graphics_DisplaySmallText(80, 210, 1.0f, 1.0f, "UNKNOWN 4");
+                Graphics_DisplaySmallText(80, 210, 1.0f, 1.0f, "BETA SB");
             }
         }
     }
@@ -97,6 +118,8 @@ void Map_LevelSelect(void) {
             } else if (sPlanetArray[mission][difficulty] == SAVE_SLOT_VENOM_2) {
                 gCurrentLevel = LEVEL_VENOM_2;
             }
+        } else if ((sCurrentPlanetId == PLANET_AREA_6) && startOption) {
+            gCurrentLevel = LEVEL_UNK_4;
         }
         if (startOption && (sCurrentPlanetId == PLANET_AREA_6)) {
             gCurrentLevel = LEVEL_UNK_4;
@@ -109,5 +132,6 @@ void Map_LevelSelect(void) {
                             (sPlanetArray[mission][difficulty] == SAVE_SLOT_VENOM_2))) {
             gLevelPhase = 1;
         }
+        // gSavedPathProgress = gPathProgress = zStart;
     }
 }

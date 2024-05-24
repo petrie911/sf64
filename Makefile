@@ -47,9 +47,10 @@ else
 endif
 
 VERSION ?= us
+REV ?= rev1
 
-BASEROM              := baserom.$(VERSION).z64
-BASEROM_UNCOMPRESSED := baserom.$(VERSION).uncompressed.z64
+BASEROM              := baserom.$(VERSION).$(REV).z64
+BASEROM_UNCOMPRESSED := baserom.$(VERSION).$(REV).uncompressed.z64
 TARGET               := starfox64
 
 ### Output ###
@@ -57,11 +58,11 @@ TARGET               := starfox64
 BUILD_DIR := build
 TOOLS	  := tools
 PYTHON	  := python3
-ROM       := $(BUILD_DIR)/$(TARGET).$(VERSION).uncompressed.z64
-ROMC 	  := $(BUILD_DIR)/$(TARGET).$(VERSION).z64
-ELF       := $(BUILD_DIR)/$(TARGET).$(VERSION).elf
-LD_MAP    := $(BUILD_DIR)/$(TARGET).$(VERSION).map
-LD_SCRIPT := linker_scripts/$(VERSION)/$(TARGET).ld
+ROM       := $(BUILD_DIR)/$(TARGET).$(VERSION).$(REV).uncompressed.z64
+ROMC 	  := $(BUILD_DIR)/$(TARGET).$(VERSION).$(REV).z64
+ELF       := $(BUILD_DIR)/$(TARGET).$(VERSION).$(REV).elf
+LD_MAP    := $(BUILD_DIR)/$(TARGET).$(VERSION).$(REV).map
+LD_SCRIPT := linker_scripts/$(VERSION)/$(REV)/$(TARGET).ld
 
 #### Setup ####
 
@@ -78,14 +79,13 @@ ifeq ($(COMPILER),gcc)
   CC       := $(MIPS_BINUTILS_PREFIX)gcc
 else
 ifeq ($(COMPILER),ido)
-  CC       := tools/ido_recomp/$(DETECTED_OS)/7.1/cc
-  CC_OLD   := tools/ido_recomp/$(DETECTED_OS)/5.3/cc
+  CC       := $(TOOLS)/ido_recomp/$(DETECTED_OS)/7.1/cc
+  CC_OLD   := $(TOOLS)/ido_recomp/$(DETECTED_OS)/5.3/cc
 else
 $(error Unsupported compiler. Please use either ido or gcc as the COMPILER variable.)
 endif
 endif
 
-# ditch g3, we aren't using that in GCC
 ifeq ($(COMPILER),gcc)
   OPTFLAGS := -Os
 else
@@ -119,10 +119,28 @@ endif
 
 BUILD_DEFINES ?=
 
+# Version check
+ifeq ($(VERSION),jp)
+    BUILD_DEFINES   += -DVERSION_JP=1
+endif
+
 ifeq ($(VERSION),us)
     BUILD_DEFINES   += -DVERSION_US=1
-else
-$(error Invalid VERSION variable detected. Please use 'us')
+endif
+
+ifeq ($(VERSION),eu)
+    BUILD_DEFINES   += -DVERSION_EU=1
+	REV := rev0
+endif
+
+ifeq ($(VERSION),au)
+	BUILD_DEFINES	+= -DVERSION_AU=1
+	REV := rev0
+endif
+
+ifeq ($(VERSION),ln)
+	BUILD_DEFINES	+= -DVERSION_LN=1
+	REV := rev0
 endif
 
 ifeq ($(NON_MATCHING),1)
@@ -191,7 +209,7 @@ OBJDUMP         := $(MIPS_BINUTILS_PREFIX)objdump
 ICONV           := iconv
 ASM_PROC        := $(PYTHON) $(TOOLS)/asm-processor/build.py
 CAT             := cat
-TORCH           := tools/Torch/cmake-build-release/torch
+TORCH           := $(TOOLS)/Torch/cmake-build-release/torch
 
 # Prefer clang as C preprocessor if installed on the system
 ifneq (,$(call find-command,clang))
@@ -205,14 +223,14 @@ endif
 ASM_PROC_FLAGS  := --input-enc=utf-8 --output-enc=euc-jp --convert-statics=global-with-filename
 
 SPLAT           ?= $(PYTHON) $(TOOLS)/splat/split.py
-SPLAT_YAML      ?= $(TARGET).$(VERSION).yaml
+SPLAT_YAML      ?= $(TARGET).$(VERSION).$(REV).yaml
 
 COMPTOOL		:= $(TOOLS)/comptool.py
 COMPTOOL_DIR	:= baserom
 MIO0			:= $(TOOLS)/mio0
 
 
-IINC := -Iinclude -Ibin/$(VERSION) -I.
+IINC := -Iinclude -Ibin/$(VERSION).$(REV) -I.
 IINC += -Ilib/ultralib/include -Ilib/ultralib/include/PR -Ilib/ultralib/include/ido
 
 ifeq ($(KEEP_MDEBUG),0)
@@ -273,11 +291,19 @@ endif
 
 #### Files ####
 
-$(shell mkdir -p asm bin linker_scripts/$(VERSION)/auto)
+$(shell mkdir -p asm bin linker_scripts/$(VERSION)/$(REV)/auto)
 
 SRC_DIRS      := $(shell find src -type d)
-ASM_DIRS      := $(shell find asm/$(VERSION) -type d -not -path "asm/$(VERSION)/nonmatchings/*")
+# Temporary, until we decide how we're gonna handle other versions
+ifeq ($(VERSION), jp)
+SRC_DIRS      := $(shell find srcjp -type d)
+endif
+ifeq ($(VERSION), eu)
+SRC_DIRS      := $(shell find srceu -type d)
+endif
+ASM_DIRS      := $(shell find asm/$(VERSION)/$(REV) -type d -not -path "asm/$(VERSION)/$(REV)/nonmatchings/*")
 BIN_DIRS      := $(shell find bin -type d)
+
 
 C_FILES       := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c))
 C_FILES       := $(filter-out %.inc.c,$(C_FILES))
@@ -293,7 +319,7 @@ DEP_FILES := $(O_FILES:.o=.d) \
              $(O_FILES:.o=.asmproc.d)
 
 # create build directories
-$(shell mkdir -p $(BUILD_DIR)/linker_scripts/$(VERSION) $(BUILD_DIR)/linker_scripts/$(VERSION)/auto $(foreach dir,$(SRC_DIRS) $(ASM_DIRS) $(BIN_DIRS),$(BUILD_DIR)/$(dir)))
+$(shell mkdir -p $(BUILD_DIR)/linker_scripts/$(VERSION)/$(REV) $(BUILD_DIR)/linker_scripts/$(VERSION)/$(REV)/auto $(foreach dir,$(SRC_DIRS) $(ASM_DIRS) $(BIN_DIRS),$(BUILD_DIR)/$(dir)))
 
 ifeq ($(COMPILER),ido)
 
@@ -307,6 +333,13 @@ build/src/libultra/host/%.o:	OPTFLAGS := -O1 -g0
 build/src/audio/%.o: OPTFLAGS := -O2 -g0
 
 # per-file flags
+build/src/audio/audio_effects.o: CFLAGS += -use_readwrite_const
+build/src/audio/audio_heap.o: CFLAGS += -use_readwrite_const
+build/src/audio/audio_load.o: CFLAGS += -use_readwrite_const
+build/src/audio/audio_seqplayer.o: CFLAGS += -use_readwrite_const
+build/src/audio/audio_playback.o: CFLAGS += -use_readwrite_const
+build/src/audio/audio_synthesis.o: CFLAGS += -use_readwrite_const
+
 build/src/libc_sprintf.o: OPTFLAGS := -O2 -g0
 build/src/libc_math64.o: OPTFLAGS := -O2 -g0
 
@@ -374,10 +407,10 @@ endif
 all: uncompressed
 
 toolchain:
-	@$(MAKE) -s -C tools
+	@$(MAKE) -s -C $(TOOLS)
 
 torch:
-	@$(MAKE) -s -C tools torch
+	@$(MAKE) -s -C $(TOOLS) torch
 	rm -f torch.hash.yml
 
 init:
@@ -393,33 +426,37 @@ uncompressed: $(ROM)
 ifneq ($(COMPARE),0)
 	@echo "$(GREEN)Calculating Rom Header Checksum... $(YELLOW)$<$(NO_COL)"
 	@$(PYTHON) $(COMPTOOL) -r $(ROM) .
-	@md5sum --status -c $(TARGET).$(VERSION).uncompressed.md5 && \
-	$(PRINT) "$(BLUE)$(TARGET).$(VERSION).uncompressed.z64$(NO_COL): $(GREEN)OK$(NO_COL)\n$(YELLOW) $(SF)" || \
-	$(PRINT) "$(BLUE)$(TARGET).$(VERSION).uncompressed.z64 $(RED)FAILED$(NO_COL)\n\
+	@md5sum --status -c $(TARGET).$(VERSION).$(REV).uncompressed.md5 && \
+	$(PRINT) "$(BLUE)$(TARGET).$(VERSION).$(REV).uncompressed.z64$(NO_COL): $(GREEN)OK$(NO_COL)\n$(YELLOW) $(SF)" || \
+	$(PRINT) "$(BLUE)$(TARGET).$(VERSION).$(REV).uncompressed.z64 $(RED)FAILED$(NO_COL)\n\
 	$(RED)CAN'T LET YOU DO THAT, STARFOX.$(NO_COL)\n"
-	@md5sum --status -c $(TARGET).$(VERSION).uncompressed.md5
+	@md5sum --status -c $(TARGET).$(VERSION).$(REV).uncompressed.md5
 endif
 
 compressed: $(ROMC)
 ifeq ($(COMPARE),1)
 	@echo "$(GREEN)Calculating Rom Header Checksum... $(YELLOW)$<$(NO_COL)"
 	@$(PYTHON) $(COMPTOOL) -r $(ROMC) .
-	@md5sum --status -c $(TARGET).$(VERSION).md5 && \
-	$(PRINT) "$(BLUE)$(TARGET).$(VERSION).z64$(NO_COL): $(GREEN)OK$(NO_COL)\n" || \
-	$(PRINT) "$(BLUE)$(TARGET).$(VERSION).z64 $(RED)FAILED$(NO_COL)\n"
-	@md5sum --status -c $(TARGET).$(VERSION).uncompressed.md5
+	@md5sum --status -c $(TARGET).$(VERSION).$(REV).md5 && \
+	$(PRINT) "$(BLUE)$(TARGET).$(VERSION).$(REV).z64$(NO_COL): $(GREEN)OK$(NO_COL)\n" || \
+	$(PRINT) "$(BLUE)$(TARGET).$(VERSION).$(REV).z64 $(RED)FAILED$(NO_COL)\n"
+	@md5sum --status -c $(TARGET).$(VERSION).$(REV).uncompressed.md5
 endif
 
 #### Main Targets ###
 
 decompress: $(BASEROM)
 	@echo "Decompressing ROM..."
-	@$(PYTHON) $(COMPTOOL) -de $(COMPTOOL_DIR) -m $(MIO0) $(BASEROM) $(BASEROM_UNCOMPRESSED)
+	@$(PYTHON) $(COMPTOOL) $(DECOMPRESS_OPT) -dse $(COMPTOOL_DIR) -m $(MIO0) $(BASEROM) $(BASEROM_UNCOMPRESSED)
+
+compress: $(BASEROM)
+	@echo "Compressing ROM..."
+	@$(PYTHON) $(COMPTOOL) $(COMPRESS_OPT) -c -m $(MIO0) $(ROM) $(ROMC)
 
 extract:
-	@$(RM) -r asm/$(VERSION) bin/$(VERSION)
+	@$(RM) -r asm/$(VERSION)/$(REV) bin/$(VERSION)/$(REV)
 	@echo "Unifying yamls..."
-	@$(CAT) yamls/$(VERSION)/header.yaml yamls/$(VERSION)/main.yaml yamls/$(VERSION)/assets.yaml yamls/$(VERSION)/overlays.yaml > $(SPLAT_YAML)
+	@$(CAT) yamls/$(VERSION)/$(REV)/header.yaml yamls/$(VERSION)/$(REV)/main.yaml yamls/$(VERSION)/$(REV)/assets.yaml yamls/$(VERSION)/$(REV)/overlays.yaml > $(SPLAT_YAML)
 	@echo "Extracting..."
 	@$(SPLAT) $(SPLAT_YAML)
 
@@ -429,14 +466,17 @@ assets:
 	@$(TORCH) header $(BASEROM_UNCOMPRESSED)
 	@$(TORCH) modding export $(BASEROM_UNCOMPRESSED)
 
+mod:
+	@$(TORCH) modding import code $(BASEROM_UNCOMPRESSED)
+
 clean:
 	rm -f torch.hash.yml
-	@git clean -fdx asm/
-	@git clean -fdx bin/
+	@git clean -fdx asm/$(VERSION)/$(REV)
+	@git clean -fdx bin/$(VERSION)/$(REV)
 	@git clean -fdx build/
 	@git clean -fdx src/assets/
 	@git clean -fdx include/assets/
-	@git clean -fdx linker_scripts/*.ld
+	@git clean -fdx linker_scripts/$(VERSION)/$(REV)/*.ld
 
 format:
 	@$(PYTHON) $(TOOLS)/format.py -j $(N_THREADS)
@@ -452,12 +492,12 @@ expected:
 
 context:
 	@echo "Generating ctx.c ..."
-	@$(PYTHON) ./tools/m2ctx.py $(filter-out $@, $(MAKECMDGOALS))
+	@$(PYTHON) ./$(TOOLS)/m2ctx.py $(filter-out $@, $(MAKECMDGOALS))
 
 disasm:
-	@$(RM) -r asm/$(VERSION) bin/$(VERSION)
+	@$(RM) -r asm/$(VERSION)/$(REV) bin/$(VERSION)/$(REV)
 	@echo "Unifying yamls..."
-	@$(CAT) yamls/$(VERSION)/header.yaml yamls/$(VERSION)/main.yaml yamls/$(VERSION)/assets.yaml yamls/$(VERSION)/overlays.yaml > $(SPLAT_YAML)
+	@$(CAT) yamls/$(VERSION)/$(REV)/header.yaml yamls/$(VERSION)/$(REV)/main.yaml yamls/$(VERSION)/$(REV)/assets.yaml yamls/$(VERSION)/$(REV)/overlays.yaml > $(SPLAT_YAML)
 	@echo "Extracting..."
 	@$(SPLAT) $(SPLAT_YAML) --disassemble-all
 
@@ -466,7 +506,7 @@ disasm:
 # Final ROM
 $(ROMC): $(BASEROM_UNCOMPRESSED)
 	$(call print,Compressing ROM...,$<,$@)
-	@$(PYTHON) $(COMPTOOL) -c $(ROM) $(ROMC)
+	@$(PYTHON) $(COMPTOOL) -c -m $(MIO0) $(ROM) $(ROMC)
 
 # Uncompressed ROM
 $(ROM): $(ELF)
@@ -474,10 +514,10 @@ $(ROM): $(ELF)
 	$(V)$(OBJCOPY) -O binary $< $@
 
 # Link
-$(ELF): $(LIBULTRA_O) $(O_FILES) $(LD_SCRIPT) $(BUILD_DIR)/linker_scripts/$(VERSION)/hardware_regs.ld $(BUILD_DIR)/linker_scripts/$(VERSION)/undefined_syms.ld $(BUILD_DIR)/linker_scripts/$(VERSION)/pif_syms.ld
+$(ELF): $(LIBULTRA_O) $(O_FILES) $(LD_SCRIPT) $(BUILD_DIR)/linker_scripts/$(VERSION)/$(REV)/hardware_regs.ld $(BUILD_DIR)/linker_scripts/$(VERSION)/$(REV)/undefined_syms.ld $(BUILD_DIR)/linker_scripts/$(VERSION)/$(REV)/pif_syms.ld
 	$(call print,Linking:,$<,$@)
 	$(V)$(LD) $(LDFLAGS) -T $(LD_SCRIPT) \
-		-T $(BUILD_DIR)/linker_scripts/$(VERSION)/hardware_regs.ld -T $(BUILD_DIR)/linker_scripts/$(VERSION)/undefined_syms.ld -T $(BUILD_DIR)/linker_scripts/$(VERSION)/pif_syms.ld \
+		-T $(BUILD_DIR)/linker_scripts/$(VERSION)/$(REV)/hardware_regs.ld -T $(BUILD_DIR)/linker_scripts/$(VERSION)/$(REV)/undefined_syms.ld -T $(BUILD_DIR)/linker_scripts/$(VERSION)/$(REV)/pif_syms.ld \
 		-Map $(LD_MAP) -o $@
 
 # PreProcessor
@@ -509,7 +549,7 @@ build/src/libultra/libc/ll.o: src/libultra/libc/ll.c
 	$(call print,Patching:,$<,$@)
 	@$(CC_CHECK) $(CC_CHECK_FLAGS) $(IINC) -I $(dir $*) $(CHECK_WARNINGS) $(BUILD_DEFINES) $(COMMON_DEFINES) $(RELEASE_DEFINES) $(GBI_DEFINES) $(C_DEFINES) $(MIPS_BUILTIN_DEFS) -o $@ $<
 	$(V)$(CC) -c $(CFLAGS) $(BUILD_DEFINES) $(IINC) $(WARNINGS) $(MIPS_VERSION) $(ENDIAN) $(COMMON_DEFINES) $(RELEASE_DEFINES) $(GBI_DEFINES) $(C_DEFINES) $(OPTFLAGS) -o $@ $<
-	$(V)$(PYTHON) tools/set_o32abi_bit.py $@
+	$(V)$(PYTHON) $(TOOLS)/set_o32abi_bit.py $@
 	$(V)$(OBJDUMP_CMD)
 	$(V)$(RM_MDEBUG)
 
@@ -518,4 +558,4 @@ build/src/libultra/libc/ll.o: src/libultra/libc/ll.c
 # Print target for debugging
 print-% : ; $(info $* is a $(flavor $*) variable set to [$($*)]) @true
 
-.PHONY: all uncompressed compressed clean init extract expected format checkformat decompress assets context disasm toolchain
+.PHONY: all uncompressed compressed clean init extract expected format checkformat decompress compress assets context disasm toolchain
