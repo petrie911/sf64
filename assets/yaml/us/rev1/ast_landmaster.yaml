@@ -17,62 +17,62 @@ aLandmasterLifeIconTLUT:
 aLandmasterModelDL:
   { type: GFX, offset: 0x3000090, symbol: aLandmasterModelDL }
 
-D_landmaster_3004CA8:
-  { type: TEXTURE, format: RGBA16, offset: 0x3004CA8, width: 32, height: 32, ctype: u16, symbol: D_landmaster_3004CA8 }
+aLandmasterModelTex1:
+  { type: TEXTURE, format: RGBA16, offset: 0x3004CA8, width: 32, height: 32, ctype: u16, symbol: aLandmasterModelTex1 }
 
-D_landmaster_30054A8:
-  { type: TEXTURE, format: RGBA16, offset: 0x30054A8, width: 32, height: 32, ctype: u16, symbol: D_landmaster_30054A8 }
+aLandmasterModelTex2:
+  { type: TEXTURE, format: RGBA16, offset: 0x30054A8, width: 32, height: 32, ctype: u16, symbol: aLandmasterModelTex2 }
 
-D_landmaster_3005CA8:
-  { type: TEXTURE, format: RGBA16, offset: 0x3005CA8, width: 16, height: 16, ctype: u16, symbol: D_landmaster_3005CA8 }
+aLandmasterModelTex3:
+  { type: TEXTURE, format: RGBA16, offset: 0x3005CA8, width: 16, height: 16, ctype: u16, symbol: aLandmasterModelTex3 }
 
-D_landmaster_3005EA8:
-  { type: TEXTURE, format: RGBA16, offset: 0x3005EA8, width: 32, height: 32, ctype: u16, symbol: D_landmaster_3005EA8 }
+aLandmasterModelTex4:
+  { type: TEXTURE, format: RGBA16, offset: 0x3005EA8, width: 32, height: 32, ctype: u16, symbol: aLandmasterModelTex4, comment: used for Wheels and the Tip of the Cannon }
 
-D_landmaster_3002680:
-  { type: TEXTURE, format: RGBA16, offset: 0x3002680, width: 32, height: 32, ctype: u16, symbol: D_landmaster_3002680 }
+aLandmasterModelTex5:
+  { type: TEXTURE, format: RGBA16, offset: 0x3002680, width: 32, height: 32, ctype: u16, symbol: aLandmasterModelTex5 }
 
-D_landmaster_3002E80:
-  { type: TEXTURE, format: RGBA16, offset: 0x3002E80, width: 32, height: 32, ctype: u16, symbol: D_landmaster_3002E80 }
+aLandmasterModelTex6:
+  { type: TEXTURE, format: RGBA16, offset: 0x3002E80, width: 32, height: 32, ctype: u16, symbol: aLandmasterModelTex6 }
 
-D_landmaster_3003680:
-  { type: TEXTURE, format: RGBA16, offset: 0x3003680, width: 64, height: 32, ctype: u16, symbol: D_landmaster_3003680 }
+aLandmasterModelTex7:
+  { type: TEXTURE, format: RGBA16, offset: 0x3003680, width: 64, height: 32, ctype: u16, symbol: aLandmasterModelTex7 }
 
-D_landmaster_3001680:
-  { type: TEXTURE, format: RGBA16, offset: 0x3001680, width: 32, height: 32, ctype: u16, symbol: D_landmaster_3001680 }
+aLandmasterModelTex8:
+  { type: TEXTURE, format: RGBA16, offset: 0x3001680, width: 32, height: 32, ctype: u16, symbol: aLandmasterModelTex8 }
 
-D_landmaster_3001E80:
-  { type: TEXTURE, format: RGBA16, offset: 0x3001E80, width: 32, height: 32, ctype: u16, symbol: D_landmaster_3001E80 }
+aLandmasterModelTex9:
+  { type: TEXTURE, format: RGBA16, offset: 0x3001E80, width: 32, height: 32, ctype: u16, symbol: aLandmasterModelTex9 }
 
 aLandmasterCanonDL:
   { type: GFX, offset: 0x3004680, symbol: aLandmasterCanonDL }
 
-D_landmaster_30066B0:
-  { type: GFX, offset: 0x30066B0, symbol: D_landmaster_30066B0 }
+aLandmasterThrusterDL:
+  { type: GFX, offset: 0x30066B0, symbol: aLandmasterThrusterDL }
 
-D_landmaster_3006738:
-  { type: TEXTURE, format: IA8, offset: 0x3006738, width: 16, height: 32, ctype: u8, symbol: D_landmaster_3006738 }
+aLandmasterThrusterTex:
+  { type: TEXTURE, format: IA8, offset: 0x3006738, width: 16, height: 32, ctype: u8, symbol: aLandmasterThrusterTex }
 
-D_landmaster_3006940:
-  { type: GFX, offset: 0x3006940, symbol: D_landmaster_3006940 }
+aLandmasterShotDL:
+  { type: GFX, offset: 0x3006940, symbol: aLandmasterShotDL }
 
-D_landmaster_30069D8:
-  { type: TEXTURE, format: IA8, offset: 0x030069D8, width: 32, height: 32, ctype: u8, symbol: D_landmaster_30069D8 }
+aLandmasterShotTex:
+  { type: TEXTURE, format: IA8, offset: 0x030069D8, width: 32, height: 32, ctype: u8, symbol: aLandmasterShotTex }
 
-D_landmaster_3006DE0:
-  { type: GFX, offset: 0x3006DE0, symbol: D_landmaster_3006DE0 }
+aLandmasterShotGreenDL:
+  { type: GFX, offset: 0x3006DE0, symbol: aLandmasterShotGreenDL, comment: Unused }
 
-D_landmaster_3006E68:
-  { type: TEXTURE, format: RGBA32, offset: 0x3006E68, width: 32, height: 32, ctype: u32, symbol: D_landmaster_3006E68 }
+aLandmasterShotGreenTex:
+  { type: TEXTURE, format: RGBA32, offset: 0x3006E68, width: 32, height: 32, ctype: u32, symbol: aLandmasterShotGreenTex }
 
-D_landmaster_3007E70:
-  { type: GFX, offset: 0x3007E70, symbol: D_landmaster_3007E70 }
+aLandmasterTankTracksDL:
+  { type: GFX, offset: 0x3007E70, symbol: aLandmasterTankTracksDL }
 
-D_landmaster_3007EF8:
-  { type: TEXTURE, format: RGBA16, offset: 0x3007EF8, width: 16, height: 16, ctype: u16, symbol: D_landmaster_3007EF8 }
+aLandmasterTankTracksTex:
+  { type: TEXTURE, format: RGBA16, offset: 0x3007EF8, width: 16, height: 16, ctype: u16, symbol: aLandmasterTankTracksTex }
 
-D_landmaster_3008100:
-  { type: GFX, offset: 0x3008100, symbol: D_landmaster_3008100 }
+aLandmasterShadowDL:
+  { type: GFX, offset: 0x3008100, symbol: aLandmasterShadowDL }
 
-D_landmaster_3008188:
-  { type: TEXTURE, format: IA8, offset: 0x03008188, width: 32, height: 32, ctype: u8, symbol: D_landmaster_3008188 }
+aLandmasterShadowTex:
+  { type: TEXTURE, format: IA8, offset: 0x03008188, width: 32, height: 32, ctype: u8, symbol: aLandmasterShadowTex }

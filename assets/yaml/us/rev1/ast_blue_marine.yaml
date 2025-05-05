@@ -14,77 +14,74 @@ aBlueMarineLifeIconTex:
 aBlueMarineLifeIconTLUT:
   { type: TEXTURE, ctype: u16, format: TLUT, colors: 8, offset: 0x3000080, symbol: aBlueMarineLifeIconTLUT }
 
-D_blue_marine_3000090:
-  { type: TEXTURE, ctype: u8, format: CI4, width: 32, height: 9, offset: 0x3000090, symbol: D_blue_marine_3000090, tlut: 0x3000120 }
+aBlueMarineBombCountTex:
+  { type: TEXTURE, ctype: u8, format: CI4, width: 32, height: 9, offset: 0x3000090, symbol: aBlueMarineBombCountTex, tlut: 0x3000120 }
 
-D_blue_marine_3000120:
-  { type: TEXTURE, ctype: u16, format: TLUT, colors: 8, offset: 0x3000120, symbol: D_blue_marine_3000120 }
+aBlueMarineBombCountTLUT:
+  { type: TEXTURE, ctype: u16, format: TLUT, colors: 8, offset: 0x3000120, symbol: aBlueMarineBombCountTLUT }
 
-D_blue_marine_3000130:
-  { type: GFX, offset: 0x3000130, symbol: D_blue_marine_3000130 }
+aBlueMarineReticleTargetDL:
+  { type: GFX, offset: 0x3000130, symbol: aBlueMarineReticleTargetDL }
 
-ast_blue_marine_seg3_vtx_00000418:
-  { type: VTX, count: 5, offset: 0x3000418, symbol: D_blue_marine_3000418 }
-
-D_blue_marine_3000470:
-  { type: GFX, offset: 0x3000470, symbol: D_blue_marine_3000470 }
+aBlueMarineReticleDL:
+  { type: GFX, offset: 0x3000470, symbol: aBlueMarineReticleDL }
 
 D_blue_marine_30005E8:
   { type: BLOB, size: 0x18, offset: 0x30005E8, symbol: D_blue_marine_30005E8 }
 
-D_blue_marine_3000600:
-  { type: TEXTURE, ctype: u8, format: CI4, width: 16, height: 8, offset: 0x3000600, symbol: D_blue_marine_3000600, tlut: 0x3000640 }
+aBlueMarineReticleTex:
+  { type: TEXTURE, ctype: u8, format: CI4, width: 16, height: 8, offset: 0x3000600, symbol: aBlueMarineReticleTex, tlut: 0x3000640 }
 
-D_blue_marine_3000640:
-  { type: TEXTURE, ctype: u16, format: TLUT, colors: 16, offset: 0x3000640, symbol: D_blue_marine_3000640 }
+aBlueMarineReticleTLUT:
+  { type: TEXTURE, ctype: u16, format: TLUT, colors: 16, offset: 0x3000640, symbol: aBlueMarineReticleTLUT }
 
-D_blue_marine_3000660:
-  { type: GFX, offset: 0x3000660, symbol: D_blue_marine_3000660 }
+aBlueMarineBubbleDL:
+  { type: GFX, offset: 0x3000660, symbol: aBlueMarineBubbleDL }
 
-D_blue_marine_30006E8:
-  { type: TEXTURE, ctype: u8, format: IA8, width: 32, height: 32, offset: 0x30006E8, symbol: D_blue_marine_30006E8 }
+aBlueMarineBubbleTex:
+  { type: TEXTURE, ctype: u8, format: IA8, width: 32, height: 32, offset: 0x30006E8, symbol: aBlueMarineBubbleTex }
 
-D_blue_marine_3000AF0:
-  { type: GFX, offset: 0x3000AF0, symbol: D_blue_marine_3000AF0 }
+aBlueMarineLeftRudderDL:
+  { type: GFX, offset: 0x3000AF0, symbol: aBlueMarineLeftRudderDL }
 
-D_blue_marine_3000C70:
-  { type: GFX, offset: 0x3000C70, symbol: D_blue_marine_3000C70 }
+aBlueMarineBodyDL:
+  { type: GFX, offset: 0x3000C70, symbol: aBlueMarineBodyDL }
 
-D_blue_marine_3001900:
-  { type: TEXTURE, ctype: u16, format: RGBA16, width: 8, height: 8, offset: 0x3001900, symbol: D_blue_marine_3001900 }
+aBlueMarineTex6:
+  { type: TEXTURE, ctype: u16, format: RGBA16, width: 8, height: 8, offset: 0x3001900, symbol: aBlueMarineTex6 }
 
-D_blue_marine_3001980:
-  { type: TEXTURE, ctype: u16, format: RGBA16, width: 32, height: 32, offset: 0x3001980, symbol: D_blue_marine_3001980 }
+aBlueMarineTex8:
+  { type: TEXTURE, ctype: u16, format: RGBA16, width: 32, height: 32, offset: 0x3001980, symbol: aBlueMarineTex8 }
 
-D_blue_marine_3002180:
-  { type: TEXTURE, ctype: u16, format: RGBA16, width: 32, height: 32, offset: 0x3002180, symbol: D_blue_marine_3002180 }
+aBlueMarineTex5:
+  { type: TEXTURE, ctype: u16, format: RGBA16, width: 32, height: 32, offset: 0x3002180, symbol: aBlueMarineTex5 }
 
-D_blue_marine_3002980:
-  { type: TEXTURE, ctype: u16, format: RGBA16, width: 32, height: 32, offset: 0x3002980, symbol: D_blue_marine_3002980 }
+aBlueMarineTex1:
+  { type: TEXTURE, ctype: u16, format: RGBA16, width: 32, height: 32, offset: 0x3002980, symbol: aBlueMarineTex1 }
 
-D_blue_marine_3003180:
-  { type: TEXTURE, ctype: u16, format: RGBA16, width: 32, height: 32, offset: 0x3003180, symbol: D_blue_marine_3003180 }
+aBlueMarineTex2:
+  { type: TEXTURE, ctype: u16, format: RGBA16, width: 32, height: 32, offset: 0x3003180, symbol: aBlueMarineTex2 }
 
-D_blue_marine_3003980:
-  { type: TEXTURE, ctype: u16, format: RGBA16, width: 32, height: 32, offset: 0x3003980, symbol: D_blue_marine_3003980 }
+aBlueMarineTex3:
+  { type: TEXTURE, ctype: u16, format: RGBA16, width: 32, height: 32, offset: 0x3003980, symbol: aBlueMarineTex3 }
 
-D_blue_marine_3004180:
-  { type: TEXTURE, ctype: u16, format: RGBA16, width: 32, height: 32, offset: 0x3004180, symbol: D_blue_marine_3004180 }
+aBlueMarineTex4:
+  { type: TEXTURE, ctype: u16, format: RGBA16, width: 32, height: 32, offset: 0x3004180, symbol: aBlueMarineTex4 }
 
-D_blue_marine_3004980:
-  { type: TEXTURE, ctype: u16, format: RGBA16, width: 64, height: 32, offset: 0x3004980, symbol: D_blue_marine_3004980 }
+aBlueMarineTex7:
+  { type: TEXTURE, ctype: u16, format: RGBA16, width: 64, height: 32, offset: 0x3004980, symbol: aBlueMarineTex7 }
 
 aBlueMarineItemBombDL:
-  { type: GFX, offset: 0x3005980, symbol: aBlueMarineItemBombDL }
+  { type: GFX, offset: 0x3005980, symbol: aBlueMarineItemBombDL, comment: Unused since there are no bomb items in Aquas }
 
-D_blue_marine_30062E8:
-  { type: TEXTURE, ctype: u16, format: RGBA16, width: 32, height: 32, offset: 0x30062E8, symbol: D_blue_marine_30062E8 }
+aBlueMarineTex9:
+  { type: TEXTURE, ctype: u16, format: RGBA16, width: 32, height: 32, offset: 0x30062E8, symbol: aBlueMarineTex9 }
 
-D_blue_marine_3006AF0:
-  { type: GFX, offset: 0x3006AF0, symbol: D_blue_marine_3006AF0 }
+aBlueMarineRightRudderDL:
+  { type: GFX, offset: 0x3006AF0, symbol: aBlueMarineRightRudderDL }
 
-D_blue_marine_3006C70:
-  { type: GFX, offset: 0x3006C70, symbol: D_blue_marine_3006C70 }
+aBlueMarineBackRudderDL:
+  { type: GFX, offset: 0x3006C70, symbol: aBlueMarineBackRudderDL }
 
-D_blue_marine_3006DE0:
-  { type: GFX, offset: 0x3006DE0, symbol: D_blue_marine_3006DE0 }
+aBlueMarinePropellerDL:
+  { type: GFX, offset: 0x3006DE0, symbol: aBlueMarinePropellerDL }

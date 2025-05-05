@@ -10,26 +10,26 @@
 #include "assets/ast_sector_z.h"
 
 typedef enum ActorAllRangeState {
-    STATE360_0,
-    STATE360_1,
-    STATE360_2,
-    STATE360_3,
-    STATE360_4,
-    STATE360_5,
-    STATE360_6,
-    STATE360_7,
-    STATE360_8,
-    STATE360_9,
-    STATE360_10,
-    STATE360_11,
-    STATE360_12,
-    STATE360_13,
-    STATE360_14,
-    STATE360_15,
-    STATE360_16,
-    STATE360_17,
-    STATE360_18,
-    STATE360_19,
+    /* 00 */ STATE360_0,
+    /* 01 */ STATE360_1,
+    /* 02 */ STATE360_2,
+    /* 03 */ STATE360_3,
+    /* 04 */ STATE360_4,
+    /* 05 */ STATE360_5,
+    /* 06 */ STATE360_6,
+    /* 07 */ STATE360_7,
+    /* 08 */ STATE360_8,
+    /* 09 */ STATE360_9,
+    /* 10 */ STATE360_10,
+    /* 11 */ STATE360_11,
+    /* 12 */ STATE360_12,
+    /* 13 */ STATE360_13,
+    /* 14 */ STATE360_14,
+    /* 15 */ STATE360_15,
+    /* 16 */ STATE360_16,
+    /* 17 */ STATE360_17,
+    /* 18 */ STATE360_18,
+    /* 19 */ STATE360_19,
 } ActorAllRangeState;
 
 s32 gAllRangeSupplyTimer;
@@ -960,7 +960,7 @@ void ActorAllRange_ApplyDamage(ActorAllRange* this) {
                 this->obj.status = OBJ_DYING;
                 this->fwork[23] = 0.0f;
 
-                func_effect_8007D2C8(this->obj.pos.x, this->obj.pos.y, this->obj.pos.z, 4.0f);
+                Effect_FireSmoke1_Spawn3(this->obj.pos.x, this->obj.pos.y, this->obj.pos.z, 4.0f);
                 AUDIO_PLAY_SFX(NA_SE_EN_CRASH_DOWN, this->sfxSource, 4);
 
                 this->timer_0C2 = 10;
@@ -1117,7 +1117,7 @@ void ActorAllRange_ApplyDamage(ActorAllRange* this) {
                     AUDIO_PLAY_SFX(NA_SE_EN_DAMAGE_S, this->sfxSource, 4);
                 }
 
-                func_effect_8007D10C(this->obj.pos.x, this->obj.pos.y, this->obj.pos.z, 1.5f);
+                Effect_FireSmoke2_Spawn3(this->obj.pos.x, this->obj.pos.y, this->obj.pos.z, 1.5f);
 
                 if (this->aiType < AI360_GREAT_FOX) {
                     Matrix_RotateY(gCalcMatrix, this->orient.y * M_DTOR, MTXF_NEW);
@@ -2148,8 +2148,8 @@ void ActorAllRange_Update(ActorAllRange* this) {
                 spA8.y = 70.0f;
                 spA8.z = -70.0f;
                 Matrix_MultVec3fNoTranslate(gCalcMatrix, &spA8, &sp9C);
-                Effect_Effect393_Spawn(this->obj.pos.x + sp9C.x, this->obj.pos.y + sp9C.y, this->obj.pos.z + sp9C.z,
-                                       3.1f);
+                Effect_Sparkle_Spawn(this->obj.pos.x + sp9C.x, this->obj.pos.y + sp9C.y, this->obj.pos.z + sp9C.z,
+                                     3.1f);
             }
         }
     }
@@ -2281,8 +2281,9 @@ void ActorAllRange_Update(ActorAllRange* this) {
                     this->timer_0BE = 2;
                     this->obj.status = OBJ_DYING;
                     this->itemDrop = DROP_NONE;
-                    Effect386_Spawn1(this->obj.pos.x, this->obj.pos.y, this->obj.pos.z, 0.0f, 0.0f, 0.0f, 5.0f, 15);
-                    Effect_SpawnTimedSfxAtPos(&this->obj.pos, NA_SE_EN_EXPLOSION_S);
+                    Effect_Effect386_Spawn1(this->obj.pos.x, this->obj.pos.y, this->obj.pos.z, 0.0f, 0.0f, 0.0f, 5.0f,
+                                            15);
+                    Effect_TimedSfx_Spawn(&this->obj.pos, NA_SE_EN_EXPLOSION_S);
                 } else {
                     this->dmgType = DMG_BEAM;
                     this->damage = 10;

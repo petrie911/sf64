@@ -6,10 +6,10 @@
 
 Vec3f sShotViewPos;
 
-void PlayerShot_SetupEffect351(Effect* effect, f32 xPos, f32 yPos, f32 zPos) {
+void PlayerShot_TorpedoTrail_Setup(EffectTorpedoTrail* effect, f32 xPos, f32 yPos, f32 zPos) {
     Effect_Initialize(effect);
     effect->obj.status = OBJ_INIT;
-    effect->obj.id = OBJ_EFFECT_351;
+    effect->obj.id = OBJ_EFFECT_TORPEDO_TRAIL;
     effect->obj.pos.x = xPos;
     effect->obj.pos.y = yPos;
     effect->obj.pos.z = zPos;
@@ -24,12 +24,12 @@ void PlayerShot_SetupEffect351(Effect* effect, f32 xPos, f32 yPos, f32 zPos) {
     Object_SetInfo(&effect->info, effect->obj.id);
 }
 
-void PlayerShot_SpawnEffect351(f32 xPos, f32 yPos, f32 zPos) {
+void PlayerShot_SpawnTorpedoTrail(f32 xPos, f32 yPos, f32 zPos) {
     s32 i;
 
     for (i = 0; i < ARRAY_COUNT(gEffects); i++) {
         if (gEffects[i].obj.status == OBJ_FREE) {
-            PlayerShot_SetupEffect351(&gEffects[i], xPos, yPos, zPos);
+            PlayerShot_TorpedoTrail_Setup(&gEffects[i], xPos, yPos, zPos);
             break;
         }
     }
@@ -67,11 +67,11 @@ void PlayerShot_ExplodeBomb(PlayerShot* shot) {
                                        shot->unk_48 * 3.0f, 5);
                 Effect_Effect367_Spawn(shot->obj.pos.x, gGroundHeight + 2.0f, shot->obj.pos.z, shot->unk_48 * 0.1f,
                                        shot->unk_48 * 3.0f, 10);
-                Effect_Effect372_Spawn2(shot->obj.pos.x, gGroundHeight, shot->obj.pos.z, shot->unk_48 * 0.05f,
-                                        shot->unk_48 * 0.5f);
-                Effect_SpawnTimedSfxAtPos(&shot->obj.pos, NA_SE_OB_WATER_BOUND_M);
+                Effect_WaterSpray_SpawnCircle(shot->obj.pos.x, gGroundHeight, shot->obj.pos.z, shot->unk_48 * 0.05f,
+                                              shot->unk_48 * 0.5f);
+                Effect_TimedSfx_Spawn(&shot->obj.pos, NA_SE_OB_WATER_BOUND_M);
             } else {
-                func_enmy_80062B60(shot->obj.pos.x, shot->obj.pos.z, 0, shot->unk_48 * 3.0f);
+                Effect_Effect348_Spawn(shot->obj.pos.x, shot->obj.pos.z, 0, shot->unk_48 * 3.0f);
             }
         }
         if (gCurrentLevel == LEVEL_BOLSE) {
@@ -158,7 +158,7 @@ void PlayerShot_Impact(PlayerShot* shot) {
                 var_v0_2 = 12;
             }
             Effect_Effect384_Spawn(shot->obj.pos.x, shot->obj.pos.y, shot->obj.pos.z, 10.0f, var_v0_2);
-            func_effect_8007D2C8(shot->obj.pos.x, shot->obj.pos.y, shot->obj.pos.z, 4.0f);
+            Effect_FireSmoke1_Spawn3(shot->obj.pos.x, shot->obj.pos.y, shot->obj.pos.z, 4.0f);
         }
     } else {
         shot->obj.status = SHOT_HITMARK;
@@ -166,8 +166,8 @@ void PlayerShot_Impact(PlayerShot* shot) {
     }
 }
 
-void PlayerShot_SetupEffect344(Effect* effect, f32 xPos, f32 yPos, f32 zPos, f32 yRot, f32 xRot, f32 scale, s32 alpha,
-                               s32 time) {
+void PlayerShot_Effect344_Setup(Effect* effect, f32 xPos, f32 yPos, f32 zPos, f32 yRot, f32 xRot, f32 scale, s32 alpha,
+                                s32 time) {
     Effect_Initialize(effect);
     effect->obj.status = OBJ_INIT;
     effect->obj.id = OBJ_EFFECT_EXPLOSION_MARK_1;
@@ -184,8 +184,8 @@ void PlayerShot_SetupEffect344(Effect* effect, f32 xPos, f32 yPos, f32 zPos, f32
     Play_PlaySfxNoPlayer(effect->sfxSource, NA_SE_EXPLOSION_S);
 }
 
-void PlayerShot_SpawnEffect344(f32 xPos, f32 yPos, f32 zPos, f32 arg3, f32 arg4, f32 arg5, f32 yRot, f32 xRot,
-                               f32 scale, s32 alpha, s32 time) {
+void PlayerShot_Effect344_Spawn(f32 xPos, f32 yPos, f32 zPos, f32 arg3, f32 arg4, f32 arg5, f32 yRot, f32 xRot,
+                                f32 scale, s32 alpha, s32 time) {
     s32 i;
 
     if ((gGroundType != GROUND_4) && (gLevelType == LEVELTYPE_PLANET) && (gGroundSurface != SURFACE_WATER) &&
@@ -193,7 +193,7 @@ void PlayerShot_SpawnEffect344(f32 xPos, f32 yPos, f32 zPos, f32 arg3, f32 arg4,
         (gCurrentLevel != LEVEL_ZONESS)) {
         for (i = 0; i < 50; i++) {
             if (gEffects[i].obj.status == OBJ_FREE) {
-                PlayerShot_SetupEffect344(&gEffects[i], xPos, yPos, zPos, yRot, xRot, scale, alpha, time);
+                PlayerShot_Effect344_Setup(&gEffects[i], xPos, yPos, zPos, yRot, xRot, scale, alpha, time);
                 break;
             }
         }
@@ -222,13 +222,13 @@ void PlayerShot_HitGround(f32 xPos, f32 yPos, f32 zPos, f32 yRot, f32 scale) {
         for (i = 0; i < 50; i++) {
             if (gEffects[i].obj.status == OBJ_FREE) {
                 PlayerShot_LaserMark1_Setup(&gEffects[i], xPos, yPos, zPos, yRot, scale);
-                func_effect_8007D10C(xPos, yPos, zPos, 2.0f);
+                Effect_FireSmoke2_Spawn3(xPos, yPos, zPos, 2.0f);
                 break;
             }
         }
     }
     if (gCurrentLevel == LEVEL_BOLSE) {
-        func_effect_8007D10C(xPos, yPos, zPos, 2.0f);
+        Effect_FireSmoke2_Spawn3(xPos, yPos, zPos, 2.0f);
     }
 }
 
@@ -319,30 +319,30 @@ s32 PlayerShot_CheckObjectHitbox(PlayerShot* shot, f32* hitboxData, Object* obj)
                             if (hitbox->z.size + (obj->pos.z + hitbox->z.offset) < shot->obj.pos.z) {
                                 shot->obj.pos.z = hitbox->z.size + (obj->pos.z + hitbox->z.offset) - 5.0f;
                             }
-                            PlayerShot_SpawnEffect344((hitbox->x.offset + obj->pos.x) - (hitbox->x.size + 2.0f),
-                                                      shot->obj.pos.y, shot->obj.pos.z, obj->pos.x, obj->pos.z,
-                                                      obj->rot.y, obj->rot.y + 90.0f, 0.0f, 2.0f, 1, 20);
+                            PlayerShot_Effect344_Spawn((hitbox->x.offset + obj->pos.x) - (hitbox->x.size + 2.0f),
+                                                       shot->obj.pos.y, shot->obj.pos.z, obj->pos.x, obj->pos.z,
+                                                       obj->rot.y, obj->rot.y + 90.0f, 0.0f, 2.0f, 1, 20);
                             return i + 1;
                         }
                         if (hitbox->x.size < shot->obj.pos.x - (obj->pos.x + hitbox->x.offset)) {
                             if ((hitbox->z.size + (obj->pos.z + hitbox->z.offset)) < shot->obj.pos.z) {
                                 shot->obj.pos.z = hitbox->z.size + (obj->pos.z + hitbox->z.offset) - 5.0f;
                             }
-                            PlayerShot_SpawnEffect344(hitbox->x.size + (hitbox->x.offset + obj->pos.x) + 2.0f,
-                                                      shot->obj.pos.y, shot->obj.pos.z, obj->pos.x, obj->pos.z,
-                                                      obj->rot.y, obj->rot.y + 90.0f, 0.0f, 2.0f, 1, 20);
+                            PlayerShot_Effect344_Spawn(hitbox->x.size + (hitbox->x.offset + obj->pos.x) + 2.0f,
+                                                       shot->obj.pos.y, shot->obj.pos.z, obj->pos.x, obj->pos.z,
+                                                       obj->rot.y, obj->rot.y + 90.0f, 0.0f, 2.0f, 1, 20);
                             return i + 1;
                         }
                         if (((hitbox->y.size + (obj->pos.y + hitbox->y.offset)) - 10.0f) <= shot->obj.pos.y) {
                             shot->obj.pos.y = ((hitbox->y.size + (obj->pos.y + hitbox->y.offset)) - 10.0f);
                         }
-                        PlayerShot_SpawnEffect344(shot->obj.pos.x, shot->obj.pos.y,
-                                                  hitbox->z.size + (obj->pos.z + hitbox->z.offset) + 20.0f, obj->pos.x,
-                                                  obj->pos.z, 0.0f, 0.0f, 0.0f, 2.0f, 1, 20);
+                        PlayerShot_Effect344_Spawn(shot->obj.pos.x, shot->obj.pos.y,
+                                                   hitbox->z.size + (obj->pos.z + hitbox->z.offset) + 20.0f, obj->pos.x,
+                                                   obj->pos.z, 0.0f, 0.0f, 0.0f, 2.0f, 1, 20);
                         return i + 1;
                     }
                     if (obj->id < OBJ_SCENERY_MAX) {
-                        Effect_SpawnTimedSfxAtPos(&shot->obj.pos, NA_SE_EN_REFLECT);
+                        Effect_TimedSfx_Spawn(&shot->obj.pos, NA_SE_EN_REFLECT);
                     }
                     return i + 1;
                 }
@@ -622,7 +622,7 @@ bool PlayerShot_CheckPolyCollision(PlayerShot* shot, ObjectId objId, Object* obj
                     return false;
                 }
                 PlayerShot_Impact(shot);
-                Effect_SpawnTimedSfxAtPos(&shot->obj.pos, NA_SE_EN_REFLECT);
+                Effect_TimedSfx_Spawn(&shot->obj.pos, NA_SE_EN_REFLECT);
                 if (gCurrentLevel == LEVEL_METEO) {
                     Matrix_RotateY(gCalcMatrix, obj->rot.y * M_DTOR, MTXF_NEW);
                     sp7C.x = sp4C.x - obj->pos.x;
@@ -645,7 +645,7 @@ bool PlayerShot_CheckPolyCollision(PlayerShot* shot, ObjectId objId, Object* obj
                 return false;
             }
             PlayerShot_Impact(shot);
-            Effect_SpawnTimedSfxAtPos(&shot->obj.pos, NA_SE_EN_REFLECT);
+            Effect_TimedSfx_Spawn(&shot->obj.pos, NA_SE_EN_REFLECT);
             if (gCurrentLevel == LEVEL_FORTUNA) {
                 Effect_Effect362_Spawn(shot->obj.pos.x, shot->obj.pos.y, shot->obj.pos.z, 3.0f);
                 Effect_Effect362_Spawn(shot->obj.pos.x, shot->obj.pos.y, shot->obj.pos.z, 3.0f);
@@ -724,7 +724,7 @@ void PlayerShot_ApplyDamageToActor(PlayerShot* shot, Actor* actor, s32 hitIndex)
             shot->obj.pos.y += shot->vel.y * 5.0f;
             shot->obj.pos.z += shot->vel.z * 5.0f;
             actor->timer_0C2 = 3;
-            Effect_Effect393_Spawn(actor->obj.pos.x, actor->obj.pos.y, actor->obj.pos.z, 8.0f);
+            Effect_Sparkle_Spawn(actor->obj.pos.x, actor->obj.pos.y, actor->obj.pos.z, 8.0f);
             AUDIO_PLAY_SFX(NA_SE_EN_REFLECT, actor->sfxSource, 4);
             Play_SpawnHitmark(gShotHitPosX, gShotHitPosY, gShotHitPosZ);
         }
@@ -873,7 +873,7 @@ void PlayerShot_CollisionCheck(PlayerShot* shot) {
                         shot->obj.pos.z += 2.0f * shot->vel.z;
                         shot->timer = 5;
                         AUDIO_PLAY_SFX(NA_SE_ROLLING_REFLECT, player->sfxSource, 0);
-                        Effect_Effect393_Spawn(player->pos.x, player->pos.y, player->trueZpos, 8.0f);
+                        Effect_Sparkle_Spawn(player->pos.x, player->pos.y, player->trueZpos, 8.0f);
                     } else {
                         PlayerShot_Impact(shot);
                         if (player->hitTimer == 0) {
@@ -890,7 +890,7 @@ void PlayerShot_CollisionCheck(PlayerShot* shot) {
                             player->knockback.y = shot->vel.y * 0.1f;
                             player->knockback.z = shot->vel.z * 0.1f;
                             if (player->form != FORM_ON_FOOT) {
-                                Effect_Effect341_Spawn(player->pos.x, player->pos.y, player->trueZpos, 2.0f);
+                                Effect_FireSmoke3_Spawn(player->pos.x, player->pos.y, player->trueZpos, 2.0f);
                             }
                         }
                     }
@@ -1229,6 +1229,7 @@ f32 D_800C9BD8[10] = { 100.0f, 100.0f, 0.0f, 0.0f, 0.0f, 50.0f, 0.0f, 40.0f, 30.
 u8 D_800C9C00[4] = { 255, 255, 32, 32 };
 u8 D_800C9C04[4] = { 255, 32, 255, 32 };
 u8 D_800C9C08[4] = { 32, 32, 32, 255 };
+
 void PlayerShot_DrawShot(PlayerShot* shot) {
     Vec3f sp11C = { 0.0f, 0.0f, 0.0f };
     s32 pad[4];
@@ -1237,6 +1238,7 @@ void PlayerShot_DrawShot(PlayerShot* shot) {
 
     Matrix_Translate(gGfxMatrix, shot->obj.pos.x, shot->obj.pos.y, shot->obj.pos.z + gPathProgress, MTXF_APPLY);
     Matrix_MultVec3f(gGfxMatrix, &sp11C, &sShotViewPos);
+
     if ((sShotViewPos.z < 0.0f) && (sShotViewPos.z > -10000.0f)) {
         var_fv1 = fabsf(sShotViewPos.x); // probably fake. The use of temps was likely different
         if (var_fv1 < (fabsf(sShotViewPos.z * 0.5f) + 500.0f)) {
@@ -1245,6 +1247,7 @@ void PlayerShot_DrawShot(PlayerShot* shot) {
             }
         }
     }
+
     if (!isDrawn) {
         if ((shot->obj.id != PLAYERSHOT_BOMB) && (shot->timer < 10) && !gVersusMode) {
             Object_Kill(&shot->obj, shot->sfxSource);
@@ -1265,13 +1268,16 @@ void PlayerShot_DrawShot(PlayerShot* shot) {
                 Matrix_RotateX(gGfxMatrix, shot->vec_2C.x * M_DTOR, MTXF_APPLY);
             }
         }
+
         Matrix_Translate(gGfxMatrix, 0.f, 0.f, D_800C9BD8[shot->obj.id], MTXF_APPLY);
         Matrix_SetGfxMtx(&gMasterDisp);
+
         switch (shot->obj.id) {
             case PLAYERSHOT_SINGLE_LASER:
             case PLAYERSHOT_TWIN_LASER:
                 PlayerShot_DrawLaser(shot);
                 break;
+
             case PLAYERSHOT_BOMB:
                 if (shot->unk_5C == 0) {
                     RCP_SetupDL(&gMasterDisp, SETUPDL_29);
@@ -1283,13 +1289,16 @@ void PlayerShot_DrawShot(PlayerShot* shot) {
                     Matrix_RotateY(gGfxMatrix, -gPlayer[gPlayerNum].camYaw, MTXF_APPLY);
                     Matrix_RotateX(gGfxMatrix, gPlayer[gPlayerNum].camPitch, MTXF_APPLY);
                     Matrix_RotateZ(gGfxMatrix, gGameFrameCount * 40.0f * M_DTOR, MTXF_APPLY);
-                    if (((gGameFrameCount % 2) == 0)) {
+
+                    if ((gGameFrameCount % 2) == 0) {
                         Matrix_Scale(gGfxMatrix, 1.7f, 1.7f, 1.7f, MTXF_APPLY);
                     } else {
                         Matrix_Scale(gGfxMatrix, 1.2f, 1.2f, 1.2f, MTXF_APPLY);
                     }
+
                     RCP_SetupDL(&gMasterDisp, SETUPDL_49);
                     gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 255);
+
                     if (gVersusMode) {
                         switch (shot->sourceId) {
                             case 0:
@@ -1313,6 +1322,7 @@ void PlayerShot_DrawShot(PlayerShot* shot) {
                 } else {
                     Matrix_Scale(gGfxMatrix, shot->scale, shot->scale, shot->scale, MTXF_APPLY);
                     Matrix_SetGfxMtx(&gMasterDisp);
+
                     if (gVersusMode) {
                         RCP_SetupDL_49();
                         gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, shot->unk_58);
@@ -1337,14 +1347,17 @@ void PlayerShot_DrawShot(PlayerShot* shot) {
                     gSPDisplayList(gMasterDisp++, D_1031EC0);
                 }
                 break;
+
             case PLAYERSHOT_TANK:
                 gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
                 RCP_SetupDL_40();
+
                 if (gVersusMode) {
                     gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 255);
                     gDPSetEnvColor(gMasterDisp++, D_800C9C00[shot->sourceId], D_800C9C04[shot->sourceId],
                                    D_800C9C08[shot->sourceId], 255);
                     RCP_SetupDL(&gMasterDisp, SETUPDL_49);
+
                     if (gLaserStrength[shot->sourceId] != LASERS_SINGLE) {
                         Matrix_RotateZ(gGfxMatrix, gGameFrameCount * 48.0f * M_DTOR, MTXF_APPLY);
                         Matrix_Push(&gGfxMatrix);
@@ -1365,6 +1378,7 @@ void PlayerShot_DrawShot(PlayerShot* shot) {
                         } else {
                             var_fv1 = 0.0f;
                         }
+
                         Matrix_RotateY(gGfxMatrix, var_fv1, MTXF_APPLY);
                         Matrix_RotateZ(gGfxMatrix, 30.0f * M_DTOR, MTXF_APPLY);
                         Matrix_Scale(gGfxMatrix, 2.0f, 2.0f, 2.0f, MTXF_APPLY);
@@ -1372,11 +1386,12 @@ void PlayerShot_DrawShot(PlayerShot* shot) {
                         gSPDisplayList(gMasterDisp++, D_versus_301AD60);
                     }
                 } else {
-                    if (((gGameFrameCount % 2) == 0)) {
+                    if ((gGameFrameCount % 2) == 0) {
                         var_fv1 = M_PI;
                     } else {
                         var_fv1 = 0.0f;
                     }
+
                     Matrix_RotateY(gGfxMatrix, var_fv1, MTXF_APPLY);
                     Matrix_RotateZ(gGfxMatrix, 30.0f * M_DTOR, MTXF_APPLY);
                     Matrix_Scale(gGfxMatrix, 1.0f, 0.65f, 1.0f, MTXF_APPLY);
@@ -1385,9 +1400,10 @@ void PlayerShot_DrawShot(PlayerShot* shot) {
                     gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 255);
                     gDPSetEnvColor(gMasterDisp++, 0, 255, 0, 0);
                     gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
-                    gSPDisplayList(gMasterDisp++, D_landmaster_3006940);
+                    gSPDisplayList(gMasterDisp++, aLandmasterShotDL);
                 }
                 break;
+
             case PLAYERSHOT_ON_FOOT:
             case PLAYERSHOT_7:
                 Matrix_Scale(gGfxMatrix, shot->scale, shot->scale, shot->scale, MTXF_APPLY);
@@ -1396,6 +1412,7 @@ void PlayerShot_DrawShot(PlayerShot* shot) {
                 gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 255);
                 gDPSetEnvColor(gMasterDisp++, D_800C9C00[shot->sourceId], D_800C9C04[shot->sourceId],
                                D_800C9C08[shot->sourceId], 255);
+
                 if (gLaserStrength[shot->sourceId] != LASERS_SINGLE) {
                     Matrix_RotateZ(gGfxMatrix, gGameFrameCount * 48.0f * M_DTOR, MTXF_APPLY);
                     Matrix_Push(&gGfxMatrix);
@@ -1410,9 +1427,11 @@ void PlayerShot_DrawShot(PlayerShot* shot) {
                     gSPDisplayList(gMasterDisp++, D_versus_301AEF0);
                 }
                 break;
+
             case PLAYERSHOT_LOCK_ON:
                 Matrix_RotateY(gGfxMatrix, M_PI, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
+
                 if (gCurrentLevel == LEVEL_AQUAS) {
                     RCP_SetupDL(&gMasterDisp, SETUPDL_60);
                     gSPDisplayList(gMasterDisp++, D_AQ_600DB80);
@@ -1430,6 +1449,7 @@ void PlayerShot_DrawShot(PlayerShot* shot) {
                     if (shot->scale > 1.5f) {
                         break;
                     }
+
                     Matrix_Pop(&gGfxMatrix);
                     Matrix_Push(&gGfxMatrix);
                     Matrix_Translate(gGfxMatrix, shot->obj.pos.x, shot->obj.pos.y, shot->obj.pos.z + gPathProgress,
@@ -1440,6 +1460,7 @@ void PlayerShot_DrawShot(PlayerShot* shot) {
                     Matrix_Scale(gGfxMatrix, 20.0f, 20.0f, 20.0f, MTXF_APPLY);
                     RCP_SetupDL(&gMasterDisp, SETUPDL_49);
                     gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 255);
+
                     if (gVersusMode) {
                         switch (shot->sourceId) {
                             case 0:
@@ -1458,6 +1479,7 @@ void PlayerShot_DrawShot(PlayerShot* shot) {
                     } else {
                         gDPSetEnvColor(gMasterDisp++, 0, 255, 0, 255);
                     }
+
                     Matrix_RotateZ(gGfxMatrix, gGameFrameCount * 53.0f * M_DTOR, MTXF_APPLY);
                     Matrix_SetGfxMtx(&gMasterDisp);
                     gSPDisplayList(gMasterDisp++, aStarDL);
@@ -1465,6 +1487,7 @@ void PlayerShot_DrawShot(PlayerShot* shot) {
                     Matrix_SetGfxMtx(&gMasterDisp);
                     gSPDisplayList(gMasterDisp++, aStarDL);
                     Matrix_Pop(&gGfxMatrix);
+
                     if (((gGameFrameCount % 2) == 0)) {
                         Matrix_Scale(gGfxMatrix, 1.7f, 1.7f, 1.7f, MTXF_APPLY);
                     } else {
@@ -1481,11 +1504,13 @@ void PlayerShot_DrawShot(PlayerShot* shot) {
                                      MTXF_APPLY);
                     Matrix_RotateY(gGfxMatrix, -gPlayer[gPlayerNum].camYaw, MTXF_APPLY);
                     Matrix_RotateX(gGfxMatrix, gPlayer[gPlayerNum].camPitch, MTXF_APPLY);
+
                     if (((gGameFrameCount % 2) == 0)) {
                         Matrix_Scale(gGfxMatrix, 1.2f, 1.2f, 1.2f, MTXF_APPLY);
                     } else {
                         Matrix_Scale(gGfxMatrix, 1.5f, 1.5f, 1.5f, MTXF_APPLY);
                     }
+
                     RCP_SetupDL(&gMasterDisp, SETUPDL_49);
                     gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 0, 255);
                     gDPSetEnvColor(gMasterDisp++, 255, 128, 128, 255);
@@ -1493,6 +1518,7 @@ void PlayerShot_DrawShot(PlayerShot* shot) {
                     gSPDisplayList(gMasterDisp++, aOrbDL);
                 }
                 break;
+
             case PLAYERSHOT_GFOX_LASER:
                 Matrix_RotateY(gGfxMatrix, M_PI, MTXF_APPLY);
                 Matrix_Scale(gGfxMatrix, 3.0f, 3.0f, 20.0f, MTXF_APPLY);
@@ -1622,14 +1648,14 @@ void PlayerShot_UpdateBeam(PlayerShot* shot, s32 index) {
     Vec3f sp38;
 
     if ((gGroundSurface == SURFACE_WATER) && (shot->obj.pos.y < (gGroundHeight + 50.0f)) && (index == 0)) {
-        Effect_Effect372_Spawn1(shot->obj.pos.x, gGroundHeight, shot->obj.pos.z, 0.1f, 1.5f, shot->obj.rot.y + 20.0f);
-        Effect_Effect372_Spawn1(shot->obj.pos.x, gGroundHeight, shot->obj.pos.z, 0.1f, 1.5f, shot->obj.rot.y - 20.0f);
+        Effect_WaterSpray_Spawn(shot->obj.pos.x, gGroundHeight, shot->obj.pos.z, 0.1f, 1.5f, shot->obj.rot.y + 20.0f);
+        Effect_WaterSpray_Spawn(shot->obj.pos.x, gGroundHeight, shot->obj.pos.z, 0.1f, 1.5f, shot->obj.rot.y - 20.0f);
     }
     if ((shot->obj.pos.y < gGroundHeight) && (gGroundType != GROUND_4)) {
         PlayerShot_Impact(shot);
         shot->obj.pos.y = gGroundHeight + 2;
         if (gCurrentLevel == LEVEL_BOLSE) {
-            Effect_SpawnTimedSfxAtPos(&shot->obj.pos, NA_SE_EN_REFLECT);
+            Effect_TimedSfx_Spawn(&shot->obj.pos, NA_SE_EN_REFLECT);
         }
         if ((gCamCount != 4) && (gCurrentLevel != LEVEL_AQUAS)) {
             if ((shot->sourceId == TEAM_ID_FOX) && (gLaserStrength[0] != LASERS_SINGLE) &&
@@ -1663,12 +1689,12 @@ void PlayerShot_UpdateBeam(PlayerShot* shot, s32 index) {
             Effect_Effect364_Spawn(shot->obj.pos.x, shot->obj.pos.y, shot->obj.pos.z, 3.0f);
             Effect_Effect364_Spawn(shot->obj.pos.x, shot->obj.pos.y, shot->obj.pos.z, 3.0f);
             Effect_Effect364_Spawn(shot->obj.pos.x, shot->obj.pos.y, shot->obj.pos.z, 3.0f);
-            Aquas_Effect366_Spawn(RAND_FLOAT_CENTERED(10.0f) + shot->obj.pos.x,
-                                  RAND_FLOAT_CENTERED(10.0f) + shot->obj.pos.y, shot->obj.pos.z, 0.8f, 0);
-            Aquas_Effect366_Spawn(RAND_FLOAT_CENTERED(10.0f) + shot->obj.pos.x,
-                                  RAND_FLOAT_CENTERED(10.0f) + shot->obj.pos.y, shot->obj.pos.z, 0.8f, 0);
-            Aquas_Effect366_Spawn(RAND_FLOAT_CENTERED(10.0f) + shot->obj.pos.x,
-                                  RAND_FLOAT_CENTERED(10.0f) + shot->obj.pos.y, shot->obj.pos.z, 0.8f, 0);
+            Aquas_Bubble_Spawn(RAND_FLOAT_CENTERED(10.0f) + shot->obj.pos.x,
+                               RAND_FLOAT_CENTERED(10.0f) + shot->obj.pos.y, shot->obj.pos.z, 0.8f, 0);
+            Aquas_Bubble_Spawn(RAND_FLOAT_CENTERED(10.0f) + shot->obj.pos.x,
+                               RAND_FLOAT_CENTERED(10.0f) + shot->obj.pos.y, shot->obj.pos.z, 0.8f, 0);
+            Aquas_Bubble_Spawn(RAND_FLOAT_CENTERED(10.0f) + shot->obj.pos.x,
+                               RAND_FLOAT_CENTERED(10.0f) + shot->obj.pos.y, shot->obj.pos.z, 0.8f, 0);
         }
     }
     if (shot->timer == 0) {
@@ -1986,7 +2012,7 @@ void PlayerShot_ApplyExplosionDamage(PlayerShot* shot, s32 damage) {
                         effect->obj.pos.y += dy * 0.03f;
                     }
                     effect->obj.pos.z += dz * 0.03f;
-                    if ((effect->obj.id == OBJ_EFFECT_392) && (effect->state == 0)) {
+                    if ((effect->obj.id == OBJ_EFFECT_SO_FLARE) && (effect->state == 0)) {
                         effect->state = 1;
                         effect->alpha = 176;
                         effect->unk_4C = 0;
@@ -2121,9 +2147,9 @@ void PlayerShot_UpdateLockOnShot(PlayerShot* shot) {
                                    shot->unk_48 * 3.0f, 0);
             Effect_Effect367_Spawn(shot->obj.pos.x, gGroundHeight + 2.0f, shot->obj.pos.z, shot->unk_48 * 0.1f,
                                    shot->unk_48 * 3.0f, 5);
-            Effect_Effect372_Spawn2(shot->obj.pos.x, gGroundHeight, shot->obj.pos.z, shot->unk_48 * 0.05f,
-                                    shot->unk_48 * 0.5f);
-            Effect_SpawnTimedSfxAtPos(&shot->obj.pos, NA_SE_OB_WATER_BOUND_M);
+            Effect_WaterSpray_SpawnCircle(shot->obj.pos.x, gGroundHeight, shot->obj.pos.z, shot->unk_48 * 0.05f,
+                                          shot->unk_48 * 0.5f);
+            Effect_TimedSfx_Spawn(&shot->obj.pos, NA_SE_OB_WATER_BOUND_M);
         }
         PlayerShot_Impact(shot);
     } else {
@@ -2282,7 +2308,7 @@ void PlayerShot_UpdateShot(PlayerShot* shot, s32 index) {
                     }
                 }
                 Object_Kill(&shot->obj, shot->sfxSource);
-                Effect_SpawnTimedSfxAtPos(&shot->obj.pos, NA_SE_SPREAD_EXPLOSION);
+                Effect_TimedSfx_Spawn(&shot->obj.pos, NA_SE_SPREAD_EXPLOSION);
             } else if (gCurrentLevel == LEVEL_AQUAS) {
                 Aquas_801ABA40(shot);
             } else {

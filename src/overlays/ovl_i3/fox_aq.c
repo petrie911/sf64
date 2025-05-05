@@ -648,8 +648,7 @@ void Aquas_801A9ED0(Player* player) {
     Aquas_801A9DE4(player);
 }
 
-// Blue Marine Reticle
-void Aquas_801AA20C(void) {
+void Aquas_BlueMarineReticle_Draw(void) {
     s32 i;
     f32 x;
     f32 y;
@@ -659,7 +658,7 @@ void Aquas_801AA20C(void) {
         Math_SmoothStepToF(&D_i3_801C41B8[5], 3.0f, 1.0f, 4.0f, 0.0001f);
         RCP_SetupDL(&gMasterDisp, SETUPDL_61);
 
-        if (D_i3_801C4190[3] == 0) {
+        if (D_i3_801C4190[3] == 0) { // Normal
             gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 255);
             x = -10.0f;
             y = 10.0f;
@@ -677,16 +676,16 @@ void Aquas_801AA20C(void) {
                 Matrix_Translate(gGfxMatrix, x, y, 0.0f, MTXF_APPLY);
                 Matrix_Push(&gGfxMatrix);
                 Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, D_blue_marine_3000470);
+                gSPDisplayList(gMasterDisp++, aBlueMarineReticleDL);
                 Matrix_Pop(&gGfxMatrix);
             }
-        } else {
+        } else { // Target
             gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 0, 0, 255);
             Matrix_Translate(gGfxMatrix, D_i3_801C41B8[0], D_i3_801C41B8[1], D_i3_801C41B8[2] + gPlayer[0].zPath,
                              MTXF_APPLY);
             Matrix_Scale(gGfxMatrix, D_i3_801C41B8[5], D_i3_801C41B8[5], D_i3_801C41B8[5], MTXF_APPLY);
             Matrix_SetGfxMtx(&gMasterDisp);
-            gSPDisplayList(gMasterDisp++, D_blue_marine_3000130);
+            gSPDisplayList(gMasterDisp++, aBlueMarineReticleTargetDL);
         }
         Matrix_Pop(&gGfxMatrix);
     }
@@ -1065,24 +1064,24 @@ void Aquas_BlueMarineMove(Player* player) {
 
         if (player->boostSpeed > 1.0f) {
             player->unk_178 -= 30.0f;
-            Aquas_Effect366_Spawn(player->pos.x + RAND_FLOAT_CENTERED(10.0f) + sp80.x,
-                                  player->pos.y + RAND_FLOAT_CENTERED(10.0f) + sp80.y,
-                                  player->trueZpos + RAND_FLOAT_CENTERED(10.0f) + (sp80.z * -1.0f), 0.4f, 1);
+            Aquas_Bubble_Spawn(player->pos.x + RAND_FLOAT_CENTERED(10.0f) + sp80.x,
+                               player->pos.y + RAND_FLOAT_CENTERED(10.0f) + sp80.y,
+                               player->trueZpos + RAND_FLOAT_CENTERED(10.0f) + (sp80.z * -1.0f), 0.4f, 1);
         } else {
             player->unk_178 -= 10.0f;
             if ((gGameFrameCount % 8) == 0) {
-                Aquas_Effect366_Spawn(player->pos.x + RAND_FLOAT_CENTERED(10.0f) + sp80.x,
-                                      player->pos.y + RAND_FLOAT_CENTERED(10.0f) + sp80.y,
-                                      player->trueZpos + RAND_FLOAT_CENTERED(20.0f) + sp80.z, 0.4f, 0);
+                Aquas_Bubble_Spawn(player->pos.x + RAND_FLOAT_CENTERED(10.0f) + sp80.x,
+                                   player->pos.y + RAND_FLOAT_CENTERED(10.0f) + sp80.y,
+                                   player->trueZpos + RAND_FLOAT_CENTERED(20.0f) + sp80.z, 0.4f, 0);
             }
         }
     }
 }
 
 void Aquas_BlueMarineDown(Player* player) {
-    func_effect_8007D0E0(player->pos.x, player->pos.y, player->trueZpos, 6.0f);
+    Effect_FireSmoke1_Spawn4(player->pos.x, player->pos.y, player->trueZpos, 6.0f);
     Effect_Effect384_Spawn(player->pos.x, player->pos.y, player->trueZpos, 3.0f, 5);
-    Effect386_Spawn1(player->pos.x, player->pos.y, player->trueZpos, 0.0f, 0.0f, 0.0f, 3.0f, 80);
+    Effect_Effect386_Spawn1(player->pos.x, player->pos.y, player->trueZpos, 0.0f, 0.0f, 0.0f, 3.0f, 80);
     Cutscene_KillPlayer(player);
 }
 
@@ -1107,13 +1106,13 @@ void Aquas_801ABA40(PlayerShot* shot) {
 
     if (shot->obj.pos.y < gGroundHeight) {
         shot->obj.pos.y = gGroundHeight + 2.0f;
-        PlayerShot_SpawnEffect344(shot->obj.pos.x, shot->obj.pos.y, shot->obj.pos.z, 0.0f, 0.0f, 0.0f, 0.0f, 90.0f,
-                                  2.0f, 0, 0);
-        Effect_FireSmoke_Spawn(shot->obj.pos.x, shot->obj.pos.y, shot->obj.pos.z, 1.2f);
+        PlayerShot_Effect344_Spawn(shot->obj.pos.x, shot->obj.pos.y, shot->obj.pos.z, 0.0f, 0.0f, 0.0f, 0.0f, 90.0f,
+                                   2.0f, 0, 0);
+        Effect_FireSmoke1_Spawn(shot->obj.pos.x, shot->obj.pos.y, shot->obj.pos.z, 1.2f);
         D_i3_801C4190[5] = D_i3_801C4190[3] = 0;
         PlayerShot_Impact(shot);
     } else if (((shot->timer == 0) || (D_i3_801C4454 == 0)) && (shot->unk_5C != 0)) {
-        Effect_FireSmoke_Spawn(shot->obj.pos.x, shot->obj.pos.y, shot->obj.pos.z, 1.2f);
+        Effect_FireSmoke1_Spawn(shot->obj.pos.x, shot->obj.pos.y, shot->obj.pos.z, 1.2f);
         D_i3_801C41B8[21] = D_i3_801C41B8[22] = D_i3_801C41B8[23] = 0.0f;
         D_i3_801C4190[5] = D_i3_801C4190[3] = 0;
         PlayerShot_Impact(shot);
@@ -1121,7 +1120,7 @@ void Aquas_801ABA40(PlayerShot* shot) {
         Math_SmoothStepToF(&shot->unk_48, 50.0f, 0.2f, 10.0f, 0.00001f);
         shot->obj.rot.z += shot->unk_48;
         if ((gGameFrameCount % 2) == 0) {
-            PlayerShot_SpawnEffect351(shot->obj.pos.x, shot->obj.pos.y, shot->obj.pos.z);
+            PlayerShot_SpawnTorpedoTrail(shot->obj.pos.x, shot->obj.pos.y, shot->obj.pos.z);
         }
 
         PlayerShot_CollisionCheck(shot);
@@ -1356,10 +1355,10 @@ void Aquas_BlueMarineShoot(Player* player) {
     }
 }
 
-void Aquas_Effect366_Setup(Effect366* this, f32 xPos, f32 yPos, f32 zPos, f32 scale2, s32 state) {
+void Aquas_Bubble_Setup(EffectBubble* this, f32 xPos, f32 yPos, f32 zPos, f32 scale2, s32 state) {
     Effect_Initialize(this);
     this->obj.status = OBJ_INIT;
-    this->obj.id = OBJ_EFFECT_366;
+    this->obj.id = OBJ_EFFECT_BUBBLE;
     this->obj.pos.x = xPos;
     this->obj.pos.y = yPos;
     this->obj.pos.z = zPos;
@@ -1376,19 +1375,19 @@ void Aquas_Effect366_Setup(Effect366* this, f32 xPos, f32 yPos, f32 zPos, f32 sc
     Object_SetInfo(&this->info, this->obj.id);
 }
 
-void Aquas_Effect366_Spawn(f32 xPos, f32 yPos, f32 zPos, f32 scale2, s32 unk4E) {
+void Aquas_Bubble_Spawn(f32 xPos, f32 yPos, f32 zPos, f32 scale2, s32 unk4E) {
     s32 i;
 
     for (i = 0; i < 95; i++) {
         if (gEffects[i].obj.status == OBJ_FREE) {
-            Aquas_Effect366_Setup(&gEffects[i], xPos, yPos, zPos, scale2, unk4E);
+            Aquas_Bubble_Setup(&gEffects[i], xPos, yPos, zPos, scale2, unk4E);
             break;
         }
     }
 }
 
-void Aquas_Effect366_Update(Effect366* this) {
-    f32 temp_fs0;
+void Aquas_Bubble_Update(EffectBubble* this) {
+    f32 waveAmplitude;
 
     if (this->unk_46 != 0) {
         this->unk_46--;
@@ -1403,9 +1402,9 @@ void Aquas_Effect366_Update(Effect366* this) {
                 Object_Kill(&this->obj, this->sfxSource);
             }
             this->scale1 += 33.0f;
-            temp_fs0 = COS_DEG(this->scale1) * 1.5f;
-            this->vel.x = __cosf(gPlayer[0].camYaw) * temp_fs0;
-            this->vel.z = __sinf(gPlayer[0].camYaw) * temp_fs0;
+            waveAmplitude = COS_DEG(this->scale1) * 1.5f;
+            this->vel.x = __cosf(gPlayer[0].camYaw) * waveAmplitude;
+            this->vel.z = __sinf(gPlayer[0].camYaw) * waveAmplitude;
             break;
 
         case 1:
@@ -1414,11 +1413,10 @@ void Aquas_Effect366_Update(Effect366* this) {
             }
             this->orient.x += 0.07f;
             this->scale1 += 33.0f;
-
             this->vel.y = this->orient.x + (SIN_DEG(this->scale1) * 3.0f);
-            temp_fs0 = COS_DEG(this->scale1) * 3.0f;
-            this->vel.x = COS_DEG(this->orient.y) * temp_fs0;
-            this->vel.z = -SIN_DEG(this->orient.y) * temp_fs0;
+            waveAmplitude = COS_DEG(this->scale1) * 3.0f;
+            this->vel.x = COS_DEG(this->orient.y) * waveAmplitude;
+            this->vel.z = -SIN_DEG(this->orient.y) * waveAmplitude;
             break;
 
         case 2:
@@ -1429,9 +1427,9 @@ void Aquas_Effect366_Update(Effect366* this) {
                 Object_Kill(&this->obj, this->sfxSource);
             }
             this->scale1 += 55.0f;
-            temp_fs0 = COS_DEG(this->scale1) * 2.5f;
-            this->vel.x = __cosf(gPlayer[0].camYaw) * temp_fs0;
-            this->vel.z = __sinf(gPlayer[0].camYaw) * temp_fs0;
+            waveAmplitude = COS_DEG(this->scale1) * 2.5f;
+            this->vel.x = __cosf(gPlayer[0].camYaw) * waveAmplitude;
+            this->vel.z = __sinf(gPlayer[0].camYaw) * waveAmplitude;
             break;
     }
 }
@@ -1440,30 +1438,30 @@ void Aquas_BlueMarine_Draw(Player* player) {
     Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -40.0f, MTXF_APPLY);
     Matrix_RotateY(gGfxMatrix, M_PI, MTXF_APPLY);
     Matrix_SetGfxMtx(&gMasterDisp);
-    gSPDisplayList(gMasterDisp++, D_blue_marine_3000C70);
+    gSPDisplayList(gMasterDisp++, aBlueMarineBodyDL);
     Matrix_Push(&gGfxMatrix);
     Matrix_Translate(gGfxMatrix, 0.0f, -4.5f, 1.2f, MTXF_APPLY);
     Matrix_RotateZ(gGfxMatrix, player->unk_178 * M_DTOR, MTXF_APPLY);
     Matrix_SetGfxMtx(&gMasterDisp);
-    gSPDisplayList(gMasterDisp++, D_blue_marine_3006DE0);
+    gSPDisplayList(gMasterDisp++, aBlueMarinePropellerDL);
     Matrix_Pop(&gGfxMatrix);
     Matrix_Push(&gGfxMatrix);
     Matrix_Translate(gGfxMatrix, 0.0f, 2.0f, 40.0f, MTXF_APPLY);
     Matrix_RotateY(gGfxMatrix, -player->unk_180 * M_DTOR, MTXF_APPLY);
     Matrix_SetGfxMtx(&gMasterDisp);
-    gSPDisplayList(gMasterDisp++, D_blue_marine_3006C70);
+    gSPDisplayList(gMasterDisp++, aBlueMarineBackRudderDL);
     Matrix_Pop(&gGfxMatrix);
     Matrix_Push(&gGfxMatrix);
     Matrix_Translate(gGfxMatrix, -19.0f, -3.6f, 1.2f, MTXF_APPLY);
     Matrix_RotateX(gGfxMatrix, player->unk_17C * M_DTOR, MTXF_APPLY);
     Matrix_SetGfxMtx(&gMasterDisp);
-    gSPDisplayList(gMasterDisp++, D_blue_marine_3000AF0);
+    gSPDisplayList(gMasterDisp++, aBlueMarineLeftRudderDL);
     Matrix_Pop(&gGfxMatrix);
     Matrix_Push(&gGfxMatrix);
     Matrix_Translate(gGfxMatrix, 19.0f, -3.6f, 1.2f, MTXF_APPLY);
     Matrix_RotateX(gGfxMatrix, player->unk_17C * M_DTOR, MTXF_APPLY);
     Matrix_SetGfxMtx(&gMasterDisp);
-    gSPDisplayList(gMasterDisp++, D_blue_marine_3006AF0);
+    gSPDisplayList(gMasterDisp++, aBlueMarineRightRudderDL);
     Matrix_Pop(&gGfxMatrix);
 }
 
@@ -1485,9 +1483,9 @@ void Aquas_BlueMarineBoost(Player* player) {
         sp54.z = 70.0f;
 
         Matrix_MultVec3fNoTranslate(gCalcMatrix, &sp54, &sp48);
-        Aquas_Effect366_Spawn(player->pos.x + RAND_FLOAT_CENTERED(10.0f) + sp48.x,
-                              player->pos.y + RAND_FLOAT_CENTERED(10.0f) + sp48.y,
-                              player->trueZpos + RAND_FLOAT_CENTERED(10.0f) + (sp48.z * -1.0f), 0.4f, 1);
+        Aquas_Bubble_Spawn(player->pos.x + RAND_FLOAT_CENTERED(10.0f) + sp48.x,
+                           player->pos.y + RAND_FLOAT_CENTERED(10.0f) + sp48.y,
+                           player->trueZpos + RAND_FLOAT_CENTERED(10.0f) + (sp48.z * -1.0f), 0.4f, 1);
         Math_SmoothStepToF(&player->camDist, -130.0f, 0.1f, 10.0f, 0.00001f);
 
         player->zRotBarrelRoll -= player->meteoWarpSpinSpeed;
@@ -1781,7 +1779,7 @@ void Aquas_AqSanada_Update(AqSanada* this) {
                     Object_Kill(&this->obj, this->sfxSource);
                 }
                 this->timer_0BC = 4;
-                func_effect_8007D0E0(D_i3_801C27C0->pos.x, D_i3_801C27C0->pos.y, D_i3_801C27C0->pos.z, 3.0f);
+                Effect_FireSmoke1_Spawn4(D_i3_801C27C0->pos.x, D_i3_801C27C0->pos.y, D_i3_801C27C0->pos.z, 3.0f);
                 AUDIO_PLAY_SFX(NA_SE_EN_SEA_EXPLOSION_S, this->sfxSource, 4);
             }
             break;
@@ -2014,10 +2012,9 @@ void Aquas_AqBacoonMuscle_Update(AqBacoonMuscle* this) {
                     if (D_i3_801C42A0[23] == 0) {
                         D_i3_801C4308[79] = -180.0f;
                         for (i = 0; i < 60; i++) {
-                            Aquas_Effect366_Spawn(gBosses[0].obj.pos.x + RAND_FLOAT_CENTERED(1800.0f),
-                                                  gBosses[0].obj.pos.y + 400.0f + RAND_FLOAT_CENTERED(1000.0f),
-                                                  gBosses[0].obj.pos.z + 700.0f + RAND_FLOAT_CENTERED(1000.0f), 7.0f,
-                                                  2);
+                            Aquas_Bubble_Spawn(gBosses[0].obj.pos.x + RAND_FLOAT_CENTERED(1800.0f),
+                                               gBosses[0].obj.pos.y + 400.0f + RAND_FLOAT_CENTERED(1000.0f),
+                                               gBosses[0].obj.pos.z + 700.0f + RAND_FLOAT_CENTERED(1000.0f), 7.0f, 2);
                         }
                         gBosses[0].timer_052 = 0;
                         gBosses[0].timer_056 = 60;
@@ -2332,8 +2329,8 @@ void Aquas_AqBacconBarnacle_Update(AqBacconBarnacle* this) {
                 Math_SmoothStepToAngle(&this->obj.rot.x, 80.0f, 0.1f, 1.0f, 0.001f);
 
                 if (((gGameFrameCount % 2) == 0)) {
-                    Aquas_Effect366_Spawn(this->obj.pos.x + RAND_FLOAT_CENTERED(300.0f),
-                                          this->obj.pos.y + RAND_FLOAT_CENTERED(200.0f), this->obj.pos.z, 4.0f, 2);
+                    Aquas_Bubble_Spawn(this->obj.pos.x + RAND_FLOAT_CENTERED(300.0f),
+                                       this->obj.pos.y + RAND_FLOAT_CENTERED(200.0f), this->obj.pos.z, 4.0f, 2);
                 }
 
                 if (this->timer_0C6 == 0) {
@@ -2376,8 +2373,8 @@ void Aquas_AqBacconBarnacle_Update(AqBacconBarnacle* this) {
                     if (this->fwork[0] <= 0.2f) {
                         for (i = 0; i < 5; i++) {
                             Effect_Effect362_Spawn(this->obj.pos.x, gGroundHeight + 50.0f, this->obj.pos.z, 20.0f);
-                            Aquas_Effect366_Spawn(this->obj.pos.x + RAND_FLOAT_CENTERED(300.0f),
-                                                  gGroundHeight + (i * 20.0f), this->obj.pos.z, 5.0f, 2);
+                            Aquas_Bubble_Spawn(this->obj.pos.x + RAND_FLOAT_CENTERED(300.0f),
+                                               gGroundHeight + (i * 20.0f), this->obj.pos.z, 5.0f, 2);
                         }
 
                         if (gBosses[0].state < 13) {
@@ -2488,15 +2485,14 @@ void Aquas_AqPearl_Update(AqPearl* this) {
             }
             Object_Kill(&this->obj, this->sfxSource);
             func_effect_800815DC();
-            func_effect_8007D0E0(this->obj.pos.x, this->obj.pos.y, this->obj.pos.z + 50.0f, 5.0f);
-            Effect_SpawnTimedSfxAtPos(&this->obj.pos, NA_SE_EN_SEA_EXPLOSION_S);
+            Effect_FireSmoke1_Spawn4(this->obj.pos.x, this->obj.pos.y, this->obj.pos.z + 50.0f, 5.0f);
+            Effect_TimedSfx_Spawn(&this->obj.pos, NA_SE_EN_SEA_EXPLOSION_S);
             break;
     }
 
     if (((gGameFrameCount % 16) == 0)) {
-        Aquas_Effect366_Spawn(this->obj.pos.x + RAND_FLOAT_CENTERED(10.0f),
-                              this->obj.pos.y + RAND_FLOAT_CENTERED(10.0f),
-                              this->obj.pos.z + RAND_FLOAT_CENTERED(10.0f), 2.0f, 1);
+        Aquas_Bubble_Spawn(this->obj.pos.x + RAND_FLOAT_CENTERED(10.0f), this->obj.pos.y + RAND_FLOAT_CENTERED(10.0f),
+                           this->obj.pos.z + RAND_FLOAT_CENTERED(10.0f), 2.0f, 1);
     }
     Aquas_801A96DC(this);
 }
@@ -2672,9 +2668,9 @@ void Aquas_AqBacoon_Update(AqBacoon* this) {
             Aquas_801B0FCC(this);
             if (!(this->timer_056 & 1)) {
                 for (i3 = 0; i3 < 30; i3++) {
-                    Aquas_Effect366_Spawn(gBosses[0].obj.pos.x + RAND_FLOAT_CENTERED(1800.0f),
-                                          gBosses[0].obj.pos.y + RAND_FLOAT_CENTERED(500.0f),
-                                          gBosses[0].obj.pos.z + 700.0f + RAND_FLOAT_CENTERED(1000.0f), 7.0f, 2);
+                    Aquas_Bubble_Spawn(gBosses[0].obj.pos.x + RAND_FLOAT_CENTERED(1800.0f),
+                                       gBosses[0].obj.pos.y + RAND_FLOAT_CENTERED(500.0f),
+                                       gBosses[0].obj.pos.z + 700.0f + RAND_FLOAT_CENTERED(1000.0f), 7.0f, 2);
                 }
             }
             if (this->timer_056 == 0) {
@@ -2824,9 +2820,9 @@ void Aquas_AqBacoon_Update(AqBacoon* this) {
                                        this->obj.pos.y + 400.0f + RAND_FLOAT_CENTERED(400.0f),
                                        this->obj.pos.z + 1000.0f + RAND_FLOAT_CENTERED(800.0f), this->vel.x,
                                        this->vel.y, this->vel.z, 0.5f, 10);
-                func_effect_8007D0E0(this->obj.pos.x + RAND_FLOAT_CENTERED(1200.0f),
-                                     this->obj.pos.y + 200.0f + RAND_FLOAT_CENTERED(400.0f),
-                                     this->obj.pos.z + 1000.0f + RAND_FLOAT_CENTERED(800.0f), 10.0f);
+                Effect_FireSmoke1_Spawn4(this->obj.pos.x + RAND_FLOAT_CENTERED(1200.0f),
+                                         this->obj.pos.y + 200.0f + RAND_FLOAT_CENTERED(400.0f),
+                                         this->obj.pos.z + 1000.0f + RAND_FLOAT_CENTERED(800.0f), 10.0f);
             }
 
             if (i3 && i3) {} //! FAKE
@@ -2896,9 +2892,9 @@ void Aquas_AqBacoon_Update(AqBacoon* this) {
         case 18:
             if (this->timer_056 != 0) {
                 for (i3 = 0; i3 < 30; i3++) {
-                    Aquas_Effect366_Spawn(gBosses[0].obj.pos.x + RAND_FLOAT_CENTERED(1800.0f),
-                                          gBosses[0].obj.pos.y + RAND_FLOAT_CENTERED(500.0f),
-                                          gBosses[0].obj.pos.z + 700.0f + RAND_FLOAT_CENTERED(1000.0f), 7.0f, 2);
+                    Aquas_Bubble_Spawn(gBosses[0].obj.pos.x + RAND_FLOAT_CENTERED(1800.0f),
+                                       gBosses[0].obj.pos.y + RAND_FLOAT_CENTERED(500.0f),
+                                       gBosses[0].obj.pos.z + 700.0f + RAND_FLOAT_CENTERED(1000.0f), 7.0f, 2);
                 }
             }
             break;
@@ -2944,7 +2940,7 @@ void Aquas_AqBacoon_Update(AqBacoon* this) {
                     this->swork[AQ_SWK_0] = 4;
                     gCameraShake = 50;
                     AUDIO_PLAY_SFX(NA_SE_WATER_PRESSURE, this->sfxSource, 0);
-                    func_enmy_80062B60(this->obj.pos.x, this->obj.pos.z + 800.0f, 0, 100.0f);
+                    Effect_Effect348_Spawn(this->obj.pos.x, this->obj.pos.z + 800.0f, 0, 100.0f);
                     var_fs3 = 80.0f;
 
                     for (i2 = 0; i2 < 3; i2++, var_fs3 += 10.0f) {
@@ -3016,7 +3012,7 @@ void Aquas_AqBacoon_Update(AqBacoon* this) {
                                 spD4.x = D_i3_801C4308[73];
                                 spD4.y = D_i3_801C4308[74];
                                 spD4.z = D_i3_801C4308[75]; // 74?
-                                Effect_SpawnTimedSfxAtPos(&spD4, NA_SE_EN_WT_DISAPPEAR_L);
+                                Effect_TimedSfx_Spawn(&spD4, NA_SE_EN_WT_DISAPPEAR_L);
                                 this->swork[AQ_SWK_10] = 250.0f + RAND_FLOAT(50.0f);
                             }
                         }
@@ -3036,7 +3032,7 @@ void Aquas_AqBacoon_Update(AqBacoon* this) {
                                 spD4.x = D_i3_801C4308[76];
                                 spD4.y = D_i3_801C4308[77]; // 76?
                                 spD4.z = D_i3_801C4308[78];
-                                Effect_SpawnTimedSfxAtPos(&spD4, NA_SE_EN_WT_DISAPPEAR_L);
+                                Effect_TimedSfx_Spawn(&spD4, NA_SE_EN_WT_DISAPPEAR_L);
                                 this->swork[AQ_SWK_11] = 250.0f + RAND_FLOAT(50.0f);
                             }
                         }
@@ -3290,7 +3286,7 @@ void Aquas_AqBacoon_Update(AqBacoon* this) {
                         spD4.y = D_i3_801C4308[74 + 3 * i7];
                         spD4.z = D_i3_801C4308[75 + 3 * i7];
 
-                        Effect_SpawnTimedSfxAtPos(&spD4, NA_SE_EN_P_BALL_SHOT);
+                        Effect_TimedSfx_Spawn(&spD4, NA_SE_EN_P_BALL_SHOT);
 
                         i2 = 0;
                         for (i3 = 0; (i2 <= i) && (i3 < ARRAY_COUNT(gActors)); i3++) {
@@ -3433,7 +3429,7 @@ void Aquas_AqBacoon_Update(AqBacoon* this) {
                 spD4.x = D_i3_801C4308[73 + 3 * i3];
                 spD4.y = D_i3_801C4308[74 + 3 * i3];
                 spD4.z = D_i3_801C4308[75 + 3 * i3];
-                Effect_SpawnTimedSfxAtPos(&spD4, NA_SE_EN_P_GUN_APPEAR);
+                Effect_TimedSfx_Spawn(&spD4, NA_SE_EN_P_GUN_APPEAR);
             }
 
             if ((fabsf(D_i3_801C4308[10]) <= 3.0f) || (this->swork[AQ_SWK_10 + i3] == 0)) {
@@ -3789,42 +3785,42 @@ void Aquas_AqSculpin_PostLimbDraw(s32 limbIndex, Vec3f* rot, void* thisx) {
         switch (limbIndex) {
             case 1:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, this->vwork);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[8]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[8]);
                 break;
 
             case 2:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[1]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[9]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[9]);
                 break;
 
             case 3:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[2]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[10]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[10]);
                 break;
 
             case 4:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[3]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[11]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[11]);
                 break;
 
             case 5:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[4]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[12]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[12]);
                 break;
 
             case 6:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[5]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[13]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[13]);
                 break;
 
             case 7:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[6]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[14]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[14]);
                 break;
 
             case 8:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[7]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[15]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[15]);
                 break;
         }
     }
@@ -3856,7 +3852,7 @@ void Aquas_AqSculpin_Update(AqSculpin* this) {
         }
         this->health = 0;
         this->state = 7;
-        Effect_SpawnTimedSfxAtPos(&this->obj.pos, NA_SE_EN_AQ_ZAKO_DOWN);
+        Effect_TimedSfx_Spawn(&this->obj.pos, NA_SE_EN_AQ_ZAKO_DOWN);
     }
 
     switch (this->state) {
@@ -3908,9 +3904,9 @@ void Aquas_AqSculpin_Update(AqSculpin* this) {
             }
 
             if ((gGameFrameCount % 8) == 0) {
-                Aquas_Effect366_Spawn(this->obj.pos.x + RAND_FLOAT_CENTERED(100.0f),
-                                      this->obj.pos.y + RAND_FLOAT_CENTERED(100.0f),
-                                      this->obj.pos.z + RAND_FLOAT_CENTERED(100.0f), 1.0f, 1);
+                Aquas_Bubble_Spawn(this->obj.pos.x + RAND_FLOAT_CENTERED(100.0f),
+                                   this->obj.pos.y + RAND_FLOAT_CENTERED(100.0f),
+                                   this->obj.pos.z + RAND_FLOAT_CENTERED(100.0f), 1.0f, 1);
             }
             break;
 
@@ -3947,9 +3943,9 @@ void Aquas_AqSculpin_Update(AqSculpin* this) {
             Math_SmoothStepToAngle(&this->obj.rot.y, this->fwork[2], 1.0f, 5.0f, 0);
 
             if ((gGameFrameCount % 4) == 0) {
-                Aquas_Effect366_Spawn(this->obj.pos.x + RAND_FLOAT_CENTERED(100.0f),
-                                      this->obj.pos.y + RAND_FLOAT_CENTERED(100.0f),
-                                      this->obj.pos.z + RAND_FLOAT_CENTERED(100.0f), 1.0f, 1);
+                Aquas_Bubble_Spawn(this->obj.pos.x + RAND_FLOAT_CENTERED(100.0f),
+                                   this->obj.pos.y + RAND_FLOAT_CENTERED(100.0f),
+                                   this->obj.pos.z + RAND_FLOAT_CENTERED(100.0f), 1.0f, 1);
             }
             break;
 
@@ -3963,7 +3959,7 @@ void Aquas_AqSculpin_Update(AqSculpin* this) {
             Actor_Despawn(this);
             func_effect_800815DC();
             Object_Kill(&this->obj, this->sfxSource);
-            func_effect_8007D0E0(this->obj.pos.x, this->obj.pos.y, this->obj.pos.z, 6.0f);
+            Effect_FireSmoke1_Spawn4(this->obj.pos.x, this->obj.pos.y, this->obj.pos.z, 6.0f);
             break;
     }
 
@@ -4070,32 +4066,32 @@ void Aquas_AqAnglerFish_PostLimbDraw(s32 limbIndex, Vec3f* rot, void* thisx) {
         switch (limbIndex) {
             case 1:
                 Matrix_MultVec3f(gCalcMatrix, &sp3C, &this->vwork[0]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[9]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[9]);
                 break;
 
             case 2:
                 Matrix_MultVec3f(gCalcMatrix, &sp3C, &this->vwork[1]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[10]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[10]);
                 break;
 
             case 3:
                 Matrix_MultVec3f(gCalcMatrix, &sp3C, &this->vwork[2]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[11]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[11]);
                 break;
 
             case 4:
                 Matrix_MultVec3f(gCalcMatrix, &sp3C, &this->vwork[3]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[12]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[12]);
                 break;
 
             case 5:
                 Matrix_MultVec3f(gCalcMatrix, &sp3C, &this->vwork[4]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[13]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[13]);
                 break;
 
             case 6:
                 Matrix_MultVec3f(gCalcMatrix, &sp3C, &this->vwork[5]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[14]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[14]);
                 break;
 
             case 7:
@@ -4110,17 +4106,17 @@ void Aquas_AqAnglerFish_PostLimbDraw(s32 limbIndex, Vec3f* rot, void* thisx) {
 
             case 8:
                 Matrix_MultVec3f(gCalcMatrix, &sp3C, &this->vwork[6]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[15]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[15]);
                 break;
 
             case 9:
                 Matrix_MultVec3f(gCalcMatrix, &sp3C, &this->vwork[7]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[16]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[16]);
                 break;
 
             case 16:
                 Matrix_MultVec3f(gCalcMatrix, &sp3C, &this->vwork[8]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[17]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[17]);
                 break;
         }
     }
@@ -4181,9 +4177,9 @@ void Aquas_AqAnglerFish_Update(AqAnglerFish* this) {
         }
 
         func_effect_800815DC();
-        func_effect_8007D0E0(this->obj.pos.x, this->obj.pos.y, this->obj.pos.z + 150.0f, 10.0f);
-        func_effect_8007D0E0(this->obj.pos.x, this->obj.pos.y, this->obj.pos.z + 150.0f, 10.0f);
-        func_effect_8007D0E0(this->obj.pos.x, this->obj.pos.y, this->obj.pos.z + 150.0f, 10.0f);
+        Effect_FireSmoke1_Spawn4(this->obj.pos.x, this->obj.pos.y, this->obj.pos.z + 150.0f, 10.0f);
+        Effect_FireSmoke1_Spawn4(this->obj.pos.x, this->obj.pos.y, this->obj.pos.z + 150.0f, 10.0f);
+        Effect_FireSmoke1_Spawn4(this->obj.pos.x, this->obj.pos.y, this->obj.pos.z + 150.0f, 10.0f);
 
         for (i = 0; i < 5; i++) {
             func_effect_80081A8C(this->obj.pos.x + RAND_FLOAT(i * 15.0f), this->obj.pos.y + RAND_FLOAT(i * 3.0f),
@@ -4198,7 +4194,7 @@ void Aquas_AqAnglerFish_Update(AqAnglerFish* this) {
         Actor_Despawn(this);
         Object_Kill(&this->obj, this->sfxSource);
         AUDIO_PLAY_SFX(NA_SE_OB_MINI_BOMB, this->sfxSource, 4);
-        Effect_SpawnTimedSfxAtPos(&this->obj.pos, NA_SE_EN_AQ_ZAKO_DOWN);
+        Effect_TimedSfx_Spawn(&this->obj.pos, NA_SE_EN_AQ_ZAKO_DOWN);
     }
 
     this->fwork[5] = (this->obj.pos.y * 0.01f) + 2.5f;
@@ -4380,10 +4376,10 @@ void Aquas_AqSpindlyFish_Update(AqSpindlyFish* this) {
             Aquas_SpawnDebris(&this->vwork[i], &this->vwork[15 + i], RAND_FLOAT_CENTERED(20.0f), RAND_FLOAT(5.0f),
                               RAND_FLOAT_CENTERED(10.0f), 51, this->scale, 200, i);
             func_effect_800815DC();
-            func_effect_8007D0E0(this->vwork[i].x, this->vwork[i].y, this->vwork[i].z + 100.0f, 6.0f);
+            Effect_FireSmoke1_Spawn4(this->vwork[i].x, this->vwork[i].y, this->vwork[i].z + 100.0f, 6.0f);
         }
         Object_Kill(&this->obj, this->sfxSource);
-        Effect_SpawnTimedSfxAtPos(&this->obj.pos, NA_SE_EN_AQ_ZAKO_DOWN);
+        Effect_TimedSfx_Spawn(&this->obj.pos, NA_SE_EN_AQ_ZAKO_DOWN);
     }
 
     switch (this->state) {
@@ -4507,77 +4503,77 @@ void Aquas_AqSpindlyFish_PostLimbDraw(s32 limbIndex, Vec3f* rot, void* thisx) {
         switch (limbIndex) {
             case 1:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[0]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[15]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[15]);
                 break;
 
             case 2:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[1]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[16]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[16]);
                 break;
 
             case 3:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[2]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[17]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[17]);
                 break;
 
             case 4:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[3]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[18]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[18]);
                 break;
 
             case 5:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[4]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[19]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[19]);
                 break;
 
             case 6:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[5]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[20]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[20]);
                 break;
 
             case 7:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[6]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[21]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[21]);
                 break;
 
             case 8:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[7]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[22]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[22]);
                 break;
 
             case 9:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[8]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[23]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[23]);
                 break;
 
             case 10:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[9]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[24]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[24]);
                 break;
 
             case 11:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[10]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[25]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[25]);
                 break;
 
             case 12:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[11]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[26]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[26]);
                 break;
 
             case 13:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[12]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[27]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[27]);
                 break;
 
             case 22:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[13]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[28]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[28]);
                 break;
 
             case 23:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[14]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[29]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[29]);
                 break;
         }
     }
@@ -4657,11 +4653,11 @@ void Aquas_AqGaroa_Update(AqGaroa* this) {
         }
 
         func_effect_800815DC();
-        func_effect_8007D0E0(this->vwork[7].x, this->vwork[7].y, this->vwork[7].z, 5.0f);
+        Effect_FireSmoke1_Spawn4(this->vwork[7].x, this->vwork[7].y, this->vwork[7].z, 5.0f);
         this->itemDrop = DROP_SILVER_RING_25p;
         Actor_Despawn(this);
         Object_Kill(&this->obj, this->sfxSource);
-        Effect_SpawnTimedSfxAtPos(&this->obj.pos, NA_SE_EN_AQ_ZAKO_DOWN);
+        Effect_TimedSfx_Spawn(&this->obj.pos, NA_SE_EN_AQ_ZAKO_DOWN);
     }
 
     if (this->state != 6) {
@@ -4717,9 +4713,9 @@ void Aquas_AqGaroa_Update(AqGaroa* this) {
                 }
             }
             if ((gGameFrameCount % 4) == 0) {
-                Aquas_Effect366_Spawn(this->vwork[7].x + RAND_FLOAT_CENTERED(120.0f),
-                                      this->vwork[7].y + RAND_FLOAT_CENTERED(50.0f),
-                                      this->vwork[7].z + 100.0f + RAND_FLOAT_CENTERED(100.0f), 1.0f, 0);
+                Aquas_Bubble_Spawn(this->vwork[7].x + RAND_FLOAT_CENTERED(120.0f),
+                                   this->vwork[7].y + RAND_FLOAT_CENTERED(50.0f),
+                                   this->vwork[7].z + 100.0f + RAND_FLOAT_CENTERED(100.0f), 1.0f, 0);
             }
             break;
 
@@ -4734,9 +4730,9 @@ void Aquas_AqGaroa_Update(AqGaroa* this) {
                 }
 
                 for (i = 0; i < 10; i++) {
-                    Aquas_Effect366_Spawn(this->vwork[7].x + RAND_FLOAT_CENTERED(120.0f),
-                                          this->vwork[7].y + RAND_FLOAT_CENTERED(50.0f),
-                                          this->vwork[7].z + 100.0f + RAND_FLOAT_CENTERED(100.0f), 2.0f, 0);
+                    Aquas_Bubble_Spawn(this->vwork[7].x + RAND_FLOAT_CENTERED(120.0f),
+                                       this->vwork[7].y + RAND_FLOAT_CENTERED(50.0f),
+                                       this->vwork[7].z + 100.0f + RAND_FLOAT_CENTERED(100.0f), 2.0f, 0);
                 }
                 this->state = 3;
             }
@@ -4871,9 +4867,9 @@ void Aquas_AqGaroa_Update(AqGaroa* this) {
 
             Math_SmoothStepToAngle(&this->obj.rot.x, 30.0f, 0.1f, 10.0f, 0);
             if (((gGameFrameCount % 2) == 0)) {
-                Aquas_Effect366_Spawn(this->vwork[7].x + RAND_FLOAT_CENTERED(120.0f),
-                                      this->vwork[7].y + RAND_FLOAT_CENTERED(50.0f),
-                                      this->vwork[7].z + RAND_FLOAT_CENTERED(100.0f), 2.0f, 0);
+                Aquas_Bubble_Spawn(this->vwork[7].x + RAND_FLOAT_CENTERED(120.0f),
+                                   this->vwork[7].y + RAND_FLOAT_CENTERED(50.0f),
+                                   this->vwork[7].z + RAND_FLOAT_CENTERED(100.0f), 2.0f, 0);
             }
             break;
 
@@ -4949,79 +4945,79 @@ void Aquas_AqGaroa_PostLimbDraw(s32 limbIndex, Vec3f* rot, void* thisx) {
         case 1:
             if (this->health == 0) {
                 Matrix_MultVec3f(gCalcMatrix, &sp4C, &this->vwork[0]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[10]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[10]);
             } else {
                 Matrix_MultVec3f(gCalcMatrix, &sp40, &this->vwork[20]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[23]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[23]);
             }
             break;
 
         case 2:
             if (this->health == 0) {
                 Matrix_MultVec3f(gCalcMatrix, &sp4C, &this->vwork[1]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[11]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[11]);
             }
             break;
 
         case 3:
             if (this->health == 0) {
                 Matrix_MultVec3f(gCalcMatrix, &sp4C, &this->vwork[2]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[12]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[12]);
             }
             break;
 
         case 4:
             if (this->health == 0) {
                 Matrix_MultVec3f(gCalcMatrix, &sp4C, &this->vwork[3]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[13]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[13]);
             } else {
                 Matrix_MultVec3f(gCalcMatrix, &sp34, &this->vwork[21]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[24]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[24]);
             }
             break;
 
         case 5:
             if (this->health == 0) {
                 Matrix_MultVec3f(gCalcMatrix, &sp4C, &this->vwork[4]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[14]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[14]);
             }
             break;
 
         case 6:
             if (this->health == 0) {
                 Matrix_MultVec3f(gCalcMatrix, &sp4C, &this->vwork[5]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[15]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[15]);
             }
             break;
 
         case 9:
             if (this->health == 0) {
                 Matrix_MultVec3f(gCalcMatrix, &sp4C, &this->vwork[6]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[16]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[16]);
             }
             break;
 
         case 10:
             if (this->health == 0) {
                 Matrix_MultVec3f(gCalcMatrix, &sp4C, &this->vwork[7]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[17]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[17]);
             }
             break;
 
         case 11:
             if (this->health == 0) {
                 Matrix_MultVec3f(gCalcMatrix, &sp4C, &this->vwork[8]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[18]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[18]);
             }
             break;
 
         case 12:
             if (this->health == 0) {
                 Matrix_MultVec3f(gCalcMatrix, &sp4C, &this->vwork[9]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[19]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[19]);
             } else {
                 Matrix_MultVec3f(gCalcMatrix, &sp28, &this->vwork[22]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[25]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[25]);
             }
             break;
     }
@@ -5075,8 +5071,8 @@ void Aquas_AqSquid_Update(AqSquid* this) {
         Object_Kill(&this->obj, this->sfxSource);
 
         func_effect_800815DC();
-        func_effect_8007D0E0(this->obj.pos.x, this->obj.pos.y, this->obj.pos.z, 5.0f);
-        Effect_SpawnTimedSfxAtPos(&this->obj.pos, NA_SE_EN_AQ_ZAKO_DOWN);
+        Effect_FireSmoke1_Spawn4(this->obj.pos.x, this->obj.pos.y, this->obj.pos.z, 5.0f);
+        Effect_TimedSfx_Spawn(&this->obj.pos, NA_SE_EN_AQ_ZAKO_DOWN);
     }
 
     switch (this->state) {
@@ -5161,7 +5157,7 @@ void Aquas_AqSquid_Update(AqSquid* this) {
 
                 Matrix_MultVec3fNoTranslate(gCalcMatrix, &spC4, &spAC);
 
-                Effect_SpawnById2(OBJ_EFFECT_ENEMY_LASER_1, this->vwork[26].x + RAND_FLOAT_CENTERED(200.0f),
+                Effect_SpawnById2(OBJ_EFFECT_ENEMY_LASER, this->vwork[26].x + RAND_FLOAT_CENTERED(200.0f),
                                   this->vwork[26].y + RAND_FLOAT_CENTERED(200.0f), this->vwork[26].z, spf98, sp94, 0.0f,
                                   0.0f, 0.0f, 0.0f, spAC.x, spAC.y, spAC.z, 1.0f);
             }
@@ -5181,9 +5177,9 @@ void Aquas_AqSquid_Update(AqSquid* this) {
             Math_SmoothStepToF(&this->fwork[8], 0.0f, 0.1f, 10.0f, 0.0001f);
 
             if (this->animFrame >= 40) {
-                Aquas_Effect366_Spawn(this->obj.pos.x + RAND_FLOAT_CENTERED(70.0f),
-                                      this->obj.pos.y - 50.0f + RAND_FLOAT_CENTERED(50.0f),
-                                      this->obj.pos.z + RAND_FLOAT_CENTERED(100.0f), 1.0f, 0);
+                Aquas_Bubble_Spawn(this->obj.pos.x + RAND_FLOAT_CENTERED(70.0f),
+                                   this->obj.pos.y - 50.0f + RAND_FLOAT_CENTERED(50.0f),
+                                   this->obj.pos.z + RAND_FLOAT_CENTERED(100.0f), 1.0f, 0);
             }
 
             if (this->animFrame >= 37) {
@@ -5193,11 +5189,11 @@ void Aquas_AqSquid_Update(AqSquid* this) {
                     Matrix_RotateY(gCalcMatrix, this->fwork[2] * M_DTOR, MTXF_NEW);
                     Matrix_RotateX(gCalcMatrix, this->vwork[27].x * M_DTOR, MTXF_APPLY);
                     Matrix_RotateZ(gCalcMatrix, this->vwork[27].z * M_DTOR, MTXF_APPLY);
-                    Aquas_Effect366_Spawn(this->vwork[11].x + RAND_FLOAT_CENTERED(120.0f),
-                                          this->vwork[11].y + RAND_FLOAT_CENTERED(50.0f),
-                                          this->vwork[11].z + RAND_FLOAT_CENTERED(100.0f), 2.0f, 0);
+                    Aquas_Bubble_Spawn(this->vwork[11].x + RAND_FLOAT_CENTERED(120.0f),
+                                       this->vwork[11].y + RAND_FLOAT_CENTERED(50.0f),
+                                       this->vwork[11].z + RAND_FLOAT_CENTERED(100.0f), 2.0f, 0);
                     Matrix_MultVec3fNoTranslate(gCalcMatrix, &spDC, &spD0);
-                    Effect_SpawnById2(OBJ_EFFECT_ENEMY_LASER_1, this->vwork[26].x + spD0.x, this->vwork[26].y + spD0.y,
+                    Effect_SpawnById2(OBJ_EFFECT_ENEMY_LASER, this->vwork[26].x + spD0.x, this->vwork[26].y + spD0.y,
                                       this->vwork[26].z + spD0.z, this->vwork[27].x, this->fwork[2], this->vwork[27].z,
                                       0.0f, 0.0f, 0.0f, spD0.x, spD0.y, spD0.z, 1.0f);
                 }
@@ -5232,53 +5228,54 @@ void Aquas_AqSquid_PostLimbDraw(s32 limbIndex, Vec3f* rot, void* thisx) {
         switch (limbIndex) {
             case 1:
                 Matrix_MultVec3f(gCalcMatrix, &sp34, &this->vwork[0]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[13]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[13]);
                 break;
             case 2:
                 Matrix_MultVec3f(gCalcMatrix, &sp34, &this->vwork[1]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[14]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[14]);
                 break;
             case 3:
                 Matrix_MultVec3f(gCalcMatrix, &sp34, &this->vwork[2]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[15]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[15]);
                 break;
             case 4:
                 Matrix_MultVec3f(gCalcMatrix, &sp34, &this->vwork[3]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[16]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[16]);
                 break;
             case 5:
                 Matrix_MultVec3f(gCalcMatrix, &sp34, &this->vwork[4]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[17]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[17]);
                 break;
             case 6:
                 Matrix_MultVec3f(gCalcMatrix, &sp34, &this->vwork[5]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[18]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[18]);
                 break;
             case 7:
                 Matrix_MultVec3f(gCalcMatrix, &sp34, &this->vwork[6]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[19]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[19]);
                 break;
             case 8:
                 Matrix_MultVec3f(gCalcMatrix, &sp34, &this->vwork[7]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[20]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[20]);
                 break;
             case 9:
                 Matrix_MultVec3f(gCalcMatrix, &sp34, &this->vwork[8]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[21]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[21]);
                 break;
             case 10:
                 Matrix_MultVec3f(gCalcMatrix, &sp34, &this->vwork[9]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[22]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[22]);
                 break;
             case 11:
                 Matrix_MultVec3f(gCalcMatrix, &sp34, &this->vwork[10]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[23]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[23]);
                 break;
 
             case 12:
                 Matrix_MultVec3f(gCalcMatrix, &sp34, &this->vwork[11]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[24]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[24]);
                 Matrix_Push(&gCalcMatrix);
+
                 switch (gGameFrameCount % 4U) {
                     case 0:
                         break;
@@ -5294,13 +5291,13 @@ void Aquas_AqSquid_PostLimbDraw(s32 limbIndex, Vec3f* rot, void* thisx) {
                 }
 
                 Matrix_MultVec3f(gCalcMatrix, &sp28, &this->vwork[26]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[27]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[27]);
                 Matrix_Pop(&gCalcMatrix);
                 break;
 
             case 21:
                 Matrix_MultVec3f(gCalcMatrix, &sp34, &this->vwork[12]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[25]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[25]);
                 break;
         }
     }
@@ -5330,7 +5327,7 @@ void Aquas_AqSquid_Draw(AqSquid* this) {
 
 void Aquas_AqSeaweed_Update(AqSeaweed* this) {
     Vec3f frameTable[30];
-    u16 sp3E;
+    u16 limbCount;
 
     switch (this->state) {
         case 0:
@@ -5339,11 +5336,11 @@ void Aquas_AqSeaweed_Update(AqSeaweed* this) {
             /* fallthrough */
         case 1:
             this->animFrame += 2;
-            if (this->animFrame >= Animation_GetFrameCount(&aAqSeaweedAnim)) {
+            if (this->animFrame >= Animation_GetFrameCount(&aAqSeaweedAnim1)) {
                 this->animFrame = 0;
             }
 
-            sp3E = Animation_GetFrameData(&aAqSeaweedAnim, this->animFrame, frameTable);
+            limbCount = Animation_GetFrameData(&aAqSeaweedAnim1, this->animFrame, frameTable);
 
             if ((fabsf(this->obj.pos.x - gPlayer[0].pos.x) < 150.0f) &&
                 (fabsf(this->obj.pos.y - gPlayer[0].pos.y) < 500.0f) &&
@@ -5355,10 +5352,12 @@ void Aquas_AqSeaweed_Update(AqSeaweed* this) {
 
         case 2:
             this->animFrame += 2;
-            if (this->animFrame >= Animation_GetFrameCount(&D_AQ_601DE50)) {
+            if (this->animFrame >= Animation_GetFrameCount(&aAqSeaweedAnim2)) {
                 this->animFrame = 0;
             }
-            sp3E = Animation_GetFrameData(&D_AQ_601DE50, this->animFrame, frameTable);
+
+            limbCount = Animation_GetFrameData(&aAqSeaweedAnim2, this->animFrame, frameTable);
+
             if ((fabsf(this->obj.pos.x - gPlayer[0].pos.x) > 150.0f) ||
                 (fabsf(this->obj.pos.y - gPlayer[0].pos.y) > 500.0f) ||
                 (fabsf(this->obj.pos.z - gPlayer[0].trueZpos) > 700.0f)) {
@@ -5367,7 +5366,7 @@ void Aquas_AqSeaweed_Update(AqSeaweed* this) {
             }
             break;
     }
-    Math_SmoothStepToVec3fArray(frameTable, this->vwork, 1, sp3E, this->fwork[0], 100.0f, 0.0f);
+    Math_SmoothStepToVec3fArray(frameTable, this->vwork, 1, limbCount, this->fwork[0], 100.0f, 0.0f);
     Math_SmoothStepToF(&this->fwork[0], 0.5f, 1.0f, 0.008f, 0.0f);
 }
 
@@ -5395,7 +5394,7 @@ void Aquas_AqBoulder_Init(AqBoulder* this) {
 
 void Aquas_AqBoulder_Update(AqBoulder* this) {
     s32 i;
-    s32 var_s2;
+    s32 j;
     Actor* boulder;
 
     switch (this->state) {
@@ -5403,9 +5402,9 @@ void Aquas_AqBoulder_Update(AqBoulder* this) {
             if (this->iwork[1] == 0) {
                 this->obj.rot.z += this->fwork[2];
                 if (((gGameFrameCount % 2) == 0)) {
-                    Aquas_Effect366_Spawn(this->obj.pos.x + RAND_FLOAT_CENTERED(120.0f),
-                                          this->obj.pos.y + RAND_FLOAT_CENTERED(50.0f),
-                                          this->obj.pos.z + RAND_FLOAT_CENTERED(100.0f), 2.0f, 0);
+                    Aquas_Bubble_Spawn(this->obj.pos.x + RAND_FLOAT_CENTERED(120.0f),
+                                       this->obj.pos.y + RAND_FLOAT_CENTERED(50.0f),
+                                       this->obj.pos.z + RAND_FLOAT_CENTERED(100.0f), 2.0f, 0);
                 }
 
                 this->fwork[1] += 10.0f;
@@ -5428,9 +5427,9 @@ void Aquas_AqBoulder_Update(AqBoulder* this) {
             if (this->iwork[1] == 0) {
                 this->obj.rot.z += this->fwork[2];
                 if (((gGameFrameCount % 4) == 0)) {
-                    Aquas_Effect366_Spawn(this->obj.pos.x + RAND_FLOAT_CENTERED(70.0f),
-                                          this->obj.pos.y + RAND_FLOAT_CENTERED(50.0f),
-                                          this->obj.pos.z + RAND_FLOAT_CENTERED(50.0f), 1.0f, 0);
+                    Aquas_Bubble_Spawn(this->obj.pos.x + RAND_FLOAT_CENTERED(70.0f),
+                                       this->obj.pos.y + RAND_FLOAT_CENTERED(50.0f),
+                                       this->obj.pos.z + RAND_FLOAT_CENTERED(50.0f), 1.0f, 0);
                 }
 
                 Math_SmoothStepToF(&this->vel.y, -7.0f, 0.1f, 1.0f, 0.0001f);
@@ -5460,8 +5459,7 @@ void Aquas_AqBoulder_Update(AqBoulder* this) {
             this->health = this->itemDrop = 0;
             Actor_Despawn(this);
             if (this->state == 0) {
-                for (i = 0, var_s2 = 0, boulder = &gActors[0]; (i < ARRAY_COUNT(gActors)) && (var_s2 < 4);
-                     i++, boulder++) {
+                for (i = 0, j = 0, boulder = &gActors[0]; (i < ARRAY_COUNT(gActors)) && (j < 4); i++, boulder++) {
                     if (boulder->obj.status == OBJ_FREE) {
                         Actor_Initialize(boulder);
                         boulder->obj.status = OBJ_INIT;
@@ -5475,7 +5473,7 @@ void Aquas_AqBoulder_Update(AqBoulder* this) {
                         boulder->state = 1;
 
                         Object_SetInfo(&boulder->info, boulder->obj.id);
-                        var_s2++;
+                        j++;
                     }
                 }
                 if (i >= ARRAY_COUNT(gActors)) {
@@ -5491,7 +5489,7 @@ void Aquas_AqBoulder_Update(AqBoulder* this) {
             Effect_Effect362_Spawn(this->obj.pos.x, this->obj.pos.y, this->obj.pos.z + 130.0f, this->scale * 30.0f);
             Effect_Effect362_Spawn(this->obj.pos.x, this->obj.pos.y, this->obj.pos.z + 130.0f, this->scale * 30.0f);
             Object_Kill(&this->obj, this->sfxSource);
-            Effect_SpawnTimedSfxAtPos(&this->obj.pos, NA_SE_EN_EXPLOSION_S);
+            Effect_TimedSfx_Spawn(&this->obj.pos, NA_SE_EN_EXPLOSION_S);
         }
     }
 }
@@ -5542,29 +5540,29 @@ void Aquas_AqCoral_Update(AqCoral* this) {
 
 void Aquas_AqCoral_PostLimbDraw(s32 limbIndex, Vec3f* rot, void* thisx) {
     Vec3f sp24 = { 0.0f, 0.0f, 0.0f };
-    Actor* this = (Actor*) thisx;
+    AqCoral* this = (AqCoral*) thisx;
 
     if (this->state != 0) {
         switch (limbIndex) {
             case 1:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[0]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[5]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[5]);
                 break;
             case 2:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[1]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[6]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[6]);
                 break;
             case 3:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[2]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[7]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[7]);
                 break;
             case 4:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[3]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[8]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[8]);
                 break;
             case 9:
                 Matrix_MultVec3f(gCalcMatrix, &sp24, &this->vwork[4]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[9]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[9]);
                 break;
         }
     }
@@ -5597,8 +5595,8 @@ s32 D_i3_801C04A0[6] = {
 };
 
 void Aquas_AqJellyfish_Init(AqJellyfish* this) {
-    s32 sp64;
-    s32 sp60;
+    s32 i;
+    s32 j;
     Vec3f sp54;
     Vec3f sp48;
     AqJellyfish* jellyfish;
@@ -5645,7 +5643,7 @@ void Aquas_AqJellyfish_Init(AqJellyfish* this) {
 
         Matrix_MultVec3fNoTranslate(gCalcMatrix, &sp54, &sp48);
 
-        for (sp64 = 0, jellyfish = &gActors[0]; sp64 < ARRAY_COUNT(gActors); sp64++, jellyfish++) {
+        for (i = 0, jellyfish = &gActors[0]; i < ARRAY_COUNT(gActors); i++, jellyfish++) {
             if (jellyfish->obj.status == OBJ_FREE) {
                 Actor_Initialize(jellyfish);
                 jellyfish->obj.status = OBJ_INIT;
@@ -5658,7 +5656,7 @@ void Aquas_AqJellyfish_Init(AqJellyfish* this) {
                 jellyfish->iwork[13] = this->iwork[13];
                 jellyfish->iwork[18] = this->iwork[18];
                 jellyfish->iwork[19] = this->iwork[19];
-                this->iwork[0] = sp64 + 1;
+                this->iwork[0] = i + 1;
                 Object_SetInfo(&jellyfish->info, jellyfish->obj.id);
                 break;
             }
@@ -5672,7 +5670,7 @@ void Aquas_AqJellyfish_Init(AqJellyfish* this) {
 
         Matrix_MultVec3fNoTranslate(gCalcMatrix, &sp54, &sp48);
 
-        for (sp60 = 0, jellyfish2 = &gActors[0]; sp60 < ARRAY_COUNT(gActors); sp60++, jellyfish2++) {
+        for (j = 0, jellyfish2 = &gActors[0]; j < ARRAY_COUNT(gActors); j++, jellyfish2++) {
             if (jellyfish2->obj.status == OBJ_FREE) {
                 Actor_Initialize(jellyfish2);
                 jellyfish2->obj.status = OBJ_INIT;
@@ -5686,8 +5684,8 @@ void Aquas_AqJellyfish_Init(AqJellyfish* this) {
                 jellyfish2->iwork[13] = this->iwork[13];
                 jellyfish2->iwork[18] = this->iwork[18];
                 jellyfish2->iwork[19] = this->iwork[19];
-                jellyfish->iwork[1] = sp60 + 1;
-                this->iwork[1] = sp60 + 1;
+                jellyfish->iwork[1] = j + 1;
+                this->iwork[1] = j + 1;
                 Object_SetInfo(&jellyfish2->info, jellyfish2->obj.id);
                 break;
             }
@@ -5697,6 +5695,7 @@ void Aquas_AqJellyfish_Init(AqJellyfish* this) {
         this->fwork[20] = this->obj.rot.z;
 
         this->obj.rot.x = this->obj.rot.y = this->obj.rot.z = 0.0f;
+
         D_i3_801C4450++;
         if (D_i3_801C4450 > 20) {
             D_i3_801C4450 = 0;
@@ -5746,7 +5745,7 @@ void Aquas_AqJellyfish_Update(AqJellyfish* this) {
             case 4:
                 i = this->iwork[19] + (this->iwork[2] * 2);
                 this->vel.y = D_i3_801C04A0[i];
-                if (((gGameFrameCount % 4) == 0)) {
+                if ((gGameFrameCount % 4) == 0) {
                     if (fabsf(this->fwork[23] - this->obj.pos.y) >= 100.0f) {
                         if (this->iwork[20] == 0) {
                             this->iwork[19]++;
@@ -5754,7 +5753,7 @@ void Aquas_AqJellyfish_Update(AqJellyfish* this) {
                             this->iwork[20] = 50;
                         }
                     } else {
-                        for (i = 0, wall1 = gScenery; i < ARRAY_COUNT(gScenery); i++, wall1++) {
+                        for (i = 0, wall1 = &gScenery[0]; i < ARRAY_COUNT(gScenery); i++, wall1++) {
                             if ((wall1->obj.status == OBJ_ACTIVE) && (wall1->obj.id == OBJ_SCENERY_AQ_WALL_1) &&
                                 (Object_CheckHitboxCollision(&this->obj.pos, wall1->info.hitbox, &wall1->obj, 0.0f,
                                                              0.0f, 0.0f) ||
@@ -5797,7 +5796,7 @@ void Aquas_AqJellyfish_Update(AqJellyfish* this) {
             }
 
             if (((gGameFrameCount % 8) == 0)) {
-                Effect_SpawnTimedSfxAtPos(&sp70->obj.pos, NA_SE_EN_WT_SPARK_BEAM);
+                Effect_TimedSfx_Spawn(&sp70->obj.pos, NA_SE_EN_WT_SPARK_BEAM);
             }
 
             Aquas_801A92EC(this, sp70->obj.pos.x, sp70->obj.pos.y, sp70->obj.pos.z, this->iwork[13], i);
@@ -5831,7 +5830,7 @@ void Aquas_AqJellyfish_Update(AqJellyfish* this) {
                 }
             }
             if (((gGameFrameCount % 4) == 0)) {
-                Effect_SpawnTimedSfxAtPos(&sp6C->obj.pos, NA_SE_EN_WT_SPARK_BEAM);
+                Effect_TimedSfx_Spawn(&sp6C->obj.pos, NA_SE_EN_WT_SPARK_BEAM);
             }
 
             Aquas_801A92EC(this, sp6C->obj.pos.x, sp6C->obj.pos.y, sp6C->obj.pos.z, this->iwork[13] + 1, i);
@@ -5867,7 +5866,7 @@ void Aquas_AqJellyfish_Update(AqJellyfish* this) {
             }
 
             if (((gGameFrameCount % 16) == 0)) {
-                Effect_SpawnTimedSfxAtPos(&sp70->obj.pos, NA_SE_EN_WT_SPARK_BEAM);
+                Effect_TimedSfx_Spawn(&sp70->obj.pos, NA_SE_EN_WT_SPARK_BEAM);
             }
 
             Aquas_801A92EC(this, sp70->obj.pos.x, sp70->obj.pos.y, sp70->obj.pos.z, this->iwork[13] + 2, i);
@@ -6002,12 +6001,12 @@ void Aquas_AqJellyfish_Update(AqJellyfish* this) {
 }
 
 bool Aquas_AqJellyfish_OverrideLimbDraw(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* thisx) {
-    Vec3f sp64 = { 0.0f, 0.0f, 0.0f };
-    Vec3f sp58;
-    f32 sp54 = 0.0f;
-    f32 sp50 = 0.0f;
-    f32 sp4C = 0.0f;
-    Actor* this = (Actor*) thisx;
+    Vec3f lightSrc = { 0.0f, 0.0f, 0.0f };
+    Vec3f lightDest;
+    f32 xScale = 0.0f;
+    f32 yScale = 0.0f;
+    f32 zScale = 0.0f;
+    AqJellyfish* this = (AqJellyfish*) thisx;
 
     RCP_SetupDL(&gMasterDisp, SETUPDL_41);
 
@@ -6019,15 +6018,15 @@ bool Aquas_AqJellyfish_OverrideLimbDraw(s32 limbIndex, Gfx** dList, Vec3f* pos, 
 
     switch (limbIndex) {
         case 1:
-            sp54 = this->fwork[12];
-            sp50 = this->fwork[15];
-            sp4C = this->fwork[18];
+            xScale = this->fwork[12];
+            yScale = this->fwork[15];
+            zScale = this->fwork[18];
             break;
 
         case 2:
-            sp54 = this->fwork[13];
-            sp50 = this->fwork[16];
-            sp4C = this->fwork[19];
+            xScale = this->fwork[13];
+            yScale = this->fwork[16];
+            zScale = this->fwork[19];
             break;
 
         case 3:
@@ -6046,12 +6045,12 @@ bool Aquas_AqJellyfish_OverrideLimbDraw(s32 limbIndex, Gfx** dList, Vec3f* pos, 
             break;
 
         case 11:
-            sp54 = this->fwork[11];
-            sp50 = this->fwork[14];
-            sp4C = this->fwork[17];
+            xScale = this->fwork[11];
+            yScale = this->fwork[14];
+            zScale = this->fwork[17];
     }
 
-    if (sp54 > 0.0f) {
+    if (xScale > 0.0f) {
         Matrix_Translate(gCalcMatrix, pos->x, pos->y, pos->z, MTXF_APPLY);
 
         Matrix_RotateZ(gCalcMatrix, rot->z * M_DTOR, MTXF_APPLY);
@@ -6059,11 +6058,11 @@ bool Aquas_AqJellyfish_OverrideLimbDraw(s32 limbIndex, Gfx** dList, Vec3f* pos, 
         Matrix_RotateX(gCalcMatrix, rot->x * M_DTOR, MTXF_APPLY);
 
         if (*dList != NULL) {
-            Matrix_MultVec3f(gCalcMatrix, &sp64, &sp58);
-            Display_SetSecondLight(&sp58);
+            Matrix_MultVec3f(gCalcMatrix, &lightSrc, &lightDest);
+            Display_SetSecondLight(&lightDest);
             Matrix_Mult(gGfxMatrix, gCalcMatrix, MTXF_APPLY);
             Matrix_Push(&gGfxMatrix);
-            Matrix_Scale(gGfxMatrix, sp54, sp50, sp4C, MTXF_APPLY);
+            Matrix_Scale(gGfxMatrix, xScale, yScale, zScale, MTXF_APPLY);
             Matrix_SetGfxMtx(&gMasterDisp);
             gSPDisplayList(gMasterDisp++, *dList);
             Matrix_Pop(&gGfxMatrix);
@@ -6194,16 +6193,16 @@ void Aquas_AqStoneColumn_Update(AqStoneColumn* this) {
             }
 
             func_effect_800815DC();
-            func_effect_8007D0E0(this->vwork[4].x, this->vwork[4].y, this->vwork[4].z, 10.0f);
+            Effect_FireSmoke1_Spawn4(this->vwork[4].x, this->vwork[4].y, this->vwork[4].z, 10.0f);
 
             for (j = 0; j < 20; j++) {
-                Aquas_Effect366_Spawn(this->vwork[4].x + RAND_FLOAT_CENTERED(100.0f),
-                                      this->vwork[4].y + RAND_FLOAT_CENTERED(200.0f),
-                                      this->vwork[4].z + 100.0f + RAND_FLOAT_CENTERED(200.0f), 6.0f, 2);
+                Aquas_Bubble_Spawn(this->vwork[4].x + RAND_FLOAT_CENTERED(100.0f),
+                                   this->vwork[4].y + RAND_FLOAT_CENTERED(200.0f),
+                                   this->vwork[4].z + 100.0f + RAND_FLOAT_CENTERED(200.0f), 6.0f, 2);
             }
 
             func_effect_800815DC();
-            func_effect_8007D0E0(this->vwork[4].x, this->vwork[4].y, this->vwork[4].z + 150.0f, 10.0f);
+            Effect_FireSmoke1_Spawn4(this->vwork[4].x, this->vwork[4].y, this->vwork[4].z + 150.0f, 10.0f);
             this->timer_0BC = 4;
             this->state = 4;
             break;
@@ -6216,7 +6215,7 @@ void Aquas_AqStoneColumn_Update(AqStoneColumn* this) {
                 this->itemDrop = D_i3_801C04C4[this->iwork[1]];
                 Actor_Despawn(this);
                 Object_Kill(&this->obj, this->sfxSource);
-                Effect_SpawnTimedSfxAtPos(&this->obj.pos, NA_SE_OB_AQ_PILLAR_BROKE);
+                Effect_TimedSfx_Spawn(&this->obj.pos, NA_SE_OB_AQ_PILLAR_BROKE);
             }
             break;
 
@@ -6224,15 +6223,15 @@ void Aquas_AqStoneColumn_Update(AqStoneColumn* this) {
             Math_SmoothStepToAngle(&this->obj.rot.y, this->fwork[0], 0.1f, 10.0f, 0.0001f);
             Math_SmoothStepToAngle(&this->obj.rot.x, 90.0f, 0.1f, 1.0f, 0.0001f);
             if (((gGameFrameCount % 2) == 0) && (this->iwork[2] == 0)) {
-                Aquas_Effect366_Spawn(this->obj.pos.x + RAND_FLOAT_CENTERED(200.0f),
-                                      this->obj.pos.y + RAND_RANGE(-45.0f, 105.0f),
-                                      this->obj.pos.z + RAND_FLOAT_CENTERED(200.0f), 6.0f, 2);
+                Aquas_Bubble_Spawn(this->obj.pos.x + RAND_FLOAT_CENTERED(200.0f),
+                                   this->obj.pos.y + RAND_RANGE(-45.0f, 105.0f),
+                                   this->obj.pos.z + RAND_FLOAT_CENTERED(200.0f), 6.0f, 2);
             }
 
             if ((this->obj.pos.y < (gGroundHeight + 30.0f)) && (this->iwork[2] == 0)) {
                 this->iwork[2] = 1;
                 this->vel.x = this->vel.y = this->vel.z = this->gravity = 0.0f;
-                Effect_SpawnTimedSfxAtPos(&this->obj.pos, NA_SE_OB_AQ_ROCK_BOUND);
+                Effect_TimedSfx_Spawn(&this->obj.pos, NA_SE_OB_AQ_ROCK_BOUND);
                 for (j = 0; j < 6; j++) {
                     Effect_Effect364_Spawn(this->obj.pos.x + RAND_FLOAT_CENTERED(100.0f),
                                            this->obj.pos.y + RAND_RANGE(-9.0f, 21.0f),
@@ -6244,24 +6243,24 @@ void Aquas_AqStoneColumn_Update(AqStoneColumn* this) {
 }
 
 void Aquas_AqStoneColumn_PostLimbDraw(s32 limbIndex, Vec3f* rot, void* thisx) {
-    Vec3f sp2C = { 0.0f, 0.0f, 0.0f };
-    Actor* this = (Actor*) thisx;
+    Vec3f src = { 0.0f, 0.0f, 0.0f };
+    AqStoneColumn* this = (AqStoneColumn*) thisx;
 
     if (this->state == 3) {
         switch (limbIndex) {
             case 1:
-                Matrix_MultVec3f(gCalcMatrix, &sp2C, &this->vwork[4]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[5]);
+                Matrix_MultVec3f(gCalcMatrix, &src, &this->vwork[4]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[5]);
                 break;
 
             case 2:
-                Matrix_MultVec3f(gCalcMatrix, &sp2C, &this->vwork[0]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[2]);
+                Matrix_MultVec3f(gCalcMatrix, &src, &this->vwork[0]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[2]);
                 break;
 
             case 5:
-                Matrix_MultVec3f(gCalcMatrix, &sp2C, &this->vwork[1]);
-                Matrix_GetYRPAngles(gCalcMatrix, &this->vwork[3]);
+                Matrix_MultVec3f(gCalcMatrix, &src, &this->vwork[1]);
+                Matrix_GetYPRAngles(gCalcMatrix, &this->vwork[3]);
                 break;
         }
     }
@@ -6627,7 +6626,7 @@ void Aquas_801BE274(AqOyster* this, f32 yRot, f32 xRot) {
     sp40.z = 80.0f;
 
     Matrix_MultVec3fNoTranslate(gCalcMatrix, &sp40, &sp58);
-    Effect_SpawnById2(OBJ_EFFECT_355, sp64.x, sp64.y, sp64.z, xRot, yRot, 0.0f, 0.0f, 0.0f, 0.0f, sp58.x, sp58.y,
+    Effect_SpawnById2(OBJ_EFFECT_BLUE_ORB, sp64.x, sp64.y, sp64.z, xRot, yRot, 0.0f, 0.0f, 0.0f, 0.0f, sp58.x, sp58.y,
                       sp58.z, 1.0f);
 }
 
@@ -6662,9 +6661,9 @@ void Aquas_AqOyster_Update(AqOyster* this) {
             this->animFrame++;
             if (this->animFrame == 10) {
                 for (i = 0; i < 10; i++) {
-                    Aquas_Effect366_Spawn(this->obj.pos.x + RAND_FLOAT_CENTERED(200.0f),
-                                          this->obj.pos.y + 50.0f + RAND_FLOAT_CENTERED(70.0f),
-                                          this->obj.pos.z + 100.0f, 3.0f, 2);
+                    Aquas_Bubble_Spawn(this->obj.pos.x + RAND_FLOAT_CENTERED(200.0f),
+                                       this->obj.pos.y + 50.0f + RAND_FLOAT_CENTERED(70.0f), this->obj.pos.z + 100.0f,
+                                       3.0f, 2);
                 }
             }
 
@@ -6708,9 +6707,9 @@ void Aquas_AqOyster_Update(AqOyster* this) {
                     Actor_Despawn(this);
 
                     for (i = 0; i < 10; i++) {
-                        Aquas_Effect366_Spawn(this->obj.pos.x + RAND_FLOAT_CENTERED(200.0f),
-                                              this->obj.pos.y + 50.0f + RAND_FLOAT_CENTERED(70.0f),
-                                              this->obj.pos.z + 100.0f, 3.0f, 2);
+                        Aquas_Bubble_Spawn(this->obj.pos.x + RAND_FLOAT_CENTERED(200.0f),
+                                           this->obj.pos.y + 50.0f + RAND_FLOAT_CENTERED(70.0f),
+                                           this->obj.pos.z + 100.0f, 3.0f, 2);
                     }
 
                     for (i = 0; i < 3; i++) {
@@ -6718,7 +6717,7 @@ void Aquas_AqOyster_Update(AqOyster* this) {
                                              this->obj.pos.z + RAND_FLOAT(5.0f), 1.0f + RAND_FLOAT(0.5f), 7);
                     }
                     func_effect_800815DC();
-                    Effect_FireSmoke_Spawn(this->obj.pos.x, this->obj.pos.y, this->obj.pos.z + 51.0f, 10.0f);
+                    Effect_FireSmoke1_Spawn(this->obj.pos.x, this->obj.pos.y, this->obj.pos.z + 51.0f, 10.0f);
                 }
             }
 

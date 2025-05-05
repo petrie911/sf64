@@ -188,7 +188,7 @@ s8 Audio_GetSfxReverb(u8 bankId, u8 entryIndex, u8 channelId) {
 }
 
 s8 Audio_GetSfxPan(f32 xPos, f32 zPos, u8 mode) {
-    if (sSfxChannelLayout != SFXCHAN_3) {
+    if (sSfxChannelLayout != SFX_BANK_3) {
         f32 absx = ABSF(xPos);
         f32 absz = ABSF(zPos);
         f32 pan;
@@ -262,7 +262,7 @@ void Audio_SetSfxProperties(u8 bankId, u8 entryIndex, u8 channelId) {
             reverb = Audio_GetSfxReverb(bankId, entryIndex, channelId);
             freqMod = Audio_GetSfxFreqMod(bankId, entryIndex) * *entry->freqMod;
             if (!((bankId == SFX_BANK_PLAYER) && ((-200.0f < *entry->zPos) && (*entry->zPos < 200.0f)) &&
-                  (sSfxChannelLayout != SFXCHAN_3))) {
+                  (sSfxChannelLayout != SFX_BANK_3))) {
                 pan = Audio_GetSfxPan(*entry->xPos, *entry->zPos, entry->token);
             }
             break;
@@ -272,7 +272,7 @@ void Audio_SetSfxProperties(u8 bankId, u8 entryIndex, u8 channelId) {
                 AUDIOCMD_CHANNEL_SET_IO(SEQ_PLAYER_SFX, channelId, 1, gVoiceLanguage);
             }
 #endif
-            if (sSfxChannelLayout == SFXCHAN_3) {
+            if (sSfxChannelLayout == SFX_BANK_3) {
                 if (entry->token != 4) {
                     pan = (entry->token & 1) * 127;
                 }
@@ -2310,7 +2310,7 @@ void Audio_PlayFanfare(u16 seqId, u8 bgmVolume, u8 bgmFadeoutTime, u8 bgmFadeinT
 void Audio_PlayDeathSequence(void) {
     u8 i;
 
-    if (sAudioSpecId == AUDIOSPEC_24) {
+    if (sAudioSpecId == AUDIOSPEC_MAP) {
         Audio_ClearVoice();
         Audio_PlayMapMenuSfx(0);
         AUDIO_PLAY_SFX(NA_SE_ARWING_EXPLOSION, gDefaultSfxSource, 4);
@@ -2496,7 +2496,7 @@ void Audio_RestartSeqPlayers(void) {
 
     if (sAudioSpecId == AUDIOSPEC_AQ) {
         fadeIn = 360;
-    } else if (sAudioSpecId < AUDIOSPEC_23) {
+    } else if (sAudioSpecId < AUDIOSPEC_TITLE) {
         fadeIn = 90;
     }
     Audio_StartSequence(SEQ_PLAYER_SFX, NA_BGM_SE, -1, fadeIn);
@@ -2514,11 +2514,11 @@ void Audio_RestartSeqPlayers(void) {
 }
 
 void Audio_StartReset(u8 oldSpecId) {
-    if (oldSpecId == AUDIOSPEC_16) {
-        if ((sAudioSpecId == AUDIOSPEC_22) || (sAudioSpecId == AUDIOSPEC_23)) {
+    if (oldSpecId == AUDIOSPEC_VS) {
+        if ((sAudioSpecId == AUDIOSPEC_OPENING) || (sAudioSpecId == AUDIOSPEC_TITLE)) {
             sAudioResetStatus = AUDIORESET_BLOCK;
         }
-    } else if ((oldSpecId == AUDIOSPEC_28) && (sAudioSpecId == AUDIOSPEC_23)) {
+    } else if ((oldSpecId == AUDIOSPEC_TR) && (sAudioSpecId == AUDIOSPEC_TITLE)) {
         sAudioResetStatus = AUDIORESET_BLOCK;
     } else {
         sAudioResetStatus = AUDIORESET_WAIT;
